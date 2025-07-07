@@ -1,0 +1,230 @@
+<!-- Tạo đề thi mới -->
+<div class="create-exam-page">
+    <div class="page-header">
+        <h2>Tạo bài thi mới</h2>
+        <p>Tạo bài thi trắc nghiệm cho sinh viên</p>
+    </div>
+
+    <!-- Form tạo đề thi -->
+    <div class="exam-form-container">
+        <form id="createExamForm" class="exam-form">
+            <!-- Thông tin cơ bản -->
+            <div class="form-section">
+                <h3>Thông tin cơ bản</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="examTitle">Tiêu đề bài thi *</label>
+                        <input type="text" id="examTitle" name="title" required 
+                               placeholder="Nhập tiêu đề bài thi">
+                    </div>
+                    <div class="form-group">
+                        <label for="examSubject">Môn học *</label>
+                        <select id="examSubject" name="subject" required>
+                            <option value="">Chọn môn học</option>
+                            <option value="Lập trình Web">Lập trình Web</option>
+                            <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
+                            <option value="Mạng máy tính">Mạng máy tính</option>
+                            <option value="Kỹ thuật phần mềm">Kỹ thuật phần mềm</option>
+                            <option value="Hệ điều hành">Hệ điều hành</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="examDuration">Thời gian làm bài (phút) *</label>
+                        <input type="number" id="examDuration" name="duration" required 
+                               min="5" max="300" value="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="examMaxAttempts">Số lần làm tối đa</label>
+                        <input type="number" id="examMaxAttempts" name="maxAttempts" 
+                               min="1" max="10" value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="examDescription">Mô tả bài thi</label>
+                    <textarea id="examDescription" name="description" rows="3" 
+                              placeholder="Mô tả ngắn về nội dung bài thi"></textarea>
+                </div>
+            </div>
+
+            <!-- Cài đặt nâng cao -->
+            <div class="form-section">
+                <h3>Cài đặt nâng cao</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shuffleQuestions" name="shuffleQuestions" checked>
+                            <span class="checkmark"></span>
+                            Trộn thứ tự câu hỏi
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="shuffleAnswers" name="shuffleAnswers" checked>
+                            <span class="checkmark"></span>
+                            Trộn thứ tự đáp án
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showResults" name="showResults" checked>
+                            <span class="checkmark"></span>
+                            Hiển thị kết quả ngay sau khi nộp bài
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="allowReview" name="allowReview" checked>
+                            <span class="checkmark"></span>
+                            Cho phép xem lại bài làm
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Câu hỏi -->
+            <div class="form-section">
+                <div class="section-header">
+                    <h3>Câu hỏi</h3>
+                    <div class="section-actions">
+                        <button type="button" id="addQuestionBtn" class="btn btn-secondary">
+                            <span class="btn-icon">➕</span>
+                            Thêm câu hỏi
+                        </button>
+                        <button type="button" id="importQuestionsBtn" class="btn btn-outline">
+                            <span class="btn-icon">📁</span>
+                            Import từ file
+                        </button>
+                    </div>
+                </div>
+
+                <div id="questionsContainer" class="questions-container">
+                    <!-- Questions will be added here dynamically -->
+                </div>
+
+                <div class="empty-questions" id="emptyQuestions">
+                    <div class="empty-icon">❓</div>
+                    <h4>Chưa có câu hỏi nào</h4>
+                    <p>Bắt đầu tạo câu hỏi cho bài thi của bạn</p>
+                    <button type="button" onclick="window.createExam?.addQuestion()" class="btn btn-primary">
+                        Thêm câu hỏi đầu tiên
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="form-actions">
+                <button type="button" onclick="window.app.loadPage('dashboard')" class="btn btn-secondary">
+                    Hủy
+                </button>
+                <button type="button" id="saveAsDraftBtn" class="btn btn-outline">
+                    <span class="btn-icon">💾</span>
+                    Lưu nháp
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <span class="btn-icon">✅</span>
+                    Tạo bài thi
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Question template (hidden) -->
+    <template id="questionTemplate">
+        <div class="question-item" data-question-id="">
+            <div class="question-header">
+                <div class="question-number">Câu <span class="number">1</span></div>
+                <div class="question-type">
+                    <select class="question-type-select">
+                        <option value="multiple-choice">Trắc nghiệm (1 đáp án)</option>
+                        <option value="multiple-select">Trắc nghiệm (nhiều đáp án)</option>
+                        <option value="text">Tự luận ngắn</option>
+                    </select>
+                </div>
+                <div class="question-actions">
+                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionUp(this)" title="Di chuyển lên">⬆️</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionDown(this)" title="Di chuyển xuống">⬇️</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.duplicateQuestion(this)" title="Nhân đôi">📋</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.deleteQuestion(this)" title="Xóa">🗑️</button>
+                </div>
+            </div>
+
+            <div class="question-content">
+                <div class="form-group">
+                    <label>Nội dung câu hỏi *</label>
+                    <textarea class="question-text" rows="3" required 
+                              placeholder="Nhập nội dung câu hỏi"></textarea>
+                </div>
+
+                <!-- Multiple choice options -->
+                <div class="answer-options multiple-choice-options">
+                    <label>Các đáp án (chọn đáp án đúng)</label>
+                    <div class="options-container">
+                        <!-- Options will be added here -->
+                    </div>
+                    <button type="button" class="add-option-btn" onclick="window.createExam?.addOption(this)">
+                        ➕ Thêm đáp án
+                    </button>
+                </div>
+
+                <!-- Text answer -->
+                <div class="answer-options text-options" style="display: none;">
+                    <div class="form-group">
+                        <label>Đáp án đúng *</label>
+                        <input type="text" class="correct-text-answer" 
+                               placeholder="Nhập đáp án đúng (không phân biệt hoa thường)">
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" class="case-sensitive">
+                            <span class="checkmark"></span>
+                            Phân biệt hoa thường
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question settings -->
+                <div class="question-settings">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Điểm số</label>
+                            <input type="number" class="question-points" min="0.5" max="10" step="0.5" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Giải thích (tùy chọn)</label>
+                            <textarea class="question-explanation" rows="2" 
+                                      placeholder="Giải thích đáp án đúng"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Option template (hidden) -->
+    <template id="optionTemplate">
+        <div class="option-item">
+            <div class="option-input">
+                <input type="radio" name="correct-answer" class="correct-indicator">
+                <input type="text" class="option-text" placeholder="Nhập đáp án" required>
+                <button type="button" class="remove-option-btn" onclick="createExam.removeOption(this)">
+                    ❌
+                </button>
+            </div>
+        </div>
+    </template>
+</div>
+
+<!-- Progress indicator -->
+<div id="saveProgress" class="save-progress" style="display: none;">
+    <div class="progress-content">
+        <div class="spinner"></div>
+        <span>Đang lưu...</span>
+    </div>
+</div>

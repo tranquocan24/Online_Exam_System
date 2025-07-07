@@ -1,0 +1,80 @@
+/* CSS riêng cho sinh viên */
+
+#student-layout {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+#student-nav .nav-link.active {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+#student-nav .nav-link:hover {
+    color: #4facfe;
+}
+
+/* Exam specific styles */
+.exam-card {
+    border-left: 4px solid #4facfe;
+    transition: transform 0.3s ease;
+}
+
+.exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.15);
+}
+
+.exam-status {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.exam-status.available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.exam-status.completed {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.exam-status.expired {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* Result styles */
+.score-display {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.score-number {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.score-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

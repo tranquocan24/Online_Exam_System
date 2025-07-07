@@ -1,0 +1,36 @@
+{
+  "name": "online-exam-system",
+  "version": "1.0.0",
+  "description": "Hệ thống thi online tối giản sử dụng Node.js thuần túy",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": [
+    "nodejs",
+    "exam",
+    "online",
+    "education",
+    "quiz",
+    "test"
+  ],
+  "author": "Online Exam Project Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
+  },
+  "homepage": "http://localhost:3000",
+  "dependencies": {},
+  "devDependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

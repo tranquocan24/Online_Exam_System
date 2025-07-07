@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Làm bài thi</title>
+    <link rel="stylesheet" href="../../css/common.css">
+    <link rel="stylesheet" href="../../css/student.css">
+    <style>
+        .exam-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .exam-info h1 {
+            color: #2c3e50;
+            margin: 0 0 10px 0;
+            font-size: 1.8em;
+        }
+
+        .exam-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .exam-timer {
+            text-align: center;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+        }
+
+        .timer-label {
+            font-size: 0.8em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+
+        .timer-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timer-warning {
+            background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+        }
+
+        .timer-critical {
+            background: linear-gradient(135deg, #e74c3c, #c0392b) !important;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .question-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .progress-info {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .progress-bar {
+            flex: 1;
+            margin: 0 20px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .question-card.answered {
+            border-color: #27ae60;
+            background: #f8fff8;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .question-number {
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .question-type {
+            background: #ecf0f1;
+            color: #7f8c8d;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            text-transform: uppercase;
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .options-container {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            background: #e3f2fd;
+            border-color: #3498db;
+        }
+
+        .option.selected {
+            background: #e8f5e8;
+            border-color: #27ae60;
+            box-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+
+        .option-text {
+            flex: 1;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+
+        .text-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .navigation-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .nav-button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-previous {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-previous:hover:not(:disabled) {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-next {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled) {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-submit {
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-submit:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .question-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
+            margin: 0 20px;
+        }
+
+        .question-nav-item {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #bdc3c7;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .question-nav-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .question-nav-item.current {
+            background: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .question-nav-item.answered {
+            background: #27ae60;
+            color: white;
+            border-color: #229954;
+        }
+
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e0e0e0;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1em;
+            color: #7f8c8d;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #f5c6cb;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .warning-banner {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ffeaa7;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .exam-container {
+                margin: 10px;
+                padding: 15px;
+            }
+
+            .exam-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .question-progress {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .progress-bar {
+                margin: 0;
+                width: 100%;
+            }
+
+            .navigation-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .question-list {
+                grid-template-columns: repeat(auto-fill, minmax(35px, 1fr));
+            }
+
+            .question-nav-item {
+                width: 35px;
+                height: 35px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Đang tải bài thi...</div>
+    </div>
+
+    <div class="exam-container" id="examContainer" style="display: none;">
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="warning-banner" id="warningBanner" style="display: none;">
+            <span>⚠️</span>
+            <span id="warningText"></span>
+        </div>
+
+        <div class="exam-header">
+            <div class="exam-info">
+                <h1 id="examTitle">Đang tải...</h1>
+                <div class="exam-meta">
+                    <span id="examDescription"></span>
+                    <br>
+                    <strong>Thời gian:</strong> <span id="examDuration"></span> phút
+                    | <strong>Số câu:</strong> <span id="examQuestionCount"></span> câu
+                </div>
+            </div>
+            <div class="exam-timer" id="timer">
+                <div class="timer-label">Thời gian còn lại</div>
+                <div class="timer-display" id="timerDisplay">--:--</div>
+            </div>
+        </div>
+
+        <div class="question-progress">
+            <div class="progress-info">
+                Câu <span id="currentQuestionNumber">1</span> / <span id="totalQuestions">-</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-info">
+                Đã trả lời: <span id="answeredCount">0</span>
+            </div>
+        </div>
+
+        <div class="question-list" id="questionNavigation"></div>
+
+        <div class="question-card" id="questionCard">
+            <div class="question-header">
+                <div class="question-number" id="questionNumber">Câu 1</div>
+                <div class="question-type" id="questionType">Trắc nghiệm</div>
+            </div>
+            <div class="question-text" id="questionText">Đang tải câu hỏi...</div>
+            <div class="options-container" id="optionsContainer"></div>
+        </div>
+
+        <div class="navigation-controls">
+            <button class="nav-button btn-previous" id="previousBtn" disabled>
+                ← Câu trước
+            </button>
+            <button class="nav-button btn-next" id="nextBtn">
+                Câu tiếp →
+            </button>
+            <button class="nav-button btn-submit" id="submitBtn" style="display: none;">
+                Nộp bài
+            </button>
+        </div>
+    </div>
+
+    <script src="../../js/main.js"></script>
+    <script src="../../js/student/exam.js"></script>
+</body>
+</html>

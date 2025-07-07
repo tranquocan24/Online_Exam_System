@@ -1,0 +1,190 @@
+<!-- Quản lý đề thi -->
+<div class="manage-exams-page">
+    <div class="page-header">
+        <h2>Quản lý đề thi</h2>
+        <div class="header-actions">
+            <button onclick="window.app.loadPage('create_exam')" class="btn btn-primary">
+                <span class="btn-icon">➕</span>
+                Tạo đề thi mới
+            </button>
+            <button onclick="manageExams.refreshData()" class="btn btn-secondary">
+                <span class="btn-icon">🔄</span>
+                Làm mới
+            </button>
+        </div>
+    </div>
+
+    <!-- Statistics Overview -->
+    <div class="stats-overview">
+        <div class="stat-card">
+            <div class="stat-icon">📚</div>
+            <div class="stat-info">
+                <div class="stat-number" id="totalExams">0</div>
+                <div class="stat-label">Tổng số đề thi</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+                <div class="stat-number" id="publishedExams">0</div>
+                <div class="stat-label">Đã xuất bản</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-info">
+                <div class="stat-number" id="draftExams">0</div>
+                <div class="stat-label">Bản nháp</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-info">
+                <div class="stat-number" id="totalSubmissions">0</div>
+                <div class="stat-label">Lượt thi</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filter-section">
+        <div class="filter-controls">
+            <select id="subjectFilter" class="filter-select">
+                <option value="">Tất cả môn học</option>
+                <option value="Lập trình Web">Lập trình Web</option>
+                <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
+                <option value="Mạng máy tính">Mạng máy tính</option>
+                <option value="Kỹ thuật phần mềm">Kỹ thuật phần mềm</option>
+                <option value="Hệ điều hành">Hệ điều hành</option>
+            </select>
+            
+            <select id="statusFilter" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="published">Đã xuất bản</option>
+                <option value="draft">Bản nháp</option>
+                <option value="archived">Đã lưu trữ</option>
+            </select>
+            
+            <select id="sortBy" class="filter-select">
+                <option value="created-desc">Mới nhất</option>
+                <option value="created-asc">Cũ nhất</option>
+                <option value="title-asc">Tên A-Z</option>
+                <option value="title-desc">Tên Z-A</option>
+                <option value="submissions-desc">Nhiều lượt thi nhất</option>
+            </select>
+            
+            <input type="text" id="searchExams" class="search-input" placeholder="Tìm kiếm đề thi...">
+        </div>
+    </div>
+
+    <!-- Loading state -->
+    <div id="loadingExams" class="loading-state" style="display: none;">
+        <div class="spinner"></div>
+        <p>Đang tải danh sách đề thi...</p>
+    </div>
+
+    <!-- Exams Grid -->
+    <div id="examsContainer" class="exams-grid">
+        <!-- Exams will be loaded here -->
+    </div>
+
+    <!-- Empty state -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-icon">📚</div>
+        <h3>Chưa có đề thi nào</h3>
+        <p>Bắt đầu tạo đề thi đầu tiên của bạn</p>
+        <button onclick="window.app.loadPage('create_exam')" class="btn btn-primary">
+            Tạo đề thi mới
+        </button>
+    </div>
+</div>
+
+<!-- Exam Actions Modal -->
+<div id="examActionsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Hành động đề thi</h3>
+            <button class="modal-close" onclick="manageExams.closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="action-buttons">
+                <button id="editExamBtn" class="action-btn edit-btn">
+                    <span class="btn-icon">✏️</span>
+                    <div class="btn-content">
+                        <strong>Chỉnh sửa</strong>
+                        <small>Sửa nội dung đề thi</small>
+                    </div>
+                </button>
+                
+                <button id="duplicateExamBtn" class="action-btn duplicate-btn">
+                    <span class="btn-icon">📋</span>
+                    <div class="btn-content">
+                        <strong>Nhân đôi</strong>
+                        <small>Tạo bản sao đề thi</small>
+                    </div>
+                </button>
+                
+                <button id="viewResultsBtn" class="action-btn results-btn">
+                    <span class="btn-icon">📊</span>
+                    <div class="btn-content">
+                        <strong>Xem kết quả</strong>
+                        <small>Thống kê bài làm</small>
+                    </div>
+                </button>
+                
+                <button id="exportExamBtn" class="action-btn export-btn">
+                    <span class="btn-icon">💾</span>
+                    <div class="btn-content">
+                        <strong>Xuất file</strong>
+                        <small>Tải về định dạng JSON</small>
+                    </div>
+                </button>
+                
+                <button id="publishExamBtn" class="action-btn publish-btn">
+                    <span class="btn-icon">🚀</span>
+                    <div class="btn-content">
+                        <strong>Xuất bản</strong>
+                        <small>Cho phép sinh viên làm bài</small>
+                    </div>
+                </button>
+                
+                <button id="archiveExamBtn" class="action-btn archive-btn">
+                    <span class="btn-icon">📦</span>
+                    <div class="btn-content">
+                        <strong>Lưu trữ</strong>
+                        <small>Ẩn khỏi danh sách</small>
+                    </div>
+                </button>
+                
+                <button id="deleteExamBtn" class="action-btn delete-btn">
+                    <span class="btn-icon">🗑️</span>
+                    <div class="btn-content">
+                        <strong>Xóa</strong>
+                        <small>Xóa vĩnh viễn</small>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Actions Bar -->
+<div id="bulkActionsBar" class="bulk-actions-bar" style="display: none;">
+    <div class="bulk-info">
+        <span id="selectedCount">0</span> đề thi được chọn
+    </div>
+    <div class="bulk-actions">
+        <button onclick="manageExams.bulkPublish()" class="btn btn-secondary">
+            Xuất bản tất cả
+        </button>
+        <button onclick="manageExams.bulkArchive()" class="btn btn-secondary">
+            Lưu trữ tất cả
+        </button>
+        <button onclick="manageExams.bulkDelete()" class="btn btn-danger">
+            Xóa tất cả
+        </button>
+        <button onclick="manageExams.clearSelection()" class="btn btn-outline">
+            Bỏ chọn
+        </button>
+    </div>
+</div>

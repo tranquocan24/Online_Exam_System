@@ -1,0 +1,152 @@
+{
+  "exams": [
+    {
+      "id": "exam_001",
+      "title": "Kiểm tra Lập trình Web",
+      "subject": "Lập trình Web",
+      "duration": 60,
+      "createdBy": "GV001",
+      "createdAt": "2025-01-01T00:00:00Z",
+      "questions": [
+        {
+          "id": 1,
+          "question": "HTML là gì?",
+          "options": [
+            "HyperText Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyperlink and Text Markup Language"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": 2,
+          "question": "CSS được sử dụng để làm gì?",
+          "options": [
+            "Tạo cấu trúc trang web",
+            "Định dạng và trang trí trang web",
+            "Xử lý logic trang web",
+            "Kết nối cơ sở dữ liệu"
+          ],
+          "correctAnswer": 1
+        }
+      ]
+    },
+    {
+      "title": "1",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV001",
+      "questions": [
+        {
+          "id": "q_1751893869302_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751893908083_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "id": "exam_1751893918219",
+      "createdAt": "2025-07-07T13:11:58.219Z"
+    },
+    {
+      "title": "2",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV001",
+      "questions": [
+        {
+          "id": "q_1751899074767_1",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "7"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899074867_2",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "8"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899100720_3",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899110717_4",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1751899116115",
+      "createdAt": "2025-07-07T14:38:36.115Z"
+    }
+  ]
+}

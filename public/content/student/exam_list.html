@@ -1,0 +1,705 @@
+<!-- Danh sách bài thi cho sinh viên -->
+<div class="exam-list-page">
+    <div class="page-header">
+        <h2>Danh sách bài thi</h2>
+        <p>Chọn bài thi để bắt đầu làm bài</p>
+    </div>
+    
+    <!-- Bộ lọc -->
+    <div class="filter-section">
+        <div class="filter-controls">
+            <select id="subjectFilter" class="filter-select">
+                <option value="">Tất cả môn học</option>
+                <option value="Lập trình Web">Lập trình Web</option>
+                <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
+                <option value="Mạng máy tính">Mạng máy tính</option>
+            </select>
+            
+            <select id="statusFilter" class="filter-select">
+                <option value="">Tất cả trạng thái</option>
+                <option value="available">Có thể làm</option>
+                <option value="completed">Đã hoàn thành</option>
+                <option value="expired">Hết hạn</option>
+            </select>
+            
+            <input type="text" id="searchExam" class="search-input" placeholder="Tìm kiếm bài thi...">
+        </div>
+    </div>
+    
+    <!-- Loading state -->
+    <div id="loading-exams" class="loading-state" style="display: none;">
+        <div class="spinner"></div>
+        <p>Đang tải danh sách bài thi...</p>
+    </div>
+    
+    <!-- Danh sách bài thi -->
+    <div class="exam-grid" id="exam-grid">
+        <!-- Exam cards will be populated here -->
+    </div>
+    
+    <!-- Empty state -->
+    <div id="empty-state" class="empty-state" style="display: none;">
+        <div class="empty-icon">📝</div>
+        <h3>Chưa có bài thi nào</h3>
+        <p>Hiện tại chưa có bài thi nào khả dụng. Vui lòng liên hệ giáo viên để biết thêm thông tin.</p>
+    </div>
+</div>
+
+<!-- Modal xác nhận bắt đầu thi -->
+<div id="examModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Xác nhận bắt đầu bài thi</h3>
+            <button class="close-modal" onclick="closeExamModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="exam-details" id="examDetails">
+                <!-- Exam details will be populated here -->
+            </div>
+            <div class="exam-rules">
+                <h4>Quy định thi:</h4>
+                <ul>
+                    <li>Thời gian làm bài có giới hạn, không thể tạm dừng</li>
+                    <li>Mỗi câu hỏi chỉ có thể chọn một đáp án</li>
+                    <li>Có thể xem lại và thay đổi đáp án trước khi nộp bài</li>
+                    <li>Sau khi nộp bài không thể thay đổi</li>
+                    <li>Không được sử dụng tài liệu bên ngoài</li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeExamModal()">Hủy</button>
+            <button class="btn btn-primary" onclick="startExam()" id="startExamBtn">Bắt đầu thi</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.exam-list-page {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 30px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border-radius: 15px;
+}
+
+.page-header h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.page-header p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.filter-section {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.filter-controls {
+    display: grid;
+    grid-template-columns: 200px 200px 1fr;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-select, .search-input {
+    padding: 10px 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+}
+
+.filter-select:focus, .search-input:focus {
+    outline: none;
+    border-color: #4facfe;
+}
+
+.search-input {
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>') no-repeat right 12px center;
+    background-size: 18px;
+    padding-right: 40px;
+}
+
+.loading-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.loading-state .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #4facfe;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+.exam-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.exam-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    padding: 25px;
+    transition: all 0.3s ease;
+    border-left: 5px solid #4facfe;
+    position: relative;
+    overflow: hidden;
+}
+
+.exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(79, 172, 254, 0.15);
+}
+
+.exam-card.completed {
+    border-left-color: #48bb78;
+    opacity: 0.9;
+}
+
+.exam-card.expired {
+    border-left-color: #e53e3e;
+    opacity: 0.7;
+}
+
+.exam-status {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-available {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-completed {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.exam-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 10px;
+    margin-right: 80px;
+}
+
+.exam-subject {
+    color: #4facfe;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.exam-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #718096;
+}
+
+.info-icon {
+    font-size: 16px;
+}
+
+.exam-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-take-exam {
+    flex: 1;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-take-exam:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+}
+
+.btn-take-exam:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-view-result {
+    background: #e2e8f0;
+    color: #4a5568;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #718096;
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    margin-bottom: 10px;
+    color: #4a5568;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 15px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: slideInUp 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.modal-header h3 {
+    color: #2d3748;
+    margin: 0;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #a0aec0;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-modal:hover {
+    color: #e53e3e;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.exam-details {
+    margin-bottom: 25px;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f7fafc;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.detail-value {
+    color: #2d3748;
+}
+
+.exam-rules {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.exam-rules h4 {
+    color: #2d3748;
+    margin-bottom: 15px;
+}
+
+.exam-rules ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.exam-rules li {
+    margin-bottom: 8px;
+    color: #4a5568;
+    line-height: 1.4;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    padding: 20px 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        padding: 20px;
+    }
+    
+    .page-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .filter-controls {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .exam-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .exam-card {
+        padding: 20px;
+    }
+    
+    .exam-info {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: 20px;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+}
+</style>
+
+<script>
+let examList = [];
+let filteredExams = [];
+
+// Load exam list when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadExamList();
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Filter event listeners
+    document.getElementById('subjectFilter').addEventListener('change', filterExams);
+    document.getElementById('statusFilter').addEventListener('change', filterExams);
+    document.getElementById('searchExam').addEventListener('input', filterExams);
+}
+
+async function loadExamList() {
+    const loadingEl = document.getElementById('loading-exams');
+    const gridEl = document.getElementById('exam-grid');
+    const emptyEl = document.getElementById('empty-state');
+    
+    loadingEl.style.display = 'block';
+    gridEl.innerHTML = '';
+    emptyEl.style.display = 'none';
+    
+    try {
+        // Simulate API call
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Get exams from API
+        const response = await fetch('/api/questions');
+        const data = await response.json();
+        
+        examList = data.exams.map(exam => ({
+            ...exam,
+            status: getExamStatus(exam),
+            timeLeft: getTimeLeft(exam)
+        }));
+        
+        filteredExams = [...examList];
+        renderExamList();
+        
+    } catch (error) {
+        console.error('Error loading exams:', error);
+        showError('Không thể tải danh sách bài thi. Vui lòng thử lại.');
+    } finally {
+        loadingEl.style.display = 'none';
+    }
+}
+
+function getExamStatus(exam) {
+    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+    
+    // Check if student has completed this exam
+    const userResult = results.find(r => 
+        r.examId === exam.id && r.studentId === currentUser.id
+    );
+    
+    if (userResult) {
+        return 'completed';
+    }
+    
+    // Check if exam is expired (for demo, assume all exams are available)
+    return 'available';
+}
+
+function getTimeLeft(exam) {
+    // For demo, return random time left
+    const days = Math.floor(Math.random() * 7) + 1;
+    return `${days} ngày`;
+}
+
+function renderExamList() {
+    const gridEl = document.getElementById('exam-grid');
+    const emptyEl = document.getElementById('empty-state');
+    
+    if (filteredExams.length === 0) {
+        gridEl.innerHTML = '';
+        emptyEl.style.display = 'block';
+        return;
+    }
+    
+    emptyEl.style.display = 'none';
+    
+    gridEl.innerHTML = filteredExams.map(exam => `
+        <div class="exam-card ${exam.status}">
+            <div class="exam-status status-${exam.status}">
+                ${getStatusText(exam.status)}
+            </div>
+            
+            <h3 class="exam-title">${exam.title}</h3>
+            <div class="exam-subject">${exam.subject}</div>
+            
+            <div class="exam-info">
+                <div class="info-item">
+                    <span class="info-icon">⏱️</span>
+                    <span>${exam.duration} phút</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">❓</span>
+                    <span>${exam.questions.length} câu hỏi</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">📅</span>
+                    <span>Còn ${exam.timeLeft}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-icon">👨‍🏫</span>
+                    <span>GV: ${getTeacherName(exam.createdBy)}</span>
+                </div>
+            </div>
+            
+            <div class="exam-actions">
+                ${exam.status === 'available' ? `
+                    <button class="btn-take-exam" onclick="showExamModal('${exam.id}')">
+                        Bắt đầu thi
+                    </button>
+                ` : exam.status === 'completed' ? `
+                    <button class="btn-take-exam" disabled>
+                        Đã hoàn thành
+                    </button>
+                    <button class="btn-view-result" onclick="viewResult('${exam.id}')">
+                        Xem kết quả
+                    </button>
+                ` : `
+                    <button class="btn-take-exam" disabled>
+                        Hết hạn
+                    </button>
+                `}
+            </div>
+        </div>
+    `).join('');
+}
+
+function getStatusText(status) {
+    const statusMap = {
+        'available': 'Có thể làm',
+        'completed': 'Đã hoàn thành',
+        'expired': 'Hết hạn'
+    };
+    return statusMap[status] || status;
+}
+
+function getTeacherName(teacherId) {
+    // For demo, return default teacher name
+    return 'Nguyễn Văn C';
+}
+
+function filterExams() {
+    const subjectFilter = document.getElementById('subjectFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    const searchTerm = document.getElementById('searchExam').value.toLowerCase();
+    
+    filteredExams = examList.filter(exam => {
+        const matchSubject = !subjectFilter || exam.subject === subjectFilter;
+        const matchStatus = !statusFilter || exam.status === statusFilter;
+        const matchSearch = !searchTerm || 
+            exam.title.toLowerCase().includes(searchTerm) ||
+            exam.subject.toLowerCase().includes(searchTerm);
+        
+        return matchSubject && matchStatus && matchSearch;
+    });
+    
+    renderExamList();
+}
+
+function showExamModal(examId) {
+    const exam = examList.find(e => e.id === examId);
+    if (!exam) return;
+    
+    const modal = document.getElementById('examModal');
+    const detailsEl = document.getElementById('examDetails');
+    const startBtn = document.getElementById('startExamBtn');
+    
+    detailsEl.innerHTML = `
+        <div class="detail-item">
+            <span class="detail-label">Tên bài thi:</span>
+            <span class="detail-value">${exam.title}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Môn học:</span>
+            <span class="detail-value">${exam.subject}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Thời gian:</span>
+            <span class="detail-value">${exam.duration} phút</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Số câu hỏi:</span>
+            <span class="detail-value">${exam.questions.length} câu</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">Điểm tối đa:</span>
+            <span class="detail-value">${exam.questions.length * 10} điểm</span>
+        </div>
+    `;
+    
+    startBtn.onclick = () => startExam(examId);
+    modal.style.display = 'flex';
+}
+
+function closeExamModal() {
+    document.getElementById('examModal').style.display = 'none';
+}
+
+function viewResult(examId) {
+    // Navigate to results page with exam filter
+    localStorage.setItem('viewResultExam', examId);
+    
+    const navLink = document.querySelector('[data-page="my_results"]');
+    if (navLink) {
+        navLink.click();
+    }
+}
+
+function showError(message) {
+    const gridEl = document.getElementById('exam-grid');
+    gridEl.innerHTML = `
+        <div class="error-state">
+            <div class="error-icon">⚠️</div>
+            <h3>Lỗi tải dữ liệu</h3>
+            <p>${message}</p>
+            <button class="btn btn-primary" onclick="loadExamList()">Thử lại</button>
+        </div>
+    `;
+}
+</script>

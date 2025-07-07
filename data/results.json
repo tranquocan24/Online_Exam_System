@@ -1,0 +1,160 @@
+{
+  "submissions": [
+    {
+      "id": "result_1751895484637_SV001",
+      "examId": "exam_001",
+      "examTitle": "Kiểm tra Lập trình Web",
+      "examQuestions": [
+        {
+          "id": 1,
+          "question": "HTML là gì?",
+          "options": [
+            "HyperText Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyperlink and Text Markup Language"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": 2,
+          "question": "CSS được sử dụng để làm gì?",
+          "options": [
+            "Tạo cấu trúc trang web",
+            "Định dạng và trang trí trang web",
+            "Xử lý logic trang web",
+            "Kết nối cơ sở dữ liệu"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "userId": "SV001",
+      "userName": "Nguy?n Van A",
+      "answers": {
+        "1": 0,
+        "2": 1
+      },
+      "timeSpent": 300,
+      "submittedAt": "2025-07-07T20:38:04.361Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1751895837955_SV001",
+      "examId": "exam_1751893918219",
+      "examTitle": "1",
+      "examQuestions": [
+        {
+          "id": "q_1751893869302_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751893908083_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "userId": "SV001",
+      "userName": "Nguyễn Văn A",
+      "answers": {
+        "0": 0,
+        "1": 1
+      },
+      "timeSpent": 5,
+      "submittedAt": "2025-07-07T13:43:57.949Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1751899158533_SV001",
+      "examId": "exam_1751899116115",
+      "examTitle": "2",
+      "examQuestions": [
+        {
+          "id": "q_1751899074767_1",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "7"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899074867_2",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "8"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899100720_3",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899110717_4",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV001",
+      "userName": "Nguyễn Văn A",
+      "answers": {
+        "0": 0,
+        "1": 0,
+        "2": 1,
+        "3": 1
+      },
+      "timeSpent": 7,
+      "submittedAt": "2025-07-07T14:39:18.526Z",
+      "isTimeUp": false
+    }
+  ]
+}

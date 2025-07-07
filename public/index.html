@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống thi online</title>
+    <link rel="stylesheet" href="css/common.css">
+</head>
+<body>
+    <!-- Header chung -->
+    <header id="main-header">
+        <div class="header-container">
+            <h1>Hệ thống thi online</h1>
+            <div id="user-info" style="display:none;">
+                <span id="welcome-text"></span>
+                <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Container chính -->
+    <div id="app-container">
+        <!-- Nơi load content động -->
+        <div class="loading">
+            <p>Đang tải...</p>
+        </div>
+    </div>
+
+    <!-- Footer chung -->
+    <footer id="main-footer">
+        <div class="footer-container">
+            <p>&copy; 2025 Hệ thống thi online - Trường Đại học ABC</p>
+        </div>
+    </footer>
+
+    <script src="js/shared/score-calculator.js"></script>
+    <script src="js/main.js"></script>
+    <!-- Auth.js sẽ được load động khi cần thiết -->
+</body>
+</html>
