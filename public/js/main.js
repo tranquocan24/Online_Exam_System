@@ -176,6 +176,10 @@ class App {
             } else if (this.currentRole === 'teacher') {
                 layoutFile = 'teacher.html';
                 cssFile = 'css/teacher.css';
+            } else if (this.currentRole === 'admin') {
+                // Redirect to admin page
+                window.location.href = '/admin.html';
+                return;
             }
 
             // Load CSS riêng cho role

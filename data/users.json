@@ -1,14 +1,6 @@
 {
   "students": [
     {
-      "id": "SV001",
-      "username": "sv001",
-      "password": "123456",
-      "name": "Nguyễn Văn A",
-      "class": "CNTT01",
-      "role": "student"
-    },
-    {
       "id": "SV002",
       "username": "sv002",
       "password": "123456",
@@ -25,6 +17,15 @@
       "name": "PGS.TS Nguyễn Văn C",
       "subject": "Lập trình Web",
       "role": "teacher"
+    }
+  ],
+  "admins": [
+    {
+      "id": "AD001",
+      "username": "admin",
+      "password": "admin123",
+      "name": "Quản trị viên hệ thống",
+      "role": "admin"
     }
   ]
 }

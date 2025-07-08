@@ -155,6 +155,80 @@
       "timeSpent": 7,
       "submittedAt": "2025-07-07T14:39:18.526Z",
       "isTimeUp": false
+    },
+    {
+      "id": "result_1751971517870_SV002",
+      "examId": "exam_1751899116115",
+      "examTitle": "2",
+      "examQuestions": [
+        {
+          "id": "q_1751899074767_1",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "7"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899074867_2",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "8"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899100720_3",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899110717_4",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV002",
+      "userName": "Trần Thị B",
+      "answers": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 0
+      },
+      "timeSpent": 9,
+      "submittedAt": "2025-07-08T10:45:17.864Z",
+      "isTimeUp": false
     }
   ]
 }

@@ -1,83 +1,167 @@
 <!-- Xem kết quả thi của sinh viên -->
 <div class="view-results-page">
-    <div class="page-header">
-        <h2>Kết quả thi sinh viên</h2>
-        <div class="header-actions">
-            <button onclick="viewResults.exportResults()" class="btn btn-secondary">
-                <span class="btn-icon">📊</span>
-                Xuất Excel
-            </button>
-            <button onclick="viewResults.refreshData()" class="btn btn-secondary">
-                <span class="btn-icon">🔄</span>
-                Làm mới
-            </button>
+    <div class="page-header bg-gradient-info">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h2 class="header-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Kết quả thi sinh viên
+                    </h2>
+                    <p class="header-subtitle">Theo dõi và phân tích kết quả thi của sinh viên</p>
+                </div>
+                <div class="header-actions">
+                    <button onclick="viewResults.exportResults()" class="btn btn-light btn-lg me-2">
+                        <i class="fas fa-file-excel"></i>
+                        Xuất Excel
+                    </button>
+                    <button onclick="viewResults.refreshData()" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sync-alt"></i>
+                        Làm mới
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Exam selector -->
-    <div class="exam-selector">
-        <label for="examSelect">Chọn bài thi:</label>
-        <select id="examSelect" class="exam-select">
-            <option value="">-- Chọn bài thi --</option>
-        </select>
-    </div>
-
-    <!-- Results Overview -->
-    <div id="resultsOverview" class="results-overview" style="display: none;">
-        <div class="overview-cards">
-            <div class="overview-card">
-                <div class="card-icon">👥</div>
-                <div class="card-content">
-                    <div class="card-number" id="totalStudents">0</div>
-                    <div class="card-label">Sinh viên tham gia</div>
-                </div>
-            </div>
-            <div class="overview-card">
-                <div class="card-icon">📊</div>
-                <div class="card-content">
-                    <div class="card-number" id="averageScore">0%</div>
-                    <div class="card-label">Điểm trung bình</div>
-                </div>
-            </div>
-            <div class="overview-card">
-                <div class="card-icon">🏆</div>
-                <div class="card-content">
-                    <div class="card-number" id="highestScore">0%</div>
-                    <div class="card-label">Điểm cao nhất</div>
-                </div>
-            </div>
-            <div class="overview-card">
-                <div class="card-icon">📉</div>
-                <div class="card-content">
-                    <div class="card-number" id="lowestScore">0%</div>
-                    <div class="card-label">Điểm thấp nhất</div>
+    <div class="container mt-4">
+        <div class="exam-selector card shadow-sm">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-4">
+                        <label for="examSelect" class="form-label fw-semibold">
+                            <i class="fas fa-clipboard-list text-info me-2"></i>
+                            Chọn bài thi:
+                        </label>
+                        <select id="examSelect" class="form-select form-select-lg">
+                            <option value="">-- Chọn bài thi --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-8 text-end">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Chọn bài thi để xem thống kê chi tiết
+                        </small>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Score Distribution Chart -->
-        <div class="score-distribution">
-            <h3>Phân bố điểm số</h3>
-            <div class="chart-container">
-                <canvas id="scoreChart" width="400" height="200"></canvas>
+        <!-- Results Overview -->
+        <div id="resultsOverview" class="results-overview mt-4" style="display: none;">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="overview-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="card-icon bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-users text-primary fa-lg"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-number h4 mb-0 text-primary" id="totalStudents">0</div>
+                                <div class="card-label text-muted small">Sinh viên tham gia</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="overview-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="card-icon bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-chart-line text-info fa-lg"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-number h4 mb-0 text-info" id="averageScore">0%</div>
+                                <div class="card-label text-muted small">Điểm trung bình</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="overview-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="card-icon bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-trophy text-success fa-lg"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-number h4 mb-0 text-success" id="highestScore">0%</div>
+                                <div class="card-label text-muted small">Điểm cao nhất</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="overview-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="card-icon bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-chart-line text-warning fa-lg"></i>
+                            </div>
+                            <div class="card-content">
+                                <div class="card-number h4 mb-0 text-warning" id="lowestScore">0%</div>
+                                <div class="card-label text-muted small">Điểm thấp nhất</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Score Distribution Chart -->
+            <div class="score-distribution card shadow-sm">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Phân bố điểm số
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="scoreChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div id="resultsFilters" class="results-filters card shadow-sm mt-4" style="display: none;">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-filter text-primary me-2"></i>
+                    Lọc kết quả
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="classFilter" class="form-label fw-semibold">Lớp</label>
+                        <select id="classFilter" class="form-select">
+                            <option value="">Tất cả lớp</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="scoreRangeFilter" class="form-label fw-semibold">Khoảng điểm</label>
+                        <select id="scoreRangeFilter" class="form-select">
+                            <option value="">Tất cả điểm</option>
+                            <option value="excellent">Xuất sắc (90-100%)</option>
+                            <option value="good">Khá (80-89%)</option>
+                            <option value="average">Trung bình (70-79%)</option>
+                            <option value="weak">Yếu (60-69%)</option>
+                            <option value="poor">Kém (<60%)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <label for="searchStudents" class="form-label fw-semibold">Tìm kiếm sinh viên</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" id="searchStudents" class="form-control" 
+                                   placeholder="Tên hoặc MSSV...">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Filters -->
-    <div id="resultsFilters" class="results-filters" style="display: none;">
-        <div class="filter-row">
-            <select id="classFilter" class="filter-select">
-                <option value="">Tất cả lớp</option>
-            </select>
-            
-            <select id="scoreRangeFilter" class="filter-select">
-                <option value="">Tất cả điểm</option>
-                <option value="excellent">Xuất sắc (90-100%)</option>
-                <option value="good">Khá (80-89%)</option>
-                <option value="average">Trung bình (70-79%)</option>
-                <option value="weak">Yếu (60-69%)</option>
-                <option value="poor">Kém (<60%)</option>
             </select>
             
             <input type="text" id="studentSearch" class="search-input" placeholder="Tìm sinh viên...">

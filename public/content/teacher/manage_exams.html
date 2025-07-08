@@ -1,79 +1,141 @@
 <!-- Quản lý đề thi -->
 <div class="manage-exams-page">
-    <div class="page-header">
-        <h2>Quản lý đề thi</h2>
-        <div class="header-actions">
-            <button onclick="window.app.loadPage('create_exam')" class="btn btn-primary">
-                <span class="btn-icon">➕</span>
-                Tạo đề thi mới
-            </button>
-            <button onclick="manageExams.refreshData()" class="btn btn-secondary">
-                <span class="btn-icon">🔄</span>
-                Làm mới
-            </button>
+    <div class="page-header bg-gradient-success">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h2 class="header-title">
+                        <i class="fas fa-clipboard-list"></i>
+                        Quản lý đề thi
+                    </h2>
+                    <p class="header-subtitle">Quản lý, chỉnh sửa và theo dõi tất cả đề thi của bạn</p>
+                </div>
+                <div class="header-actions">
+                    <button onclick="window.app.loadPage('create_exam')" class="btn btn-light btn-lg me-2">
+                        <i class="fas fa-plus"></i>
+                        Tạo đề thi mới
+                    </button>
+                    <button onclick="manageExams.refreshData()" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sync-alt"></i>
+                        Làm mới
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- Statistics Overview -->
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-icon">📚</div>
-            <div class="stat-info">
-                <div class="stat-number" id="totalExams">0</div>
-                <div class="stat-label">Tổng số đề thi</div>
+    <div class="container mt-4">
+        <div class="stats-overview">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-book text-primary fa-lg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number h4 mb-0 text-primary" id="totalExams">0</div>
+                                <div class="stat-label text-muted small">Tổng số đề thi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-check-circle text-success fa-lg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number h4 mb-0 text-success" id="publishedExams">0</div>
+                                <div class="stat-label text-muted small">Đã xuất bản</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-edit text-warning fa-lg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number h4 mb-0 text-warning" id="draftExams">0</div>
+                                <div class="stat-label text-muted small">Bản nháp</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-users text-info fa-lg"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-number h4 mb-0 text-info" id="totalSubmissions">0</div>
+                                <div class="stat-label text-muted small">Lượt thi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-icon">✅</div>
-            <div class="stat-info">
-                <div class="stat-number" id="publishedExams">0</div>
-                <div class="stat-label">Đã xuất bản</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">📝</div>
-            <div class="stat-info">
-                <div class="stat-number" id="draftExams">0</div>
-                <div class="stat-label">Bản nháp</div>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-info">
-                <div class="stat-number" id="totalSubmissions">0</div>
-                <div class="stat-label">Lượt thi</div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Filters and Search -->
-    <div class="filter-section">
-        <div class="filter-controls">
-            <select id="subjectFilter" class="filter-select">
-                <option value="">Tất cả môn học</option>
-                <option value="Lập trình Web">Lập trình Web</option>
-                <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
-                <option value="Mạng máy tính">Mạng máy tính</option>
-                <option value="Kỹ thuật phần mềm">Kỹ thuật phần mềm</option>
-                <option value="Hệ điều hành">Hệ điều hành</option>
-            </select>
-            
-            <select id="statusFilter" class="filter-select">
-                <option value="">Tất cả trạng thái</option>
-                <option value="published">Đã xuất bản</option>
-                <option value="draft">Bản nháp</option>
-                <option value="archived">Đã lưu trữ</option>
-            </select>
-            
-            <select id="sortBy" class="filter-select">
-                <option value="created-desc">Mới nhất</option>
-                <option value="created-asc">Cũ nhất</option>
-                <option value="title-asc">Tên A-Z</option>
-                <option value="title-desc">Tên Z-A</option>
-                <option value="submissions-desc">Nhiều lượt thi nhất</option>
-            </select>
-            
-            <input type="text" id="searchExams" class="search-input" placeholder="Tìm kiếm đề thi...">
+        <!-- Filters and Search -->
+        <div class="filter-section card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-filter text-primary me-2"></i>
+                    Lọc và tìm kiếm
+                </h5>
+                <div class="row g-3">
+                    <div class="col-lg-2 col-md-4">
+                        <label for="subjectFilter" class="form-label fw-semibold">Môn học</label>
+                        <select id="subjectFilter" class="form-select">
+                            <option value="">Tất cả môn học</option>
+                            <option value="Lập trình Web">Lập trình Web</option>
+                            <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
+                            <option value="Mạng máy tính">Mạng máy tính</option>
+                            <option value="Kỹ thuật phần mềm">Kỹ thuật phần mềm</option>
+                            <option value="Hệ điều hành">Hệ điều hành</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-lg-2 col-md-4">
+                        <label for="statusFilter" class="form-label fw-semibold">Trạng thái</label>
+                        <select id="statusFilter" class="form-select">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="published">Đã xuất bản</option>
+                            <option value="draft">Bản nháp</option>
+                            <option value="archived">Đã lưu trữ</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-lg-2 col-md-4">
+                        <label for="sortBy" class="form-label fw-semibold">Sắp xếp</label>
+                        <select id="sortBy" class="form-select">
+                            <option value="created-desc">Mới nhất</option>
+                            <option value="created-asc">Cũ nhất</option>
+                            <option value="title-asc">Tên A-Z</option>
+                            <option value="title-desc">Tên Z-A</option>
+                            <option value="submissions-desc">Nhiều lượt thi nhất</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-lg-6">
+                        <label for="searchExams" class="form-label fw-semibold">Tìm kiếm</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="fas fa-search"></i>
+                            </span>
+                            <input type="text" id="searchExams" class="form-control" 
+                                   placeholder="Tìm kiếm đề thi...">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

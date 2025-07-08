@@ -62,6 +62,15 @@ class ExamServer {
                         subject: "Lập trình Web",
                         role: "teacher"
                     }
+                ],
+                admins: [
+                    {
+                        id: "AD001",
+                        username: "admin",
+                        password: "admin123",
+                        name: "Quản trị viên hệ thống",
+                        role: "admin"
+                    }
                 ]
             };
             fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
@@ -295,6 +304,9 @@ class ExamServer {
                 await this.handleExamApi(req, res, pathname);
             } else if (pathname.startsWith('/api/result/')) {
                 await this.handleResultApi(req, res, pathname);
+            } else if (pathname.startsWith('/api/users/')) {
+                // Handle user-specific operations (PUT, DELETE)
+                await this.handleUsers(req, res);
             } else {
                 switch (pathname) {
                     case '/api/users':
@@ -535,11 +547,185 @@ class ExamServer {
     // Handle users API
     async handleUsers(req, res) {
         const usersFile = path.join(this.dataDir, 'users.json');
+        const url = require('url');
+        const pathname = url.parse(req.url).pathname;
         
         if (req.method === 'GET') {
-            const data = fs.readFileSync(usersFile, 'utf8');
+            try {
+                const data = fs.readFileSync(usersFile, 'utf8');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(data);
+            } catch (error) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Failed to load users' }));
+            }
+        } else if (req.method === 'POST') {
+            // Add new user
+            this.handleUserCreate(req, res, usersFile);
+        } else if (req.method === 'PUT') {
+            // Update user
+            const userId = pathname.split('/').pop();
+            this.handleUserUpdate(req, res, usersFile, userId);
+        } else if (req.method === 'DELETE') {
+            // Delete user
+            const userId = pathname.split('/').pop();
+            this.handleUserDelete(req, res, usersFile, userId);
+        } else {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
+        }
+    }
+
+    // Handle user creation
+    async handleUserCreate(req, res, usersFile) {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        
+        req.on('end', () => {
+            try {
+                const newUser = JSON.parse(body);
+                const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                
+                // Validate required fields
+                if (!newUser.username || !newUser.password || !newUser.name || !newUser.role) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Missing required fields' }));
+                    return;
+                }
+                
+                // Check if username already exists
+                const allUsers = [
+                    ...(data.students || []),
+                    ...(data.teachers || []),
+                    ...(data.admins || [])
+                ];
+                
+                if (allUsers.some(user => user.username === newUser.username)) {
+                    res.writeHead(409, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Username already exists' }));
+                    return;
+                }
+                
+                // Add user to appropriate collection
+                const userType = newUser.role + 's';
+                if (!data[userType]) {
+                    data[userType] = [];
+                }
+                
+                data[userType].push(newUser);
+                fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                
+                res.writeHead(201, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(newUser));
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid JSON or server error' }));
+            }
+        });
+    }
+
+    // Handle user update
+    async handleUserUpdate(req, res, usersFile, userId) {
+        let body = '';
+        req.on('data', chunk => {
+            body += chunk.toString();
+        });
+        
+        req.on('end', () => {
+            try {
+                const updatedUser = JSON.parse(body);
+                const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                
+                // Find user in all collections
+                let userFound = false;
+                const collections = ['students', 'teachers', 'admins'];
+                
+                for (const collection of collections) {
+                    if (data[collection]) {
+                        const userIndex = data[collection].findIndex(user => user.id === userId);
+                        if (userIndex !== -1) {
+                            // Check if username is changed and not conflicting
+                            if (updatedUser.username !== data[collection][userIndex].username) {
+                                const allUsers = [
+                                    ...(data.students || []),
+                                    ...(data.teachers || []),
+                                    ...(data.admins || [])
+                                ];
+                                
+                                if (allUsers.some(user => user.username === updatedUser.username && user.id !== userId)) {
+                                    res.writeHead(409, { 'Content-Type': 'application/json' });
+                                    res.end(JSON.stringify({ error: 'Username already exists' }));
+                                    return;
+                                }
+                            }
+                            
+                            // Update user
+                            data[collection][userIndex] = { ...data[collection][userIndex], ...updatedUser };
+                            userFound = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!userFound) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'User not found' }));
+                    return;
+                }
+                
+                fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'User updated successfully' }));
+            } catch (error) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Invalid JSON or server error' }));
+            }
+        });
+    }
+
+    // Handle user deletion
+    async handleUserDelete(req, res, usersFile, userId) {
+        try {
+            // Bảo vệ tài khoản admin chính
+            if (userId === 'AD001') {
+                res.writeHead(403, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Không thể xóa tài khoản quản trị viên chính' }));
+                return;
+            }
+
+            const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+            
+            // Find and remove user from all collections
+            let userFound = false;
+            const collections = ['students', 'teachers', 'admins'];
+            
+            for (const collection of collections) {
+                if (data[collection]) {
+                    const userIndex = data[collection].findIndex(user => user.id === userId);
+                    if (userIndex !== -1) {
+                        data[collection].splice(userIndex, 1);
+                        userFound = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!userFound) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'User not found' }));
+                return;
+            }
+            
+            fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+            
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(data);
+            res.end(JSON.stringify({ message: 'User deleted successfully' }));
+        } catch (error) {
+            res.writeHead(500, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Server error' }));
         }
     }
 
@@ -685,6 +871,8 @@ class ExamServer {
             console.log(`\n📝 Tài khoản demo:`);
             console.log(`   Sinh viên: sv001 / 123456`);
             console.log(`   Giáo viên: gv001 / 123456`);
+            console.log(`   Quản trị viên: admin / admin123`);
+            console.log(`\n🔧 Trang quản trị: http://localhost:${this.port}/admin.html`);
             console.log(`\n⏹️  Nhấn Ctrl+C để dừng server\n`);
         });
 

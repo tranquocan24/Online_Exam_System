@@ -28,6 +28,9 @@ class Auth {
             console.log('Sử dụng dữ liệu mẫu');
             this.users = this.getDefaultUsers();
         }
+        
+        // Cập nhật demo accounts sau khi load xong
+        this.updateDemoAccounts();
     }
 
     // Dữ liệu users mẫu
@@ -59,6 +62,15 @@ class Auth {
                     name: "PGS.TS Nguyễn Văn C",
                     subject: "Lập trình Web",
                     role: "teacher"
+                }
+            ],
+            admins: [
+                {
+                    id: "AD001",
+                    username: "admin",
+                    password: "admin123",
+                    name: "Quản trị viên hệ thống",
+                    role: "admin"
                 }
             ]
         };
@@ -126,30 +138,7 @@ class Auth {
         if (container) {
             const demoInfo = document.createElement('div');
             demoInfo.className = 'demo-accounts';
-            demoInfo.innerHTML = `
-                <div class="demo-info">
-                    <h4>Tài khoản demo:</h4>
-                    <div class="demo-grid">
-                        <div class="demo-account" onclick="Auth.fillDemoAccount('sv001', '123456')">
-                            <strong>Sinh viên:</strong><br>
-                            Username: sv001<br>
-                            Password: 123456<br>
-                            <small>Click để điền tự động</small>
-                        </div>
-                        <div class="demo-account" onclick="Auth.fillDemoAccount('gv001', '123456')">
-                            <strong>Giáo viên:</strong><br>
-                            Username: gv001<br>
-                            Password: 123456<br>
-                            <small>Click để điền tự động</small>
-                        </div>
-                    </div>
-                    <div class="keyboard-shortcuts">
-                        <small>
-                            💡 <strong>Phím tắt:</strong> Alt+L để focus vào form, Esc để xóa form
-                        </small>
-                    </div>
-                </div>
-            `;
+            demoInfo.innerHTML = this.generateDemoAccountsHTML();
             
             // Thêm CSS cho demo info
             const style = document.createElement('style');
@@ -210,6 +199,78 @@ class Auth {
             document.head.appendChild(style);
             
             container.appendChild(demoInfo);
+        }
+    }
+
+    // Generate demo accounts HTML dựa trên dữ liệu thực tế
+    generateDemoAccountsHTML() {
+        if (!this.users) {
+            return `
+                <div class="demo-info">
+                    <h4>Đang tải tài khoản demo...</h4>
+                </div>
+            `;
+        }
+
+        let demoAccountsHTML = '';
+        
+        // Lấy tài khoản đầu tiên từ mỗi loại
+        if (this.users.students && this.users.students.length > 0) {
+            const student = this.users.students[0];
+            demoAccountsHTML += `
+                <div class="demo-account" onclick="Auth.fillDemoAccount('${student.username}', '${student.password}')">
+                    <strong>Sinh viên:</strong><br>
+                    Username: ${student.username}<br>
+                    Password: ${student.password}<br>
+                    <small>Click để điền tự động</small>
+                </div>
+            `;
+        }
+
+        if (this.users.teachers && this.users.teachers.length > 0) {
+            const teacher = this.users.teachers[0];
+            demoAccountsHTML += `
+                <div class="demo-account" onclick="Auth.fillDemoAccount('${teacher.username}', '${teacher.password}')">
+                    <strong>Giáo viên:</strong><br>
+                    Username: ${teacher.username}<br>
+                    Password: ${teacher.password}<br>
+                    <small>Click để điền tự động</small>
+                </div>
+            `;
+        }
+
+        if (this.users.admins && this.users.admins.length > 0) {
+            const admin = this.users.admins[0];
+            demoAccountsHTML += `
+                <div class="demo-account" onclick="Auth.fillDemoAccount('${admin.username}', '${admin.password}')">
+                    <strong>Quản trị viên:</strong><br>
+                    Username: ${admin.username}<br>
+                    Password: ${admin.password}<br>
+                    <small>Click để điền tự động</small>
+                </div>
+            `;
+        }
+
+        return `
+            <div class="demo-info">
+                <h4>Tài khoản demo:</h4>
+                <div class="demo-grid">
+                    ${demoAccountsHTML}
+                </div>
+                <div class="keyboard-shortcuts">
+                    <small>
+                        💡 <strong>Phím tắt:</strong> Alt+L để focus vào form, Esc để xóa form
+                    </small>
+                </div>
+            </div>
+        `;
+    }
+
+    // Cập nhật demo accounts sau khi load users
+    updateDemoAccounts() {
+        const existingDemo = document.querySelector('.demo-accounts');
+        if (existingDemo) {
+            existingDemo.innerHTML = this.generateDemoAccountsHTML();
         }
     }
 
@@ -381,16 +442,23 @@ class Auth {
         if (!this.users) return null;
         
         // Kiểm tra trong danh sách sinh viên
-        for (const student of this.users.students) {
+        for (const student of this.users.students || []) {
             if (student.username === username && student.password === password) {
                 return student;
             }
         }
         
         // Kiểm tra trong danh sách giáo viên
-        for (const teacher of this.users.teachers) {
+        for (const teacher of this.users.teachers || []) {
             if (teacher.username === username && teacher.password === password) {
                 return teacher;
+            }
+        }
+        
+        // Kiểm tra trong danh sách quản trị viên
+        for (const admin of this.users.admins || []) {
+            if (admin.username === username && admin.password === password) {
+                return admin;
             }
         }
         

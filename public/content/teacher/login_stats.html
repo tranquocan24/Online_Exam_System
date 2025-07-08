@@ -1,384 +1,124 @@
 <!-- Trang thống kê đăng nhập -->
 <div class="login-stats">
-    <div class="stats-header">
-        <h2>Thống kê đăng nhập</h2>
-        <p>Theo dõi hoạt động đăng nhập của hệ thống</p>
+    <div class="page-header bg-gradient-warning">
+        <div class="container">
+            <div class="header-content">
+                <div class="header-text">
+                    <h2 class="header-title">
+                        <i class="fas fa-chart-line"></i>
+                        Thống kê đăng nhập
+                    </h2>
+                    <p class="header-subtitle">Theo dõi hoạt động đăng nhập của hệ thống</p>
+                </div>
+            </div>
+        </div>
     </div>
     
     <!-- Thống kê tổng quan -->
-    <div class="stats-overview">
-        <div class="stat-card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-content">
-                <div class="stat-number" id="total-users">0</div>
-                <div class="stat-label">Tổng người dùng</div>
+    <div class="container mt-4">
+        <div class="stats-overview">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-users text-primary fa-lg"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number h4 mb-0 text-primary" id="total-users">0</div>
+                                <div class="stat-label text-muted small">Tổng người dùng</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-sign-in-alt text-info fa-lg"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number h4 mb-0 text-info" id="total-logins">0</div>
+                                <div class="stat-label text-muted small">Lượt đăng nhập</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-check-circle text-success fa-lg"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number h4 mb-0 text-success" id="successful-logins">0</div>
+                                <div class="stat-label text-muted small">Đăng nhập thành công</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-card card h-100 border-0 shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <div class="stat-icon bg-danger bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-times-circle text-danger fa-lg"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number h4 mb-0 text-danger" id="failed-logins">0</div>
+                                <div class="stat-label text-muted small">Đăng nhập thất bại</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Lịch sử đăng nhập -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-history text-primary me-2"></i>
+                    Lịch sử đăng nhập gần đây
+                </h5>
+                <button onclick="clearLoginHistory()" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-trash"></i>
+                    Xóa lịch sử
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="login-history" id="login-history">
+                    <div class="no-data text-center py-4">
+                        <i class="fas fa-history fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Chưa có lịch sử đăng nhập</p>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="stat-card">
-            <div class="stat-icon">🔑</div>
-            <div class="stat-content">
-                <div class="stat-number" id="total-logins">0</div>
-                <div class="stat-label">Lượt đăng nhập</div>
+        <!-- Hoạt động người dùng -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-user-clock text-success me-2"></i>
+                    Hoạt động người dùng
+                </h5>
+                <button onclick="clearUserActivities()" class="btn btn-outline-danger btn-sm">
+                    <i class="fas fa-trash"></i>
+                    Xóa hoạt động
+                </button>
             </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">✅</div>
-            <div class="stat-content">
-                <div class="stat-number" id="successful-logins">0</div>
-                <div class="stat-label">Đăng nhập thành công</div>
-            </div>
-        </div>
-        
-        <div class="stat-card">
-            <div class="stat-icon">❌</div>
-            <div class="stat-content">
-                <div class="stat-number" id="failed-logins">0</div>
-                <div class="stat-label">Đăng nhập thất bại</div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Lịch sử đăng nhập -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Lịch sử đăng nhập gần đây</h3>
-            <button onclick="clearLoginHistory()" class="btn btn-secondary btn-sm">Xóa lịch sử</button>
-        </div>
-        <div class="login-history" id="login-history">
-            <div class="no-data">
-                <p>Chưa có lịch sử đăng nhập</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Hoạt động người dùng -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Hoạt động người dùng</h3>
-            <button onclick="clearUserActivities()" class="btn btn-secondary btn-sm">Xóa hoạt động</button>
-        </div>
-        <div class="user-activities" id="user-activities">
-            <div class="no-data">
-                <p>Chưa có hoạt động nào</p>
+            <div class="card-body">
+                <div class="user-activities" id="user-activities">
+                    <div class="no-data text-center py-4">
+                        <i class="fas fa-user-clock fa-3x text-muted mb-3"></i>
+                        <p class="text-muted">Chưa có hoạt động nào</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-.login-stats {
-    animation: fadeInUp 0.5s ease-out;
-}
-
-.stats-header {
-    text-align: center;
-    margin-bottom: 30px;
-    padding: 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
     border-radius: 15px;
-}
 
-.stats-header h2 {
-    font-size: 2rem;
-    margin-bottom: 10px;
-}
-
-.stats-header p {
-    opacity: 0.9;
-    font-size: 1.1rem;
-}
-
-.stats-overview {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    transition: transform 0.3s ease;
-    border-top: 4px solid #667eea;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
-}
-
-.stat-icon {
-    font-size: 2.5rem;
-    opacity: 0.8;
-}
-
-.stat-content {
-    flex: 1;
-}
-
-.stat-number {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 5px;
-}
-
-.stat-label {
-    color: #718096;
-    font-weight: 500;
-    font-size: 0.9rem;
-}
-
-.card-header {
-    display: flex;
-    justify-content: between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.btn-sm {
-    padding: 6px 12px;
-    font-size: 12px;
-}
-
-.login-history, .user-activities {
-    max-height: 400px;
-    overflow-y: auto;
-}
-
-.history-item, .activity-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 15px;
-    border-bottom: 1px solid #e2e8f0;
-    transition: background-color 0.2s ease;
-}
-
-.history-item:hover, .activity-item:hover {
-    background-color: #f7fafc;
-}
-
-.history-item:last-child, .activity-item:last-child {
-    border-bottom: none;
-}
-
-.item-info h4 {
-    margin-bottom: 3px;
-    color: #2d3748;
-    font-size: 1rem;
-}
-
-.item-info p {
-    color: #718096;
-    font-size: 0.85rem;
-    margin: 0;
-}
-
-.item-meta {
-    text-align: right;
-}
-
-.item-status {
-    padding: 3px 8px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    margin-bottom: 3px;
-    display: inline-block;
-}
-
-.status-success {
-    background: #d4edda;
-    color: #155724;
-}
-
-.status-failed {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.status-activity {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.item-time {
-    color: #a0aec0;
-    font-size: 0.75rem;
-}
-
-.no-data {
-    text-align: center;
-    padding: 40px;
-    color: #718096;
-    font-style: italic;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@media (max-width: 768px) {
-    .stats-header {
-        padding: 20px;
-    }
-    
-    .stats-header h2 {
-        font-size: 1.5rem;
-    }
-    
-    .stat-card {
-        padding: 20px;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-    }
-    
-    .card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .history-item, .activity-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-    }
-    
-    .item-meta {
-        text-align: left;
-        width: 100%;
-    }
-}
-</style>
-
-<script>
-// Load dữ liệu thống kê khi trang được tải
-document.addEventListener('DOMContentLoaded', function() {
-    loadLoginStats();
-});
-
-function loadLoginStats() {
-    try {
-        // Load login attempts
-        const loginAttempts = JSON.parse(localStorage.getItem('loginAttempts') || '[]');
-        const userActivities = JSON.parse(localStorage.getItem('userActivities') || '[]');
-        const users = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        
-        // Calculate statistics
-        const totalLogins = loginAttempts.length;
-        const successfulLogins = loginAttempts.filter(attempt => attempt.success).length;
-        const failedLogins = totalLogins - successfulLogins;
-        const totalUsers = Object.keys(users).length || 1; // At least current user
-        
-        // Update overview stats
-        document.getElementById('total-users').textContent = totalUsers;
-        document.getElementById('total-logins').textContent = totalLogins;
-        document.getElementById('successful-logins').textContent = successfulLogins;
-        document.getElementById('failed-logins').textContent = failedLogins;
-        
-        // Display login history
-        displayLoginHistory(loginAttempts);
-        
-        // Display user activities
-        displayUserActivities(userActivities);
-        
-    } catch (error) {
-        console.error('Error loading login stats:', error);
-    }
-}
-
-function displayLoginHistory(attempts) {
-    const container = document.getElementById('login-history');
-    
-    if (attempts.length === 0) {
-        container.innerHTML = '<div class="no-data"><p>Chưa có lịch sử đăng nhập</p></div>';
-        return;
-    }
-    
-    // Sort by timestamp (newest first)
-    attempts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
-    container.innerHTML = attempts.map(attempt => `
-        <div class="history-item">
-            <div class="item-info">
-                <h4>${attempt.username}</h4>
-                <p>IP: ${attempt.ip}</p>
-            </div>
-            <div class="item-meta">
-                <div class="item-status ${attempt.success ? 'status-success' : 'status-failed'}">
-                    ${attempt.success ? 'Thành công' : 'Thất bại'}
-                </div>
-                <div class="item-time">${formatDateTime(attempt.timestamp)}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function displayUserActivities(activities) {
-    const container = document.getElementById('user-activities');
-    
-    if (activities.length === 0) {
-        container.innerHTML = '<div class="no-data"><p>Chưa có hoạt động nào</p></div>';
-        return;
-    }
-    
-    // Sort by timestamp (newest first) and take last 20
-    activities.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    const recentActivities = activities.slice(0, 20);
-    
-    container.innerHTML = recentActivities.map(activity => `
-        <div class="activity-item">
-            <div class="item-info">
-                <h4>${activity.user}</h4>
-                <p>${activity.description}</p>
-            </div>
-            <div class="item-meta">
-                <div class="item-status status-activity">${activity.type}</div>
-                <div class="item-time">${formatDateTime(activity.timestamp)}</div>
-            </div>
-        </div>
-    `).join('');
-}
-
-function clearLoginHistory() {
-    if (confirm('Bạn có chắc chắn muốn xóa lịch sử đăng nhập?')) {
-        localStorage.removeItem('loginAttempts');
-        loadLoginStats();
-        alert('Đã xóa lịch sử đăng nhập');
-    }
-}
-
-function clearUserActivities() {
-    if (confirm('Bạn có chắc chắn muốn xóa lịch sử hoạt động?')) {
-        localStorage.removeItem('userActivities');
-        loadLoginStats();
-        alert('Đã xóa lịch sử hoạt động');
-    }
-}
-
-function formatDateTime(dateTimeString) {
-    const date = new Date(dateTimeString);
-    return date.toLocaleDateString('vi-VN') + ' ' + 
-           date.toLocaleTimeString('vi-VN', {hour: '2-digit', minute: '2-digit'});
-}
-</script>

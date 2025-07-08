@@ -1,210 +1,1188 @@
-/* CSS riêng cho giáo viên */
+/* CSS riêng cho giáo viên - Light Theme với Bootstrap */
 
-#teacher-layout {
-    animation: fadeInUp 0.5s ease-out;
+/* Root variables for light theme */
+:root {
+    --primary-color: #4f46e5;
+    --primary-light: #6366f1;
+    --secondary-color: #10b981;
+    --info-color: #06b6d4;
+    --warning-color: #f59e0b;
+    --light-bg: #f8fafc;
+    --white: #ffffff;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-#teacher-nav .nav-link.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+/* Light gradient backgrounds */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%) !important;
+    color: white;
+}
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%) !important;
+    color: white;
+}
+
+.bg-gradient-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #38bdf8 100%) !important;
+    color: white;
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%) !important;
+    color: white;
+}
+
+/* Main layout - completely light */
+#teacher-layout {
+    min-height: 100vh;
+    background: var(--gray-50);
+    color: var(--gray-700);
+}
+
+/* Light navigation */
+#teacher-nav {
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-200);
+    box-shadow: var(--shadow);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#teacher-nav .nav-link {
+    color: var(--gray-600);
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 0 3px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
 }
 
 #teacher-nav .nav-link:hover {
-    color: #667eea;
+    background: var(--gray-100);
+    color: var(--primary-color);
+    border-color: var(--gray-200);
+    transform: translateY(-1px);
 }
 
-/* Exam management styles */
-.exam-management-card {
-    border-left: 4px solid #667eea;
-    transition: transform 0.3s ease;
+#teacher-nav .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: var(--shadow);
 }
 
-.exam-management-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
-}
-
-/* Create exam form styles */
-.question-item {
-    background: #f8f9ff;
-    border: 2px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 15px;
+/* Updated page headers - light theme */
+.page-header {
+    padding: 2.5rem 0;
+    margin-bottom: 0;
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: var(--shadow-lg);
     position: relative;
 }
 
-.question-header {
+.header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 1.5rem;
 }
 
-.question-number {
-    background: #667eea;
-    color: white;
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 14px;
+.header-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.remove-question {
-    background: #e53e3e;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
+.header-subtitle {
+    font-size: 1.125rem;
+    opacity: 0.95;
+    margin-bottom: 0;
 }
 
-.remove-question:hover {
-    background: #c53030;
-}
-
-.answer-options {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.answer-option {
+.header-actions {
     display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px;
-    background: white;
-    border-radius: 6px;
-    border: 1px solid #e2e8f0;
+    gap: 0.75rem;
+    flex-wrap: wrap;
 }
 
-.answer-option input[type="radio"] {
-    accent-color: #667eea;
-}
+/* Enhanced cards - pure light */
+.card {
+    background: var(--white);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
 
-.answer-option input[type="text"] {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 5px;
-}
-
-/* Statistics styles */
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    background: white;
-    padding: 25px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border-top: 4px solid #667eea;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 5px;
-}
-
-.stat-label {
-    color: #718096;
-    font-weight: 500;
-}
-
-/* Results table */
-.results-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.results-table th,
-.results-table td {
-    padding: 15px;
-    text-align: left;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.results-table th {
-    background: #f7fafc;
-    font-weight: 600;
-    color: #2d3748;
-}
-
-.results-table tr:hover {
-    background: #f7fafc;
-}
-
-.grade-badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    text-align: center;
-    min-width: 60px;
-    display: inline-block;
-}
-
-.grade-excellent {
-    background: #d4edda;
-    color: #155724;
-}
-
-.grade-good {
-    background: #cce5ff;
-    color: #004085;
-}
-
-.grade-average {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.grade-poor {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* Add question button */
-.add-question-btn {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 20px 0;
-}
-
-.add-question-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-/* Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
+    .card {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-sm);
+        position: relative;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--gray-300);
     }
-}
+
+    .card-header {
+        background: var(--gray-50);
+        border-bottom: 1px solid var(--gray-200);
+        border-radius: 12px 12px 0 0 !important;
+        color: var(--gray-700);
+    }
+
+    .card-body {
+        background: var(--white);
+        color: var(--gray-700);
+    }
+
+    .card-footer {
+        background: var(--gray-50);
+        border-top: 1px solid var(--gray-200);
+        border-radius: 0 0 12px 12px !important;
+    }
+
+    /* Exam management styles - light theme */
+    .exam-management-card {
+        border-left: 5px solid var(--primary-color);
+        transition: all 0.3s ease;
+        background: var(--white);
+    }
+
+    .exam-management-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-left-color: var(--primary-light);
+    }
+
+    /* Form enhancements - light theme */
+    .form-label {
+        font-weight: 600;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control,
+    .form-select {
+        background: var(--white);
+        border: 2px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 0.75rem;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        color: var(--gray-700);
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: var(--white);
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        transform: translateY(-1px);
+        color: var(--gray-700);
+    }
+
+    .form-control-lg,
+    .form-select-lg {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .form-text {
+        color: var(--gray-600);
+        font-size: 0.875rem;
+    }
+
+    /* Form sections styling */
+    .form-section {
+        margin-bottom: 2rem;
+        background: var(--white);
+        border-radius: 12px;
+    }
+
+    .section-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--gray-700);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .section-subtitle {
+        font-size: 0.95rem;
+        color: var(--gray-600);
+        margin-bottom: 0;
+    }
+
+    /* Light buttons */
+    .btn {
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: visible;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-light);
+        border-color: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+        color: white;
+    }
+
+    .btn-light {
+        background: var(--white);
+        border-color: var(--gray-300);
+        color: var(--gray-700);
+    }
+
+    .btn-light:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-400);
+        color: var(--gray-700);
+        transform: translateY(-1px);
+    }
+
+    .btn-outline-primary {
+        background: transparent;
+        border-color: var(--primary-color);
+        color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    .btn-outline-warning {
+        background: transparent;
+        border-color: var(--warning-color);
+        color: var(--warning-color);
+    }
+
+    .btn-outline-warning:hover {
+        background: var(--warning-color);
+        border-color: var(--warning-color);
+        color: white;
+    }
+
+    .btn-warning {
+        background: var(--warning-color);
+        border-color: var(--warning-color);
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+        border-color: #d97706;
+        color: white;
+    }
+
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* ================== QUESTION ITEM STYLING ================== */
+
+    /* Enhanced question-item card layout */
+    .question-item {
+        background: var(--white);
+        border: 1px solid var(--gray-200) !important;
+        border-left: 4px solid var(--info-color) !important;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow) !important;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .question-item:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg) !important;
+        border-color: var(--gray-300) !important;
+        border-left-color: var(--info-color) !important;
+    }
+
+    .question-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--info-color), #38bdf8);
+    }
+
+    /* Question header improvements */
+    .question-item .question-header {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 1.25rem;
+        border-radius: 0;
+    }
+
+    .question-item .question-number h5 {
+        color: var(--info-color);
+        font-weight: 600;
+        margin: 0;
+    }
+
+    .question-item .question-type-select {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+        color: var(--gray-700);
+        min-width: 200px;
+    }
+
+    .question-item .question-type-select:focus {
+        border-color: var(--info-color);
+        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+    }
+
+    /* Question content area */
+    .question-item .question-content {
+        padding: 1.5rem;
+        background: var(--white);
+    }
+
+    .question-item .form-label {
+        color: var(--gray-700);
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        font-size: 0.95rem;
+    }
+
+    .question-item .form-control {
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+        color: var(--gray-700);
+        background: var(--white);
+        transition: all 0.2s ease;
+    }
+
+    .question-item .form-control:focus {
+        border-color: var(--info-color);
+        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
+        background: var(--white);
+    }
+
+    .question-item .question-text {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Question settings section */
+    .question-item .question-settings {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--gray-200);
+        background: var(--gray-50);
+        border-radius: 8px;
+        padding: 1.5rem;
+    }
+
+    /* Answer options styling */
+    .question-item .answer-options {
+        margin-top: 1.5rem;
+        padding: 1.25rem;
+        background: var(--gray-50);
+        border-radius: 8px;
+        border: 1px solid var(--gray-200);
+    }
+
+    .question-item .options-container {
+        margin-top: 1rem;
+    }
+
+    .question-item .add-option-btn {
+        background: var(--white);
+        color: var(--info-color);
+        border: 1px solid var(--info-color);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+
+    .question-item .add-option-btn:hover {
+        background: var(--info-color);
+        color: white;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+    }
+
+    /* ================== BUTTON STYLING FIXES ================== */
+
+
+
+    /* ================== QUESTION ACTIONS STYLING ================== */
+
+    /* Question actions container */
+    .question-item .question-actions {
+        display: flex;
+        align-items: center;
+    }
+
+    .question-item .question-actions .btn-group {
+        gap: 0.25rem;
+        display: flex;
+    }
+
+    .question-item .question-actions .btn {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        border-width: 1px;
+        white-space: nowrap;
+    }
+
+    .question-item .question-actions .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+    }
+
+    /* Specific styling for different action button types */
+    .question-item .btn-outline-secondary {
+        color: var(--gray-600) !important;
+        border-color: var(--gray-300) !important;
+        background: var(--white) !important;
+    }
+
+    .question-item .btn-outline-secondary:hover {
+        color: var(--gray-700) !important;
+        border-color: var(--gray-400) !important;
+        background: var(--gray-50) !important;
+    }
+
+    .question-item .btn-outline-info {
+        color: var(--info-color) !important;
+        border-color: var(--info-color) !important;
+        background: var(--white) !important;
+    }
+
+    .question-item .btn-outline-info:hover {
+        color: white !important;
+        border-color: var(--info-color) !important;
+        background: var(--info-color) !important;
+    }
+
+    .question-item .btn-outline-danger {
+        color: #dc3545 !important;
+        border-color: #dc3545 !important;
+        background: var(--white) !important;
+    }
+
+    .question-item .btn-outline-danger:hover {
+        color: white !important;
+        border-color: #dc3545 !important;
+        background: #dc3545 !important;
+    }
+
+    /* Ensure button text is always visible */
+    .question-item .question-actions .btn span {
+        color: inherit !important;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .question-item .question-actions .btn i {
+        font-size: 0.85rem;
+    }
+
+    /* Responsive behavior for action buttons */
+    @media (max-width: 768px) {
+        .question-item .question-actions .btn {
+            padding: 0.25rem 0.5rem;
+            min-width: 32px;
+            justify-content: center;
+        }
+
+        .question-item .question-actions .btn span {
+            display: none !important;
+        }
+
+        .question-item .question-actions .btn i {
+            margin: 0;
+        }
+    }
+
+    /* ================== OPTION ITEMS STYLING ================== */
+
+    /* Style for answer option items */
+    .question-item .option-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        border-radius: 8px;
+        margin-bottom: 0.75rem;
+        transition: all 0.2s ease;
+    }
+
+    .question-item .option-item:hover {
+        border-color: var(--gray-300);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .question-item .option-item .option-input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        padding: 0.25rem 0;
+        font-size: 0.9rem;
+        color: var(--gray-700);
+    }
+
+    .question-item .option-item .option-input:focus {
+        outline: none;
+        background: var(--gray-50);
+        border-radius: 4px;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .question-item .option-item .option-radio,
+    .question-item .option-item .option-checkbox {
+        accent-color: var(--info-color);
+        width: 18px;
+        height: 18px;
+    }
+
+    .question-item .option-item .remove-option-btn {
+        background: transparent;
+        border: none;
+        color: #dc3545;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .question-item .option-item .remove-option-btn:hover {
+        background: #fef2f2;
+        color: #dc2626;
+        transform: scale(1.1);
+    }
+
+    /* ================== VIETNAMESE TEXT SUPPORT ================== */
+
+    /* Ensure proper font rendering for Vietnamese characters */
+    .question-item,
+    .question-item * {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* Specific styling for Vietnamese text in form controls */
+    .question-item .form-control,
+    .question-item .form-select,
+    .question-item .form-check-label {
+        font-family: inherit;
+        unicode-bidi: isolate;
+        direction: ltr;
+    }
+
+    /* Improve text input for Vietnamese */
+    .question-item input[type="text"],
+    .question-item textarea {
+        font-variant-ligatures: none;
+        font-feature-settings: "liga" 0;
+    }
+
+    /* Better line height for Vietnamese text */
+    .question-item .question-text,
+    .question-item .question-explanation,
+    .question-item .correct-text-answer {
+        line-height: 1.6;
+    }
+
+    /* ================== LOADING & EMPTY STATES ================== */
+
+    /* Loading state */
+    .loading-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+        color: var(--gray-600);
+    }
+
+    .loading-state .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid var(--gray-200);
+        border-top: 3px solid var(--primary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .loading-state p {
+        font-size: 1.1rem;
+        margin: 0;
+        color: var(--gray-600);
+    }
+
+    /* Empty state */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+        text-align: center;
+        background: var(--white);
+        border-radius: 12px;
+        border: 2px dashed var(--gray-300);
+        margin: 2rem 0;
+    }
+
+    .empty-state .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        opacity: 0.7;
+    }
+
+    .empty-state h3 {
+        color: var(--gray-700);
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+
+    .empty-state p {
+        color: var(--gray-600);
+        font-size: 1rem;
+        margin-bottom: 2rem;
+        max-width: 400px;
+        line-height: 1.5;
+    }
+
+    .empty-state .btn {
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+    }
+
+    /* Stats overview cards enhancement */
+    .stats-overview .stat-card {
+        transition: all 0.3s ease;
+        border: 1px solid var(--gray-200);
+    }
+
+    .stats-overview .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--gray-300);
+    }
+
+    .stat-icon {
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1);
+    }
+
+    /* ================== RESPONSIVE DESIGN ================== */
+
+    /* Exams grid container */
+    .exams-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 1.5rem 0;
+    }
+
+    @media (min-width: 768px) {
+        .exams-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 1200px) {
+        .exams-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .header-actions {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .header-title {
+            font-size: 1.75rem;
+        }
+
+        .btn-lg {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        .section-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .section-actions {
+            margin-top: 1rem;
+            width: 100%;
+        }
+
+        .section-actions .btn {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .card {
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
+        }
+
+        .btn-group {
+            flex-direction: column;
+        }
+
+        .btn-group .btn {
+            border-radius: 6px !important;
+            margin-bottom: 0.25rem;
+        }
+    }
+
+    /* Print styles */
+    @media print {
+
+        #teacher-nav,
+        .btn,
+        .remove-question {
+            display: none !important;
+        }
+
+        .card {
+            box-shadow: none;
+            border: 1px solid #ccc;
+        }
+    }
+
+    /* Results table */
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .results-table th {
+        background: #f7fafc;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .results-table tr:hover {
+        background: #f7fafc;
+    }
+
+    .grade-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: center;
+        min-width: 60px;
+        display: inline-block;
+    }
+
+    .grade-excellent {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .grade-good {
+        background: #cce5ff;
+        color: #004085;
+    }
+
+    .grade-average {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .grade-poor {
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    /* Add question button - light theme */
+    .add-question-btn {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 20px 0;
+        transition: all 0.3s ease;
+    }
+
+    .add-question-btn:hover {
+        background: var(--primary-light);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+    }
+
+    /* Override Bootstrap default colors for light theme */
+    .text-dark {
+        color: var(--gray-700) !important;
+    }
+
+    .bg-dark {
+        background-color: var(--white) !important;
+        color: var(--gray-700) !important;
+    }
+
+    /* Dropdown and select styling */
+    .dropdown-menu {
+        background: var(--white);
+        border: 1px solid var(--gray-200);
+        color: var(--gray-700);
+    }
+
+    .dropdown-item {
+        color: var(--gray-700);
+    }
+
+    .dropdown-item:hover {
+        background: var(--gray-50);
+        color: var(--gray-700);
+    }
+
+    /* List groups */
+    .list-group-item {
+        background: var(--white);
+        color: var(--gray-700);
+        border-color: var(--gray-200);
+    }
+
+    .list-group-item:hover {
+        background: var(--gray-50);
+    }
+
+    /* Nav tabs and pills */
+    .nav-tabs .nav-link {
+        color: var(--gray-600);
+        border-color: var(--gray-200);
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--primary-color);
+        background: var(--white);
+        border-color: var(--gray-200);
+    }
+
+    .nav-pills .nav-link {
+        color: var(--gray-600);
+    }
+
+    .nav-pills .nav-link.active {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    /* Breadcrumb */
+    .breadcrumb {
+        background: var(--gray-50);
+    }
+
+    .breadcrumb-item {
+        color: var(--gray-600);
+    }
+
+    .breadcrumb-item.active {
+        color: var(--gray-700);
+    }
+
+    /* Pagination */
+    .page-link {
+        color: var(--primary-color);
+        background: var(--white);
+        border-color: var(--gray-200);
+    }
+
+    .page-link:hover {
+        color: var(--primary-light);
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    .page-item.active .page-link {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: white;
+    }
+
+    /* Accordion */
+    .accordion-item {
+        background: var(--white);
+        border-color: var(--gray-200);
+    }
+
+    .accordion-header {
+        background: var(--white);
+    }
+
+    .accordion-button {
+        background: var(--white);
+        color: var(--gray-700);
+    }
+
+    .accordion-button:not(.collapsed) {
+        background: var(--gray-50);
+        color: var(--primary-color);
+    }
+
+    /* Offcanvas */
+    .offcanvas {
+        background: var(--white);
+        color: var(--gray-700);
+    }
+
+    .offcanvas-header {
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    /* Toast */
+    .toast {
+        background: var(--white);
+        color: var(--gray-700);
+        border: 1px solid var(--gray-200);
+    }
+
+    .toast-header {
+        background: var(--gray-50);
+        color: var(--gray-700);
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    /* Force light theme on all elements - except buttons */
+    .create-exam-page,
+    .manage-exams-page,
+    .view-results-page,
+    .login-stats {
+        background: var(--gray-50) !important;
+        color: var(--gray-700) !important;
+    }
+
+    /* Text colors - but preserve button colors */
+    .create-exam-page p,
+    .create-exam-page span:not(.btn):not(.btn *),
+    .create-exam-page div:not(.btn):not(.btn *),
+    .create-exam-page label,
+    .manage-exams-page p,
+    .manage-exams-page span:not(.btn):not(.btn *),
+    .manage-exams-page div:not(.btn):not(.btn *),
+    .manage-exams-page label,
+    .view-results-page p,
+    .view-results-page span:not(.btn):not(.btn *),
+    .view-results-page div:not(.btn):not(.btn *),
+    .view-results-page label,
+    .login-stats p,
+    .login-stats span:not(.btn):not(.btn *),
+    .login-stats div:not(.btn):not(.btn *),
+    .login-stats label {
+        color: var(--gray-700) !important;
+    }
+
+    /* Animation */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Button text visibility fixes */
+    .btn span {
+        color: inherit !important;
+        font-weight: inherit !important;
+    }
+
+    .btn i {
+        color: inherit !important;
+    }
+
+    /* Question button group responsive text */
+    @media (min-width: 768px) {
+        .question-actions .btn span {
+            display: inline !important;
+        }
+    }
+
+    @media (min-width: 992px) {
+        .remove-option-btn span {
+            display: inline !important;
+        }
+    }
+
+    /* Ensure button text is always visible on larger screens */
+    .btn-outline-secondary span,
+    .btn-outline-info span,
+    .btn-outline-danger span {
+        font-size: 0.875rem !important;
+    }
+
+    /* Size variations */
+    .btn-primary.btn-lg {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #ffffff !important;
+    }
+
+    .btn-primary.btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+        color: #ffffff !important;
+    }
+
+    /* ================== FORM ENHANCEMENTS FOR VIETNAMESE ================== */
+
+    /* Better input styling for Vietnamese text */
+    .create-exam-page .form-control,
+    .question-item .form-control {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: var(--gray-700);
+        background-color: #ffffff;
+        border: 1px solid var(--gray-300);
+    }
+
+    .create-exam-page .form-control:focus,
+    .question-item .form-control:focus {
+        color: var(--gray-700);
+        background-color: #ffffff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+    }
+
+    /* Text area specific styling */
+    .create-exam-page textarea.form-control,
+    .question-item textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    /* Select styling */
+    .create-exam-page .form-select,
+    .question-item .form-select {
+        color: var(--gray-700);
+        background-color: #ffffff;
+        border: 1px solid var(--gray-300);
+    }
+
+    .create-exam-page .form-select:focus,
+    .question-item .form-select:focus {
+        color: var(--gray-700);
+        background-color: #ffffff;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(79, 70, 229, 0.25);
+    }
+
+    /* ================== QUESTION ACTIONS STYLING ================== */
