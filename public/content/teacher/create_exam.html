@@ -97,6 +97,10 @@
                             <span class="btn-icon">➕</span>
                             Thêm câu hỏi
                         </button>
+                        <button type="button" id="importMarkdownBtn" class="btn btn-outline">
+                            <span class="btn-icon">📝</span>
+                            Import từ Markdown
+                        </button>
                         <button type="button" id="importQuestionsBtn" class="btn btn-outline">
                             <span class="btn-icon">📁</span>
                             Import từ file
@@ -219,12 +223,59 @@
             </div>
         </div>
     </template>
-</div>
 
-<!-- Progress indicator -->
-<div id="saveProgress" class="save-progress" style="display: none;">
-    <div class="progress-content">
-        <div class="spinner"></div>
-        <span>Đang lưu...</span>
+    <!-- Import Markdown Modal -->
+    <div id="importMarkdownModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 Import đề thi từ Markdown</h3>
+                <button class="modal-close" onclick="createExam.closeMarkdownModal()">&times;</button>
+            </div>        <div class="modal-body">
+            <div class="import-section">
+                <h4>Chọn file Markdown (.md)</h4>
+                <p class="help-text">
+                    <a href="markdown_guide.md" target="_blank">📖 Xem hướng dẫn tạo đề thi Markdown</a> | 
+                    <a href="sample_exam.md" target="_blank">📄 Tải file mẫu</a>
+                </p>
+                <div class="file-upload-area">
+                        <input type="file" id="markdownFile" accept=".md" style="display: none;">
+                        <div class="file-upload-zone" onclick="document.getElementById('markdownFile').click()">
+                            <div class="upload-icon">📁</div>
+                            <p>Click để chọn file .md hoặc kéo thả file vào đây</p>
+                            <small>Hỗ trợ định dạng Markdown với cú pháp đặc biệt cho đề thi</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="import-section">
+                    <h4>Hoặc dán nội dung Markdown</h4>
+                    <textarea id="markdownContent" rows="10" placeholder="Dán nội dung Markdown vào đây..."></textarea>
+                </div>
+                
+                <div class="import-section">
+                    <h4>Xem trước</h4>
+                    <div id="markdownPreview" class="markdown-preview">
+                        <p class="preview-placeholder">Nội dung sẽ được hiển thị ở đây sau khi chọn file hoặc dán nội dung</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="createExam.closeMarkdownModal()">
+                    Hủy
+                </button>
+                <button type="button" class="btn btn-primary" onclick="createExam.importFromMarkdown()">
+                    <span class="btn-icon">⬇️</span>
+                    Import câu hỏi
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress indicator -->
+    <div id="saveProgress" class="save-progress" style="display: none;">
+        <div class="progress-content">
+            <div class="spinner"></div>
+            <span>Đang lưu...</span>
+        </div>
     </div>
 </div>

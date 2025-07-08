@@ -125,7 +125,7 @@ class ManageExams {
         document.getElementById('totalSubmissions').textContent = totalSubmissions;
     }
 
-    applyFilters() {
+    applyFilters(advancedOptions = {}) {
         const subjectFilter = document.getElementById('subjectFilter')?.value || '';
         const statusFilter = document.getElementById('statusFilter')?.value || '';
         const sortBy = document.getElementById('sortBy')?.value || 'created-desc';
@@ -147,10 +147,47 @@ class ManageExams {
 
             // Search filter
             if (searchTerm) {
-                const searchText = `${exam.title} ${exam.description} ${exam.subject}`.toLowerCase();
+                const searchText = `${exam.title} ${exam.description || ''} ${exam.subject}`.toLowerCase();
                 if (!searchText.includes(searchTerm)) {
                     return false;
                 }
+            }
+
+            // Advanced filters
+            if (advancedOptions.dateFrom || advancedOptions.dateTo) {
+                const examDate = new Date(exam.createdAt);
+                if (advancedOptions.dateFrom && examDate < new Date(advancedOptions.dateFrom)) {
+                    return false;
+                }
+                if (advancedOptions.dateTo && examDate > new Date(advancedOptions.dateTo)) {
+                    return false;
+                }
+            }
+
+            // Questions count filter
+            const questionCount = exam.questions?.length || 0;
+            if (advancedOptions.questionsMin !== null && questionCount < advancedOptions.questionsMin) {
+                return false;
+            }
+            if (advancedOptions.questionsMax !== null && questionCount > advancedOptions.questionsMax) {
+                return false;
+            }
+
+            // Duration filter
+            if (advancedOptions.durationMin !== null && exam.duration < advancedOptions.durationMin) {
+                return false;
+            }
+            if (advancedOptions.durationMax !== null && exam.duration > advancedOptions.durationMax) {
+                return false;
+            }
+
+            // Submissions count filter
+            const submissionsCount = this.getExamSubmissions(exam.id);
+            if (advancedOptions.submissionsMin !== null && submissionsCount < advancedOptions.submissionsMin) {
+                return false;
+            }
+            if (advancedOptions.submissionsMax !== null && submissionsCount > advancedOptions.submissionsMax) {
+                return false;
             }
 
             return true;
@@ -214,107 +251,67 @@ class ManageExams {
         const submissions = this.getExamSubmissions(exam.id);
         const createdDate = new Date(exam.createdAt).toLocaleDateString('vi-VN');
         const questionCount = exam.questions?.length || 0;
-
-        const statusConfig = {
-            published: { 
-                class: 'status-published', 
-                text: 'Đã xuất bản', 
-                icon: '✅' 
-            },
-            draft: { 
-                class: 'status-draft', 
-                text: 'Bản nháp', 
-                icon: '📝' 
-            },
-            archived: { 
-                class: 'status-archived', 
-                text: 'Đã lưu trữ', 
-                icon: '📦' 
-            }
-        };
-
-        const config = statusConfig[status];
+        const avgScore = this.getExamAverageScore(exam.id);
 
         return `
-            <div class="exam-card ${config.class}" data-exam-id="${exam.id}">
+            <div class="exam-card-improved" data-exam-id="${exam.id}">
                 <div class="exam-card-header">
-                    <div class="exam-selection">
-                        <input type="checkbox" class="exam-checkbox" 
-                               onchange="manageExams.toggleExamSelection('${exam.id}', this.checked)">
-                    </div>
-                    <div class="exam-status">
-                        <span class="status-icon">${config.icon}</span>
-                        <span class="status-text">${config.text}</span>
-                    </div>
-                    <div class="exam-actions-trigger">
-                        <button onclick="manageExams.showExamActions('${exam.id}')" class="btn-icon" title="Thêm hành động">
-                            ⋮
-                        </button>
-                    </div>
-                </div>
-
-                <div class="exam-content">
-                    <h3 class="exam-title">${exam.title}</h3>
-                    <p class="exam-description">${exam.description || 'Không có mô tả'}</p>
-                    
+                    <div class="exam-title">${exam.title}</div>
+                    <div class="exam-subject">${exam.subject}</div>
                     <div class="exam-meta">
-                        <div class="meta-row">
-                            <div class="meta-item">
-                                <span class="meta-icon">📚</span>
-                                <span class="meta-text">${exam.subject}</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-icon">⏱️</span>
-                                <span class="meta-text">${exam.duration} phút</span>
-                            </div>
-                        </div>
-                        <div class="meta-row">
-                            <div class="meta-item">
-                                <span class="meta-icon">❓</span>
-                                <span class="meta-text">${questionCount} câu</span>
-                            </div>
-                            <div class="meta-item">
-                                <span class="meta-icon">👥</span>
-                                <span class="meta-text">${submissions} lượt thi</span>
-                            </div>
-                        </div>
-                        <div class="meta-row">
-                            <div class="meta-item">
-                                <span class="meta-icon">📅</span>
-                                <span class="meta-text">Tạo: ${createdDate}</span>
-                            </div>
-                        </div>
+                        <div class="exam-status ${status}">${this.getStatusText(status)}</div>
+                        <div class="exam-date">${createdDate}</div>
                     </div>
                 </div>
 
-                <div class="exam-quick-actions">
-                    ${status === 'draft' ? `
-                        <button onclick="manageExams.editExam('${exam.id}')" class="quick-action-btn edit">
-                            <span class="btn-icon">✏️</span>
-                            Chỉnh sửa
-                        </button>
-                        <button onclick="manageExams.publishExam('${exam.id}')" class="quick-action-btn publish">
-                            <span class="btn-icon">🚀</span>
-                            Xuất bản
-                        </button>
-                    ` : status === 'published' ? `
-                        <button onclick="manageExams.viewResults('${exam.id}')" class="quick-action-btn results">
-                            <span class="btn-icon">📊</span>
-                            Kết quả (${submissions})
-                        </button>
-                        <button onclick="manageExams.duplicateExam('${exam.id}')" class="quick-action-btn duplicate">
-                            <span class="btn-icon">📋</span>
-                            Nhân đôi
-                        </button>
-                    ` : `
-                        <button onclick="manageExams.restoreExam('${exam.id}')" class="quick-action-btn restore">
-                            <span class="btn-icon">♻️</span>
-                            Khôi phục
-                        </button>
-                    `}
+                <div class="exam-stats">
+                    <div class="exam-stat">
+                        <div class="exam-stat-number">${questionCount}</div>
+                        <div class="exam-stat-label">Câu hỏi</div>
+                    </div>
+                    <div class="exam-stat">
+                        <div class="exam-stat-number">${exam.duration || 0}'</div>
+                        <div class="exam-stat-label">Thời gian</div>
+                    </div>
+                    <div class="exam-stat">
+                        <div class="exam-stat-number">${submissions}</div>
+                        <div class="exam-stat-label">Lượt thi</div>
+                    </div>
+                </div>
+
+                <div class="exam-actions">
+                    <button onclick="manageExams.editExam('${exam.id}')" 
+                            class="exam-action-btn primary" title="Chỉnh sửa">
+                        ✏️ Sửa
+                    </button>
+                    <button onclick="manageExams.viewResults('${exam.id}')" 
+                            class="exam-action-btn secondary" title="Xem kết quả">
+                        📊 Kết quả
+                    </button>
+                    <button onclick="manageExams.showExamActions('${exam.id}')" 
+                            class="exam-action-btn secondary" title="Thêm hành động">
+                        ⋮
+                    </button>
                 </div>
             </div>
         `;
+    }
+
+    getStatusText(status) {
+        const statusMap = {
+            published: 'Đã xuất bản',
+            draft: 'Bản nháp',
+            archived: 'Đã lưu trữ'
+        };
+        return statusMap[status] || 'Không xác định';
+    }
+
+    getExamAverageScore(examId) {
+        const examResults = this.results.filter(result => result.examId === examId);
+        if (examResults.length === 0) return 0;
+        
+        const totalScore = examResults.reduce((sum, result) => sum + result.score, 0);
+        return Math.round(totalScore / examResults.length);
     }
 
     showExamActions(examId) {
@@ -549,6 +546,112 @@ class ManageExams {
         }
     }
 
+    // Advanced filters methods
+    toggleAdvancedFilters() {
+        const advancedFilters = document.getElementById('advancedFilters');
+        const toggleBtn = document.querySelector('.advanced-filter-toggle');
+        
+        if (advancedFilters) {
+            const isVisible = advancedFilters.style.display !== 'none';
+            advancedFilters.style.display = isVisible ? 'none' : 'block';
+            
+            if (toggleBtn) {
+                toggleBtn.innerHTML = isVisible 
+                    ? '<span class="btn-icon">⚙️</span>Bộ lọc nâng cao'
+                    : '<span class="btn-icon">▲</span>Ẩn bộ lọc';
+            }
+        }
+    }
+
+    applyAdvancedFilters() {
+        // Get advanced filter values
+        const dateFrom = document.getElementById('dateFrom')?.value;
+        const dateTo = document.getElementById('dateTo')?.value;
+        const questionsMin = document.getElementById('questionsMin')?.value;
+        const questionsMax = document.getElementById('questionsMax')?.value;
+        const durationMin = document.getElementById('durationMin')?.value;
+        const durationMax = document.getElementById('durationMax')?.value;
+        const submissionsMin = document.getElementById('submissionsMin')?.value;
+        const submissionsMax = document.getElementById('submissionsMax')?.value;
+
+        // Apply filters with advanced criteria
+        this.applyFilters({
+            dateFrom,
+            dateTo,
+            questionsMin: questionsMin ? parseInt(questionsMin) : null,
+            questionsMax: questionsMax ? parseInt(questionsMax) : null,
+            durationMin: durationMin ? parseInt(durationMin) : null,
+            durationMax: durationMax ? parseInt(durationMax) : null,
+            submissionsMin: submissionsMin ? parseInt(submissionsMin) : null,
+            submissionsMax: submissionsMax ? parseInt(submissionsMax) : null
+        });
+    }
+
+    clearAdvancedFilters() {
+        // Clear all advanced filter inputs
+        const inputs = ['dateFrom', 'dateTo', 'questionsMin', 'questionsMax', 
+                       'durationMin', 'durationMax', 'submissionsMin', 'submissionsMax'];
+        
+        inputs.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) element.value = '';
+        });
+
+        // Reapply basic filters only
+        this.applyFilters();
+    }
+
+    async bulkPublish() {
+        if (this.selectedExams.size === 0) return;
+        
+        if (confirm(`Bạn có chắc chắn muốn xuất bản ${this.selectedExams.size} đề thi được chọn?`)) {
+            try {
+                for (const examId of this.selectedExams) {
+                    await this.publishExam(examId);
+                }
+                this.showMessage('Đã xuất bản tất cả đề thi được chọn', 'success');
+                this.clearSelection();
+                this.refreshData();
+            } catch (error) {
+                this.showMessage('Có lỗi khi xuất bản đề thi', 'error');
+            }
+        }
+    }
+
+    async bulkArchive() {
+        if (this.selectedExams.size === 0) return;
+        
+        if (confirm(`Bạn có chắc chắn muốn lưu trữ ${this.selectedExams.size} đề thi được chọn?`)) {
+            try {
+                for (const examId of this.selectedExams) {
+                    await this.archiveExam(examId);
+                }
+                this.showMessage('Đã lưu trữ tất cả đề thi được chọn', 'success');
+                this.clearSelection();
+                this.refreshData();
+            } catch (error) {
+                this.showMessage('Có lỗi khi lưu trữ đề thi', 'error');
+            }
+        }
+    }
+
+    async bulkDelete() {
+        if (this.selectedExams.size === 0) return;
+        
+        if (confirm(`Bạn có chắc chắn muốn xóa ${this.selectedExams.size} đề thi được chọn? Hành động này không thể hoàn tác.`)) {
+            try {
+                for (const examId of this.selectedExams) {
+                    await this.deleteExam(examId);
+                }
+                this.showMessage('Đã xóa tất cả đề thi được chọn', 'success');
+                this.clearSelection();
+                this.refreshData();
+            } catch (error) {
+                this.showMessage('Có lỗi khi xóa đề thi', 'error');
+            }
+        }
+    }
+
     showLoading(show) {
         const loadingEl = document.getElementById('loadingExams');
         if (loadingEl) {
@@ -594,6 +697,51 @@ class ManageExams {
         setTimeout(() => {
             messageEl.remove();
         }, 3000);
+    }
+
+    // Advanced Filters Methods
+    toggleAdvancedFilters() {
+        const advancedFilters = document.getElementById('advancedFilters');
+        if (advancedFilters.style.display === 'none') {
+            advancedFilters.style.display = 'block';
+        } else {
+            advancedFilters.style.display = 'none';
+        }
+    }
+
+    applyAdvancedFilters() {
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        const questionsMin = document.getElementById('questionsMin').value;
+        const questionsMax = document.getElementById('questionsMax').value;
+        const durationMin = document.getElementById('durationMin').value;
+        const durationMax = document.getElementById('durationMax').value;
+        const submissionsMin = document.getElementById('submissionsMin').value;
+        const submissionsMax = document.getElementById('submissionsMax').value;
+
+        this.applyFilters({
+            dateFrom,
+            dateTo,
+            questionsMin: questionsMin ? parseInt(questionsMin) : null,
+            questionsMax: questionsMax ? parseInt(questionsMax) : null,
+            durationMin: durationMin ? parseInt(durationMin) : null,
+            durationMax: durationMax ? parseInt(durationMax) : null,
+            submissionsMin: submissionsMin ? parseInt(submissionsMin) : null,
+            submissionsMax: submissionsMax ? parseInt(submissionsMax) : null
+        });
+    }
+
+    clearAdvancedFilters() {
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        document.getElementById('questionsMin').value = '';
+        document.getElementById('questionsMax').value = '';
+        document.getElementById('durationMin').value = '';
+        document.getElementById('durationMax').value = '';
+        document.getElementById('submissionsMin').value = '';
+        document.getElementById('submissionsMax').value = '';
+        
+        this.applyFilters();
     }
 }
 

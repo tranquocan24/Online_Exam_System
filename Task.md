@@ -221,8 +221,8 @@
 - ✅ Chi tiết kết quả thi với biểu đồ phân bố điểm
 - ✅ Export CSV và thống kê toàn diện
 
-### Giai đoạn 6: Hoàn thiện & kiểm thử 🔄
-- ⏳ Kiểm thử các luồng chính
+### Giai đoạn 6: Hoàn thiện & kiểm thử ✅
+- ✅ Kiểm thử các luồng chính
   - ✅ Sửa lỗi nút "Bắt đầu thi" không hoạt động
   - ✅ Sửa lỗi routing API submit exam
   - ✅ Cải thiện error handling trong exam submission
@@ -234,7 +234,29 @@
   - ✅ Sửa lỗi hiển thị điểm không đúng trong exam card và teacher dashboard (đồng bộ với ScoreCalculator)
   - ✅ Sửa lỗi teacher dashboard không hiển thị thống kê (đề thi đã tạo, sinh viên tham gia, điểm TB, bài nộp)
   - ✅ Sửa lỗi nút "Thêm câu hỏi" trong trang tạo đề thi không hoạt động
-  - ⏳ Test complete exam flow: login → exam list → take exam → submit → view results
+  - ✅ Test complete exam flow: login → exam list → take exam → submit → view results
+- ✅ Tạo script kiểm thử tự động với Puppeteer
+  - ✅ Cài đặt Puppeteer và thiết lập test environment
+  - ✅ Test hoàn chỉnh luồng teacher: login → create exam → view results
+  - ✅ Test hoàn chỉnh luồng student: login → exam list → take exam → submit
+  - ✅ Test responsive design và performance metrics
+  - ✅ Tạo test report tự động (test-report.json)
+  - ✅ Tạo script test cơ bản cho CI/CD (test-basic-flow.js)
+  - ✅ Cập nhật package.json với các script test: test, test:basic, test:full, test:ci
+- ✅ Cải thiện giao diện quản lý đề thi
+  - ✅ Redesign layout với 4 thẻ thống kê dạng lưới
+  - ✅ Bổ sung biểu tượng và màu sắc cho các thẻ thống kê
+  - ✅ Tách riêng từng đề thi thành card với khung bo tròn và bóng đổ
+  - ✅ Sắp xếp lại thanh bộ lọc theo chiều ngang với biểu tượng
+  - ✅ Bổ sung bộ lọc nâng cao (khoảng thời gian, số câu hỏi, lượt thi, thời lượng)
+  - ✅ Responsive design cho mobile và tablet
+- ✅ Thêm tính năng Import đề thi từ Markdown
+  - ✅ Tạo modal import với drag & drop file support
+  - ✅ Parser Markdown với cú pháp đặc biệt cho đề thi
+  - ✅ Hỗ trợ 3 loại câu hỏi: trắc nghiệm đơn, trắc nghiệm nhiều lựa chọn, tự luận
+  - ✅ Preview nội dung trước khi import
+  - ✅ Tạo file mẫu (sample_exam.md) và hướng dẫn (markdown_guide.md)
+  - ✅ Tự động điền thông tin đề thi từ Markdown header
 - ⏳ Bổ sung CSS, tối ưu giao diện responsive
 - ⏳ Thêm validation và xử lý lỗi
 - ⏳ Viết README hướng dẫn sử dụng
