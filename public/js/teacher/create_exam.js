@@ -67,6 +67,32 @@ class CreateExam {
             importBtn.addEventListener('click', () => this.importQuestions());
         }
 
+        // Import Markdown button
+        const importMarkdownBtn = document.getElementById('importMarkdownBtn');
+        if (importMarkdownBtn) {
+            importMarkdownBtn.addEventListener('click', () => this.openMarkdownModal());
+        }
+
+        // Markdown file input
+        const markdownFile = document.getElementById('markdownFile');
+        if (markdownFile) {
+            markdownFile.addEventListener('change', (e) => this.handleMarkdownFile(e));
+        }
+
+        // Markdown content textarea
+        const markdownContent = document.getElementById('markdownContent');
+        if (markdownContent) {
+            markdownContent.addEventListener('input', (e) => this.previewMarkdown(e.target.value));
+        }
+
+        // Drag and drop for file upload
+        const fileUploadZone = document.querySelector('.file-upload-zone');
+        if (fileUploadZone) {
+            fileUploadZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+            fileUploadZone.addEventListener('drop', (e) => this.handleDrop(e));
+            fileUploadZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
+        }
+
         // Auto-save on form changes
         const examForm = document.getElementById('createExamForm');
         if (examForm) {
@@ -203,6 +229,25 @@ class CreateExam {
     addOption(button) {
         const questionContainer = button.closest('.question-item');
         this.addOptionToQuestion(questionContainer);
+    }
+
+    // Method to add option with container and text (for Markdown import)
+    addOptionWithText(optionsContainer, text = '') {
+        const template = document.getElementById('optionTemplate');
+        const optionElement = template.content.cloneNode(true);
+        
+        const optionInput = optionElement.querySelector('.option-text');
+        const correctRadio = optionElement.querySelector('.correct-indicator');
+        
+        optionInput.value = text;
+        
+        // Make radio buttons unique within this question
+        const questionContainer = optionsContainer.closest('.question-item');
+        const questionId = questionContainer.getAttribute('data-question-id');
+        correctRadio.name = `correct-${questionId}`;
+        
+        optionsContainer.appendChild(optionElement);
+        this.markAsModified();
     }
 
     removeOption(button) {
@@ -351,30 +396,65 @@ class CreateExam {
     }
 
     populateQuestionData(questionContainer, questionData) {
-        questionContainer.querySelector('.question-type-select').value = questionData.type;
-        questionContainer.querySelector('.question-text').value = questionData.question || '';
-        questionContainer.querySelector('.question-points').value = questionData.points || 1;
-        questionContainer.querySelector('.question-explanation').value = questionData.explanation || '';
-        
-        // Trigger type change to show correct options
-        this.changeQuestionType(questionContainer, questionData.type);
-        
-        if (questionData.type === 'text') {
-            questionContainer.querySelector('.correct-text-answer').value = questionData.correctAnswer || '';
-            if (questionData.caseSensitive) {
-                questionContainer.querySelector('.case-sensitive').checked = true;
+        try {
+            // Set question text
+            const questionText = questionContainer.querySelector('.question-text');
+            if (questionText) {
+                questionText.value = questionData.text || '';
             }
-        } else {
-            // Clear existing options and add new ones
-            const optionsContainer = questionContainer.querySelector('.options-container');
-            optionsContainer.innerHTML = '';
-            
-            questionData.options.forEach((option, index) => {
-                const isCorrect = questionData.type === 'multiple-choice' 
-                    ? index === questionData.correctAnswer
-                    : questionData.correctAnswer.includes(index);
-                this.addOptionToQuestion(questionContainer, option, isCorrect);
-            });
+
+            // Set question type
+            const typeSelect = questionContainer.querySelector('.question-type-select');
+            if (typeSelect) {
+                typeSelect.value = questionData.type || 'multiple-choice';
+                this.changeQuestionType(questionContainer, questionData.type || 'multiple-choice');
+            }
+
+            // Set score
+            const scoreInput = questionContainer.querySelector('.question-score');
+            if (scoreInput) {
+                scoreInput.value = questionData.score || 1;
+            }
+
+            // Set options and correct answers
+            if (questionData.options && questionData.options.length > 0) {
+                const optionsContainer = questionContainer.querySelector('.options-container');
+                if (optionsContainer) {
+                    // Clear existing options
+                    optionsContainer.innerHTML = '';
+                    
+                    // Add options from data
+                    questionData.options.forEach((optionText, index) => {
+                        this.addOptionWithText(optionsContainer, optionText);
+                        
+                        // Set correct answer
+                        const optionElement = optionsContainer.children[index];
+                        if (optionElement) {
+                            const correctCheckbox = optionElement.querySelector('input[type="checkbox"], input[type="radio"]');
+                            if (correctCheckbox) {
+                                if (questionData.type === 'multiple-choice' && questionData.correctAnswer === index) {
+                                    correctCheckbox.checked = true;
+                                } else if (questionData.type === 'multiple-select' && 
+                                          questionData.correctAnswers && 
+                                          questionData.correctAnswers.includes(index)) {
+                                    correctCheckbox.checked = true;
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Set sample answer for text questions
+            if (questionData.type === 'text' && questionData.sampleAnswer) {
+                const sampleAnswer = questionContainer.querySelector('.sample-answer');
+                if (sampleAnswer) {
+                    sampleAnswer.value = questionData.sampleAnswer;
+                }
+            }
+
+        } catch (error) {
+            console.error('Error populating question data:', error);
         }
     }
 
@@ -584,6 +664,259 @@ class CreateExam {
             }
         };
         reader.readAsText(file);
+    }
+
+    // Markdown Import Methods
+    openMarkdownModal() {
+        const modal = document.getElementById('importMarkdownModal');
+        if (modal) {
+            modal.style.display = 'flex';
+        }
+    }
+
+    closeMarkdownModal() {
+        const modal = document.getElementById('importMarkdownModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        
+        // Clear file input and content
+        const fileInput = document.getElementById('markdownFile');
+        const contentInput = document.getElementById('markdownContent');
+        const preview = document.getElementById('markdownPreview');
+        
+        if (fileInput) fileInput.value = '';
+        if (contentInput) contentInput.value = '';
+        if (preview) preview.innerHTML = '<p class="preview-placeholder">Nội dung sẽ được hiển thị ở đây sau khi chọn file hoặc dán nội dung</p>';
+    }
+
+    handleMarkdownFile(event) {
+        const file = event.target.files[0];
+        if (file && file.type === 'text/markdown' || file.name.endsWith('.md')) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const content = e.target.result;
+                document.getElementById('markdownContent').value = content;
+                this.previewMarkdown(content);
+            };
+            reader.readAsText(file);
+        } else {
+            this.showMessage('Vui lòng chọn file Markdown (.md)', 'error');
+        }
+    }
+
+    handleDragOver(event) {
+        event.preventDefault();
+        event.currentTarget.classList.add('drag-over');
+    }
+
+    handleDragLeave(event) {
+        event.currentTarget.classList.remove('drag-over');
+    }
+
+    handleDrop(event) {
+        event.preventDefault();
+        event.currentTarget.classList.remove('drag-over');
+        
+        const files = event.dataTransfer.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type === 'text/markdown' || file.name.endsWith('.md')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    document.getElementById('markdownContent').value = content;
+                    this.previewMarkdown(content);
+                };
+                reader.readAsText(file);
+            } else {
+                this.showMessage('Vui lòng chọn file Markdown (.md)', 'error');
+            }
+        }
+    }
+
+    previewMarkdown(content) {
+        const preview = document.getElementById('markdownPreview');
+        if (!preview) return;
+
+        if (!content.trim()) {
+            preview.innerHTML = '<p class="preview-placeholder">Nội dung sẽ được hiển thị ở đây sau khi chọn file hoặc dán nội dung</p>';
+            return;
+        }
+
+        try {
+            const parsed = this.parseMarkdownExam(content);
+            let html = '';
+            
+            if (parsed.examInfo) {
+                html += `<div class="exam-info">
+                    <h3>Thông tin đề thi:</h3>
+                    <p><strong>Tiêu đề:</strong> ${parsed.examInfo.title || 'Chưa có'}</p>
+                    <p><strong>Môn học:</strong> ${parsed.examInfo.subject || 'Chưa có'}</p>
+                    <p><strong>Thời gian:</strong> ${parsed.examInfo.duration || 'Chưa có'} phút</p>
+                    <p><strong>Số câu hỏi:</strong> ${parsed.questions.length}</p>
+                </div>`;
+            }
+
+            parsed.questions.forEach((question, index) => {
+                html += `<div class="question-preview">
+                    <h4>Câu ${index + 1}: ${question.type === 'multiple-choice' ? 'Trắc nghiệm đơn' : 
+                         question.type === 'multiple-select' ? 'Trắc nghiệm nhiều lựa chọn' : 'Tự luận'}</h4>
+                    <div class="question-meta">Điểm: ${question.score}</div>
+                    <div class="question-content">${question.text}</div>`;
+
+                if (question.options && question.options.length > 0) {
+                    html += '<ul class="question-options">';
+                    question.options.forEach((option, optIndex) => {
+                        const isCorrect = question.type === 'multiple-choice' ? 
+                            question.correctAnswer === optIndex :
+                            question.correctAnswers && question.correctAnswers.includes(optIndex);
+                        
+                        html += `<li class="${isCorrect ? 'correct' : ''}">${option}</li>`;
+                    });
+                    html += '</ul>';
+                }
+
+                html += '</div>';
+                if (index < parsed.questions.length - 1) {
+                    html += '<div class="question-separator"></div>';
+                }
+            });
+
+            preview.innerHTML = html;
+        } catch (error) {
+            console.error('Error parsing markdown:', error);
+            preview.innerHTML = '<p class="preview-placeholder" style="color: #e53e3e;">Lỗi: Không thể phân tích nội dung Markdown. Vui lòng kiểm tra định dạng.</p>';
+        }
+    }
+
+    parseMarkdownExam(content) {
+        const lines = content.split('\n');
+        const examInfo = {};
+        const questions = [];
+        let currentQuestion = null;
+        let currentSection = null;
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+
+            // Parse exam info from header
+            if (line.startsWith('# ')) {
+                examInfo.title = line.substring(2).trim();
+            } else if (line.startsWith('**Môn học:**')) {
+                examInfo.subject = line.replace('**Môn học:**', '').trim();
+            } else if (line.startsWith('**Thời gian:**')) {
+                const timeMatch = line.match(/(\d+)\s*phút/);
+                if (timeMatch) {
+                    examInfo.duration = parseInt(timeMatch[1]);
+                }
+            } else if (line.startsWith('**Mô tả:**')) {
+                examInfo.description = line.replace('**Mô tả:**', '').trim();
+            }
+
+            // Parse questions
+            if (line.startsWith('## Câu ')) {
+                if (currentQuestion) {
+                    questions.push(currentQuestion);
+                }
+                currentQuestion = {
+                    text: line.substring(line.indexOf(':') + 1).trim(),
+                    type: 'multiple-choice',
+                    options: [],
+                    score: 1
+                };
+            } else if (line.startsWith('**Loại:**')) {
+                const type = line.replace('**Loại:**', '').trim();
+                if (currentQuestion) {
+                    currentQuestion.type = type;
+                }
+            } else if (line.startsWith('**Điểm:**')) {
+                const score = parseInt(line.replace('**Điểm:**', '').trim());
+                if (currentQuestion) {
+                    currentQuestion.score = score;
+                }
+            } else if (line.startsWith('**Đáp án:**')) {
+                const answer = line.replace('**Đáp án:**', '').trim();
+                if (currentQuestion) {
+                    if (currentQuestion.type === 'multiple-choice') {
+                        // Convert A,B,C,D to index
+                        const answerIndex = answer.charCodeAt(0) - 65;
+                        currentQuestion.correctAnswer = answerIndex;
+                    } else if (currentQuestion.type === 'multiple-select') {
+                        // Convert A,C,D to array of indices
+                        const answers = answer.split(',').map(a => a.trim().charCodeAt(0) - 65);
+                        currentQuestion.correctAnswers = answers;
+                    } else {
+                        currentQuestion.sampleAnswer = answer;
+                    }
+                }
+            } else if (line.startsWith('- ') && currentQuestion) {
+                // Parse options
+                const optionText = line.substring(2).trim();
+                if (optionText.match(/^[A-E]\./)) {
+                    // Remove A. B. C. D. E. prefix
+                    const cleanOption = optionText.substring(2).trim();
+                    currentQuestion.options.push(cleanOption);
+                }
+            } else if (line && !line.startsWith('---') && !line.startsWith('**') && currentQuestion && currentQuestion.type === 'text') {
+                // Add text content for essay questions
+                if (!currentQuestion.text.includes(line)) {
+                    currentQuestion.text += ' ' + line;
+                }
+            }
+        }
+
+        // Add last question
+        if (currentQuestion) {
+            questions.push(currentQuestion);
+        }
+
+        return { examInfo, questions };
+    }
+
+    importFromMarkdown() {
+        const content = document.getElementById('markdownContent').value;
+        if (!content.trim()) {
+            this.showMessage('Vui lòng nhập nội dung Markdown', 'error');
+            return;
+        }
+
+        try {
+            const parsed = this.parseMarkdownExam(content);
+            
+            // Update exam info
+            if (parsed.examInfo) {
+                const titleInput = document.getElementById('examTitle');
+                const subjectInput = document.getElementById('examSubject');
+                const durationInput = document.getElementById('examDuration');
+                const descriptionInput = document.getElementById('examDescription');
+
+                if (parsed.examInfo.title && titleInput) titleInput.value = parsed.examInfo.title;
+                if (parsed.examInfo.subject && subjectInput) subjectInput.value = parsed.examInfo.subject;
+                if (parsed.examInfo.duration && durationInput) durationInput.value = parsed.examInfo.duration;
+                if (parsed.examInfo.description && descriptionInput) descriptionInput.value = parsed.examInfo.description;
+            }
+
+            // Clear existing questions
+            const questionsContainer = document.getElementById('questionsContainer');
+            if (questionsContainer) {
+                questionsContainer.innerHTML = '';
+            }
+            this.questions = [];
+            this.questionCounter = 0;
+
+            // Add parsed questions
+            parsed.questions.forEach(questionData => {
+                this.addQuestion(questionData);
+            });
+
+            this.showMessage(`Đã import thành công ${parsed.questions.length} câu hỏi`, 'success');
+            this.closeMarkdownModal();
+
+        } catch (error) {
+            console.error('Error importing markdown:', error);
+            this.showMessage('Lỗi khi import: ' + error.message, 'error');
+        }
     }
 
     markAsModified() {

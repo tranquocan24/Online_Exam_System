@@ -6,7 +6,11 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "node test-complete-flow.js",
+    "test:basic": "node test-basic-flow.js",
+    "test:ci": "node test-basic-flow.js",
+    "test:full": "node test-complete-flow.js",
+    "test:report": "node test-complete-flow.js && cat test-report.json"
   },
   "keywords": [
     "nodejs",
@@ -26,8 +30,9 @@
     "url": "."
   },
   "homepage": "http://localhost:3000",
-  "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "puppeteer": "^24.12.0"
+  },
   "browserslist": [
     "> 1%",
     "last 2 versions",

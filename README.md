@@ -1,53 +1,82 @@
 # Hệ thống thi online tối giản
 
-Một ứng dụng thi online đơn giản sử dụng Node.js thuần túy, không cần database, lưu trữ dữ liệu bằng file JSON.
+# Hệ thống thi online tối giản
 
-## 🚀 Tính năng
+Hệ thống thi online đơn giản được xây dựng bằng Node.js thuần, lưu trữ dữ liệu bằng file JSON.
 
-### Dành cho Sinh viên
-- ✅ Đăng nhập hệ thống
-- ✅ Xem dashboard với thống kê cá nhân
-- 📝 Xem danh sách bài thi
-- ⏰ Thi trực tuyến với giới hạn thời gian
-- 📊 Xem kết quả và điểm số
+## 🚀 Tính năng chính
 
-### Dành cho Giáo viên
-- ✅ Đăng nhập hệ thống
-- ✅ Xem dashboard với thống kê lớp học
-- ✏️ Tạo đề thi trắc nghiệm
-- 📋 Quản lý các đề thi đã tạo
-- 📈 Xem kết quả thi của sinh viên
+### Sinh viên
+- Đăng nhập và xem dashboard cá nhân
+- Xem danh sách bài thi khả dụng
+- Làm bài thi trực tuyến với giao diện thân thiện
+- Xem kết quả và lịch sử thi
 
-## 🏗️ Kiến trúc
+### Giảng viên
+- Đăng nhập và xem dashboard quản lý
+- Tạo đề thi với nhiều loại câu hỏi
+- **Import đề thi từ file Markdown** 📝
+- Quản lý đề thi đã tạo với giao diện card hiện đại
+- Bộ lọc nâng cao cho quản lý đề thi
+- Xem kết quả thi của sinh viên
+- Thống kê và phân tích điểm số
 
-- **Frontend**: HTML, CSS, JavaScript thuần túy
-- **Backend**: Node.js HTTP server (không Express)
-- **Lưu trữ**: File JSON (users.json, questions.json, results.json)
-- **Thiết kế**: Layout phân cấp, Single Page Application (SPA)
+## 🛠️ Cài đặt và chạy
 
-## 📂 Cấu trúc thư mục
+### Yêu cầu
+- Node.js >= 14.0.0
+- NPM
 
+### Cài đặt
+```bash
+# Clone repository
+git clone https://github.com/tranquocan24/Online_Exam_System.git
+
+# Di chuyển vào thư mục
+cd Online_Exam_System
+
+# Cài đặt dependencies (nếu có)
+npm install
 ```
-/online-exam/
-│
-├── server.js                # Server Node.js thuần
-├── data/                    # Dữ liệu JSON
-│   ├── users.json          # Thông tin sinh viên, giáo viên
-│   ├── questions.json      # Đề thi và câu hỏi
-│   └── results.json        # Kết quả thi
-│
-├── public/                 # Static files
-│   ├── index.html          # Layout chính
-│   ├── student.html        # Layout sinh viên
-│   ├── teacher.html        # Layout giáo viên
-│   │
-│   ├── css/                # Stylesheets
-│   │   ├── common.css      # CSS chung
-│   │   ├── student.css     # CSS sinh viên
-│   │   └── teacher.css     # CSS giáo viên
-│   │
-│   ├── js/                 # JavaScript
-│   │   ├── main.js         # Logic chính
+
+### Chạy ứng dụng
+```bash
+# Chạy server
+npm start
+
+# Hoặc
+node server.js
+```
+
+Ứng dụng sẽ chạy tại: `http://localhost:3000`
+
+## 👥 Tài khoản mẫu
+
+### Sinh viên
+- Username: `sv001`, Password: `123456` (Nguyễn Văn A)
+- Username: `sv002`, Password: `123456` (Trần Thị B)
+- Username: `sv003`, Password: `123456` (Lê Văn C)
+
+### Giảng viên
+- Username: `gv001`, Password: `123456` (PGS.TS Nguyễn Văn C)
+- Username: `gv002`, Password: `123456` (TS. Trần Thị D)
+
+## 🧪 Kiểm thử
+
+### Chạy test cơ bản
+```bash
+npm run test:basic
+```
+
+### Chạy test đầy đủ
+```bash
+npm run test:full
+```
+
+### Chạy tất cả test
+```bash
+npm test
+```
 │   │   ├── auth.js         # Xử lý đăng nhập
 │   │   ├── student/        # JS cho sinh viên
 │   │   └── teacher/        # JS cho giáo viên
@@ -123,10 +152,44 @@ Một ứng dụng thi online đơn giản sử dụng Node.js thuần túy, kh�
 4. **Kết quả:** Xem điểm số và chi tiết bài làm
 
 ### Dành cho Giáo viên
-1. **Dashboard:** Xem thống kê lớp học và hành động nhanh
-2. **Tạo đề thi:** Tạo đề thi trắc nghiệm mới
-3. **Quản lý đề thi:** Xem, chỉnh sửa các đề thi đã tạo
-4. **Xem kết quả:** Theo dõi kết quả thi của sinh viên
+1. **Dashboard:** Xem thống kê tổng quan
+2. **Tạo đề thi:** 
+   - Tạo đề thi thủ công với form
+   - **Import từ file Markdown** (tính năng mới!)
+3. **Quản lý đề thi:** Xem, chỉnh sửa, xóa các đề thi đã tạo
+4. **Xem kết quả:** Phân tích kết quả thi của sinh viên
+
+## 📝 Tính năng Import Markdown
+
+### Cách sử dụng
+1. Vào trang "Tạo đề thi"
+2. Nhấn nút "Import từ Markdown"
+3. Chọn file .md hoặc dán nội dung trực tiếp
+4. Xem trước và nhấn "Import câu hỏi"
+
+### Định dạng Markdown
+- **File mẫu:** `sample_exam.md`
+- **Hướng dẫn chi tiết:** `markdown_guide.md`
+- **Hỗ trợ 3 loại câu hỏi:** Trắc nghiệm đơn, trắc nghiệm nhiều lựa chọn, tự luận
+
+### Ví dụ cú pháp
+```markdown
+# Đề thi Lập trình Web
+
+**Môn học:** Lập trình Web
+**Thời gian:** 90 phút
+
+## Câu 1: HTML là viết tắt của gì?
+**Loại:** multiple-choice
+**Điểm:** 1
+
+- A. HyperText Markup Language
+- B. HyperText Modern Language
+- C. HyperLink Markup Language
+- D. HyperLink Modern Language
+
+**Đáp án:** A
+```
 
 ## 🔧 API Endpoints
 
