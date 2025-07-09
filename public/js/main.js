@@ -22,13 +22,8 @@ class App {
     }
 
     bindEvents() {
-        // Sự kiện đăng xuất - only bind if not in admin mode
-        if (this.currentRole !== 'admin') {
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', () => this.logout());
-            }
-        }
+        // Sự kiện đăng xuất sẽ được bind sau khi layout được load
+        // Không bind ở đây để tránh conflict
     }
 
     // Kiểm tra session đơn giản (localStorage)
@@ -204,25 +199,38 @@ class App {
                 layoutFile = 'teacher.html';
                 cssFile = 'css/teacher.css';
             } else if (this.currentRole === 'admin') {
-                layoutFile = 'admin-layout.html';
+                // Admin sử dụng approach khác - load content trực tiếp
                 cssFile = 'css/admin.css';
                 
-                // Hide main header for admin (admin layout will have its own)
+                // Add admin class to body for special styling
+                document.body.classList.add('admin-mode');
+                
+                // Keep main header visible for logout button, hide footer
                 const mainHeader = document.getElementById('main-header');
                 if (mainHeader) {
-                    mainHeader.style.display = 'none';
+                    mainHeader.style.display = '';
                 }
                 
-                // Also hide main footer for admin
                 const mainFooter = document.getElementById('main-footer');
                 if (mainFooter) {
                     mainFooter.style.display = 'none';
                 }
                 
-                // Add admin class to body for special styling
-                document.body.classList.add('admin-mode');
+                // Load CSS cho admin
+                await this.loadCSS(cssFile);
+                
+                // Load admin content trực tiếp
+                const response = await fetch('admin-content.html');
+                const html = await response.text();
+                this.renderContent(html);
+                
+                // Load admin script
+                await this.loadRoleScripts();
+                
+                // Admin content đã bao gồm layout, không cần load page
+                return;
             } else {
-                // Show main header/footer for other roles
+                // Show main header/footer for other roles (not admin)
                 const mainHeader = document.getElementById('main-header');
                 if (mainHeader) {
                     mainHeader.style.display = '';
@@ -233,6 +241,7 @@ class App {
                     mainFooter.style.display = '';
                 }
                 
+                // Remove admin mode regardless of current role
                 document.body.classList.remove('admin-mode');
             }
 
@@ -246,6 +255,13 @@ class App {
             
             // Load role-specific scripts
             await this.loadRoleScripts();
+            
+            // Bind logout button for all roles after layout is loaded
+            if (this.currentRole !== 'admin') {
+                setTimeout(() => {
+                    this.bindLogoutButton();
+                }, 200);
+            }
             
             // Bind navigation events
             this.bindNavigationEvents();
@@ -276,6 +292,11 @@ class App {
                     if (window.AdminPanel) {
                         console.log('Creating AdminPanel instance...');
                         window.adminPanel = new window.AdminPanel();
+                        
+                        // Bind logout button after admin layout is loaded
+                        setTimeout(() => {
+                            this.bindLogoutButton();
+                        }, 300);
                     } else {
                         console.error('AdminPanel class not found!');
                     }
@@ -285,6 +306,30 @@ class App {
         } catch (error) {
             console.error('Error loading role scripts:', error);
         }
+    }
+
+    // Bind logout button - unified for all roles  
+    bindLogoutButton() {
+        console.log('Binding logout button for role:', this.currentRole);
+        
+        // Wait a bit for DOM to be ready
+        setTimeout(() => {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                console.log('Logout button found, binding simple event...');
+                
+                // Simple logout binding
+                logoutBtn.onclick = (e) => {
+                    e.preventDefault();
+                    console.log('Logout clicked for role:', this.currentRole);
+                    this.logout();
+                };
+                
+                console.log('Logout button bound successfully for role:', this.currentRole);
+            } else {
+                console.warn('Logout button not found for role:', this.currentRole);
+            }
+        }, 100);
     }
 
     // Bind events cho navigation
@@ -352,6 +397,9 @@ class App {
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
             if (!existingScript) {
                 await this.loadScript(scriptPath);
+                
+                // Đợi một chút để script được execute
+                await new Promise(resolve => setTimeout(resolve, 200));
             }
             
             // Khởi tạo instance cho trang cụ thể
@@ -359,14 +407,14 @@ class App {
             
         } catch (error) {
             // Không bắt buộc phải có JS cho mọi trang
-            console.log(`Không có script cho trang ${page}`);
+            console.log(`Không có script cho trang ${page}`, error);
         }
     }
 
     // Khởi tạo instance cho từng trang
     async initializePageInstance(page) {
         // Đợi một chút để script load xong
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         try {
             switch (page) {
@@ -376,17 +424,21 @@ class App {
                         if (window.studentDashboard && typeof window.studentDashboard.refreshData === 'function') {
                             console.log('Refreshing existing student dashboard...');
                             await window.studentDashboard.refreshData();
-                        } else {
+                        } else if (window.StudentDashboard) {
                             console.log('Creating new student dashboard instance...');
                             window.studentDashboard = new StudentDashboard();
+                        } else {
+                            console.warn('StudentDashboard class not found');
                         }
                     } else if (this.currentRole === 'teacher') {
                         if (window.teacherDashboard && typeof window.teacherDashboard.refreshData === 'function') {
                             console.log('Refreshing existing teacher dashboard...');
                             await window.teacherDashboard.refreshData();
-                        } else {
+                        } else if (window.TeacherDashboard) {
                             console.log('Creating new teacher dashboard instance...');
                             window.teacherDashboard = new TeacherDashboard();
+                        } else {
+                            console.warn('TeacherDashboard class not found');
                         }
                     }
                     break;
@@ -397,21 +449,26 @@ class App {
                         if (window.examList && typeof window.examList.refreshData === 'function') {
                             console.log('Refreshing existing exam list...');
                             await window.examList.refreshData();
-                        } else {
+                        } else if (window.ExamList) {
                             console.log('Creating new exam list instance...');
                             window.examList = new ExamList();
+                        } else {
+                            console.warn('ExamList class not found');
                         }
                     }
                     break;
 
                 case 'my_results':
                     if (this.currentRole === 'student') {
-                        if (window.myResultsManager && typeof window.myResultsManager.refreshData === 'function') {
-                            console.log('Refreshing existing my results...');
+                        if (window.myResultsManager && typeof window.myResultsManager.reset === 'function') {
+                            console.log('Resetting existing my results...');
+                            window.myResultsManager.reset();
                             await window.myResultsManager.refreshData();
-                        } else {
+                        } else if (window.MyResultsManager) {
                             console.log('Creating new my results instance...');
                             window.myResultsManager = new MyResultsManager();
+                        } else {
+                            console.warn('MyResultsManager class not found');
                         }
                     }
                     break;
@@ -419,8 +476,12 @@ class App {
                 case 'exam':
                     if (this.currentRole === 'student') {
                         // Exam luôn tạo mới để tránh conflict
-                        console.log('Creating new exam instance...');
-                        window.examInstance = new Exam();
+                        if (window.ExamManager) {
+                            console.log('Creating new exam instance...');
+                            window.examInstance = new ExamManager();
+                        } else {
+                            console.warn('ExamManager class not found');
+                        }
                     }
                     break;
 
@@ -429,9 +490,11 @@ class App {
                         if (window.createExam && typeof window.createExam.reset === 'function') {
                             console.log('Resetting existing create exam...');
                             window.createExam.reset();
-                        } else {
+                        } else if (window.CreateExam) {
                             console.log('Creating new create exam instance...');
                             window.createExam = new CreateExam();
+                        } else {
+                            console.warn('CreateExam class not found');
                         }
                     }
                     break;
@@ -441,9 +504,11 @@ class App {
                         if (window.manageExams && typeof window.manageExams.refreshData === 'function') {
                             console.log('Refreshing existing manage exams...');
                             await window.manageExams.refreshData();
-                        } else {
+                        } else if (window.ManageExams) {
                             console.log('Creating new manage exams instance...');
                             window.manageExams = new ManageExams();
+                        } else {
+                            console.warn('ManageExams class not found');
                         }
                     }
                     break;
@@ -453,9 +518,11 @@ class App {
                         if (window.viewResults && typeof window.viewResults.refreshData === 'function') {
                             console.log('Refreshing existing view results...');
                             await window.viewResults.refreshData();
-                        } else {
+                        } else if (window.ViewResults) {
                             console.log('Creating new view results instance...');
                             window.viewResults = new ViewResults();
+                        } else {
+                            console.warn('ViewResults class not found');
                         }
                     }
                     break;
@@ -672,22 +739,9 @@ class App {
         // Clean up page instances
         this.cleanupPageInstances();
         
-        // Restore main layout if in admin mode
+        // Remove admin mode class if in admin mode
         if (this.currentRole === 'admin') {
-            console.log('Restoring main layout from admin mode');
-            
-            // Show main header/footer again
-            const mainHeader = document.getElementById('main-header');
-            if (mainHeader) {
-                mainHeader.style.display = '';
-            }
-            
-            const mainFooter = document.getElementById('main-footer');
-            if (mainFooter) {
-                mainFooter.style.display = '';
-            }
-            
-            // Remove admin mode class
+            console.log('Removing admin mode class');
             document.body.classList.remove('admin-mode');
         }
         

@@ -18,8 +18,8 @@ class AdminPanel {
         // Kiểm tra quyền admin
         this.currentUser = this.getCurrentUser();
         if (!this.currentUser || this.currentUser.role !== 'admin') {
+            console.error('Not admin user or no user found');
             alert('Bạn không có quyền truy cập trang này!');
-            window.location.href = '/';
             return;
         }
 
@@ -34,8 +34,7 @@ class AdminPanel {
         // Bind events
         this.bindEvents();
         
-        // Bind logout button after admin header is loaded
-        this.bindLogoutButton();
+        // Bind logout button will be handled by main.js like other roles
         
         // Hiển thị tab mặc định
         this.showTab('dashboard');
@@ -49,14 +48,12 @@ class AdminPanel {
     }
 
     displayUserInfo() {
-        // Hiển thị thông tin user trong admin header
+        // Hiển thị thông tin user trong main header
         const welcomeText = document.getElementById('welcome-text');
-        const userInfo = document.getElementById('user-info');
         
-        if (this.currentUser && welcomeText && userInfo) {
+        if (this.currentUser && welcomeText) {
             welcomeText.textContent = `Xin chào, ${this.currentUser.name}`;
-            userInfo.style.display = 'flex'; // Show user info
-            console.log('User info displayed in admin header');
+            console.log('User info displayed in main header');
         } else {
             console.warn('Could not display user info - elements not found or no user');
         }
@@ -107,7 +104,7 @@ class AdminPanel {
         });
 
         // Don't bind logout here - will use separate method
-        console.log('Logout binding moved to bindLogoutButton()');
+        console.log('Logout will be handled by main.js');
         
         // Add user button
         const addUserBtn = document.getElementById('add-user-btn');
@@ -875,173 +872,10 @@ class AdminPanel {
         }
     }
 
-    bindLogoutButton() {
-        console.log('Binding logout button...');
-        
-        // Try multiple times to ensure logout button is found
-        let attempts = 0;
-        const maxAttempts = 15;
-        
-        const tryBindLogout = () => {
-            attempts++;
-            console.log(`Attempt ${attempts}: Looking for logout button...`);
-            
-            // Try different selectors to find the logout button
-            let logoutBtn = document.getElementById('logout-btn');
-            
-            // Also try finding it within admin header specifically
-            if (!logoutBtn) {
-                const adminHeader = document.getElementById('admin-header');
-                if (adminHeader) {
-                    logoutBtn = adminHeader.querySelector('#logout-btn, .btn-logout');
-                }
-            }
-            
-            // Try finding any logout button on the page
-            if (!logoutBtn) {
-                logoutBtn = document.querySelector('.btn-logout, [id*="logout"]');
-            }
-            
-            console.log(`Attempt ${attempts}: Logout button found:`, !!logoutBtn);
-            
-            if (logoutBtn) {
-                console.log('Logout button element:', logoutBtn);
-                
-                // Remove any existing event listeners by cloning the element
-                const newLogoutBtn = logoutBtn.cloneNode(true);
-                logoutBtn.parentNode.replaceChild(newLogoutBtn, logoutBtn);
-                
-                // Bind new event listener
-                newLogoutBtn.addEventListener('click', (e) => {
-                    console.log('ADMIN LOGOUT: Button clicked!');
-                    e.preventDefault();
-                    e.stopPropagation();
-                    
-                    // Confirm logout
-                    if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                        this.performLogout();
-                    }
-                });
-                
-                console.log('Admin logout button bound successfully');
-                return true;
-            }
-            
-            if (attempts < maxAttempts) {
-                setTimeout(tryBindLogout, 300);
-            } else {
-                console.error('Failed to bind logout button after', maxAttempts, 'attempts');
-                // Try one more time with delegation
-                this.setupLogoutDelegation();
-            }
-            
-            return false;
-        };
-        
-        tryBindLogout();
-    }
-
-    // Setup event delegation for logout as fallback
-    setupLogoutDelegation() {
-        console.log('Setting up logout event delegation as fallback...');
-        
-        // Remove any existing delegated listeners
-        document.removeEventListener('click', this.logoutDelegationHandler);
-        
-        // Create new delegation handler
-        this.logoutDelegationHandler = (e) => {
-            if (e.target.matches('#logout-btn, .btn-logout') || 
-                e.target.closest('#logout-btn, .btn-logout')) {
-                console.log('ADMIN LOGOUT: Delegated click detected!');
-                e.preventDefault();
-                e.stopPropagation();
-                
-                if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                    this.performLogout();
-                }
-            }
-        };
-        
-        document.addEventListener('click', this.logoutDelegationHandler);
-        console.log('Logout delegation setup complete');
-    }
-
-    // Perform the actual logout
-    performLogout() {
-        console.log('Performing admin logout...');
-        
-        try {
-            // Call main app logout if available
-            if (window.app && typeof window.app.logout === 'function') {
-                console.log('Calling window.app.logout()');
-                window.app.logout();
-            } else {
-                console.log('window.app not available, using direct logout');
-                this.directLogout();
-            }
-        } catch (error) {
-            console.error('Error during logout:', error);
-            this.directLogout();
-        }
-    }
-
-    // Direct logout without main app
-    directLogout() {
-        console.log('Performing direct logout...');
-        
-        // Log logout activity
-        const currentUser = this.getCurrentUser();
-        if (currentUser) {
-            console.log('Logging out user:', currentUser.username);
-        }
-        
-        // Clear session data
-        localStorage.removeItem('currentUser');
-        localStorage.removeItem('sessionExpiry');
-        localStorage.removeItem('loginTime');
-        
-        // Clean up event listeners
-        if (this.logoutDelegationHandler) {
-            document.removeEventListener('click', this.logoutDelegationHandler);
-        }
-        
-        // Restore main layout
-        const mainHeader = document.getElementById('main-header');
-        if (mainHeader) {
-            mainHeader.style.display = '';
-        }
-        
-        const mainFooter = document.getElementById('main-footer');
-        if (mainFooter) {
-            mainFooter.style.display = '';
-        }
-        
-        // Remove admin mode class
-        document.body.classList.remove('admin-mode');
-        
-        // Show logout message
-        alert('Đăng xuất thành công!');
-        
-        // Redirect to login
-        window.location.href = '/';
-    }
 }
 
 // Export AdminPanel class to global scope for main.js to access
 window.AdminPanel = AdminPanel;
 
-// Auto-initialize if we're on admin page and not already initialized
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (!window.adminPanel && window.location.pathname.includes('admin')) {
-            console.log('Auto-initializing AdminPanel...');
-            window.adminPanel = new AdminPanel();
-        }
-    });
-} else {
-    // DOM already loaded
-    if (!window.adminPanel && (window.location.pathname.includes('admin') || document.getElementById('user-modal'))) {
-        console.log('Auto-initializing AdminPanel (DOM ready)...');
-        window.adminPanel = new AdminPanel();
-    }
-}
+// Don't auto-initialize - let main.js handle it
+console.log('AdminPanel class exported to window.AdminPanel');

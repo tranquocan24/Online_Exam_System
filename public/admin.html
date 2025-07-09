@@ -19,194 +19,19 @@
         </div>
     </header>
 
-    <!-- Navigation -->
-    <nav id="admin-nav">
-        <div class="nav-container">
-            <ul class="nav-tabs">
-                <li><a href="#" data-tab="dashboard" class="nav-tab active">Tổng quan</a></li>
-                <li><a href="#" data-tab="users" class="nav-tab">Quản lý tài khoản</a></li>
-                <li><a href="#" data-tab="stats" class="nav-tab">Thống kê</a></li>
-                <li><a href="#" data-tab="settings" class="nav-tab">Cài đặt</a></li>
-            </ul>
-        </div>
-    </nav>
-
     <!-- Container chính -->
     <div id="app-container">
-        <!-- Dashboard Tab -->
-        <div id="dashboard-tab" class="tab-content active">
-            <div class="dashboard-grid">
-                <div class="stats-card">
-                    <h3>Tổng số học sinh</h3>
-                    <div class="stat-number" id="total-students">0</div>
-                </div>
-                <div class="stats-card">
-                    <h3>Tổng số giáo viên</h3>
-                    <div class="stat-number" id="total-teachers">0</div>
-                </div>
-                <div class="stats-card">
-                    <h3>Tổng số bài thi</h3>
-                    <div class="stat-number" id="total-exams">0</div>
-                </div>
-                <div class="stats-card">
-                    <h3>Lượt thi hôm nay</h3>
-                    <div class="stat-number" id="today-attempts">0</div>
-                </div>
-            </div>
-            
-            <div class="recent-activities">
-                <h3>Hoạt động gần đây</h3>
-                <div id="recent-activities-list">
-                    <!-- Danh sách hoạt động sẽ được load động -->
-                </div>
-            </div>
-        </div>
-
-        <!-- Users Management Tab -->
-        <div id="users-tab" class="tab-content">
-            <div class="users-header">
-                <h2>Quản lý tài khoản</h2>
-                <button id="add-user-btn" class="btn btn-primary">Thêm tài khoản mới</button>
-            </div>
-            
-            <div class="users-filters">
-                <select id="user-type-filter">
-                    <option value="all">Tất cả</option>
-                    <option value="student">Học sinh</option>
-                    <option value="teacher">Giáo viên</option>
-                    <option value="admin">Quản trị viên</option>
-                </select>
-                <input type="text" id="search-users" placeholder="Tìm kiếm theo tên hoặc username...">
-            </div>
-            
-            <div class="users-table-container">
-                <table id="users-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Username</th>
-                            <th>Tên</th>
-                            <th>Vai trò</th>
-                            <th>Thông tin bổ sung</th>
-                            <th>Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table-body">
-                        <!-- Dữ liệu users sẽ được load động -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Stats Tab -->
-        <div id="stats-tab" class="tab-content">
-            <h2>Thống kê hệ thống</h2>
-            <div class="stats-grid">
-                <div class="chart-container">
-                    <h3>Phân bố người dùng</h3>
-                    <canvas id="user-distribution-chart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Hoạt động thi theo tháng</h3>
-                    <canvas id="monthly-activity-chart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Settings Tab -->
-        <div id="settings-tab" class="tab-content">
-            <h2>Cài đặt hệ thống</h2>
-            <div class="settings-grid">
-                <div class="settings-section">
-                    <h3>Cài đặt chung</h3>
-                    <div class="setting-item">
-                        <label for="system-name">Tên hệ thống:</label>
-                        <input type="text" id="system-name" value="Hệ thống thi online">
-                    </div>
-                    <div class="setting-item">
-                        <label for="default-exam-time">Thời gian thi mặc định (phút):</label>
-                        <input type="number" id="default-exam-time" value="60">
-                    </div>
-                    <div class="setting-item">
-                        <label for="allow-registration">Cho phép đăng ký tài khoản:</label>
-                        <input type="checkbox" id="allow-registration">
-                    </div>
-                </div>
-                
-                <div class="settings-section">
-                    <h3>Bảo mật</h3>
-                    <div class="setting-item">
-                        <label for="min-password-length">Độ dài mật khẩu tối thiểu:</label>
-                        <input type="number" id="min-password-length" value="6">
-                    </div>
-                    <div class="setting-item">
-                        <label for="session-timeout">Thời gian session (phút):</label>
-                        <input type="number" id="session-timeout" value="30">
-                    </div>
-                </div>
-                
-                <div class="settings-actions">
-                    <button id="save-settings-btn" class="btn btn-primary">Lưu cài đặt</button>
-                    <button id="reset-settings-btn" class="btn btn-secondary">Đặt lại mặc định</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal thêm/sửa user -->
-    <div id="user-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">Thêm tài khoản mới</h3>
-                <span class="close">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="user-form">
-                    <div class="form-group">
-                        <label for="user-username">Username:</label>
-                        <input type="text" id="user-username" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-password">Mật khẩu:</label>
-                        <input type="password" id="user-password" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-name">Tên đầy đủ:</label>
-                        <input type="text" id="user-name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="user-role">Vai trò:</label>
-                        <select id="user-role" required>
-                            <option value="student">Học sinh</option>
-                            <option value="teacher">Giáo viên</option>
-                            <option value="admin">Quản trị viên</option>
-                        </select>
-                    </div>
-                    <div class="form-group" id="student-fields">
-                        <label for="user-class">Lớp:</label>
-                        <input type="text" id="user-class">
-                    </div>
-                    <div class="form-group" id="teacher-fields">
-                        <label for="user-subject">Môn học:</label>
-                        <input type="text" id="user-subject">
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Lưu</button>
-                        <button type="button" class="btn btn-secondary" id="cancel-user-btn">Hủy</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        <!-- Admin layout sẽ được load vào đây bởi main.js -->
     </div>
 
     <!-- Footer chung -->
     <footer id="main-footer">
         <div class="footer-container">
-            <p>&copy; 2025 Hệ thống thi online - Quản trị hệ thống</p>
+            <p>&copy; 2025 Hệ thống thi online</p>
         </div>
     </footer>
 
-    <script src="js/shared/score-calculator.js"></script>
-    <script src="js/admin/admin.js"></script>
+    <!-- Load main.js để quản lý toàn bộ app -->
+    <script src="js/main.js"></script>
 </body>
 </html>

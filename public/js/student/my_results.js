@@ -437,14 +437,53 @@ class MyResultsManager {
     async refreshData() {
         console.log('Refreshing my results data...');
         try {
+            // Show loading screen
+            const loadingScreen = document.getElementById('loadingScreen');
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (loadingScreen) loadingScreen.style.display = 'block';
+            if (resultsContainer) resultsContainer.style.display = 'none';
+            
             await this.loadResults();
             this.renderSummaryStats();
             this.renderResults();
+            
+            // Hide loading screen and show results
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (resultsContainer) resultsContainer.style.display = 'block';
+            
             console.log('My results data refreshed successfully');
         } catch (error) {
             console.error('Error refreshing my results data:', error);
+            
+            // Hide loading screen on error
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            
             this.showError('Không thể tải lại dữ liệu kết quả');
         }
+    }
+
+    reset() {
+        console.log('Resetting my results state...');
+        
+        // Reset data
+        this.allResults = [];
+        this.filteredResults = [];
+        this.currentSort = 'date-desc';
+        
+        // Reset UI
+        const loadingScreen = document.getElementById('loadingScreen');
+        const resultsContainer = document.getElementById('resultsContainer');
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        if (resultsContainer) resultsContainer.style.display = 'block';
+        
+        // Clear any existing content
+        const summaryStats = document.getElementById('summaryStats');
+        const resultsGrid = document.getElementById('resultsGrid');
+        if (summaryStats) summaryStats.innerHTML = '';
+        if (resultsGrid) resultsGrid.innerHTML = '';
+        
+        console.log('My results state reset successfully');
     }
 }
 

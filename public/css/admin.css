@@ -1,5 +1,23 @@
 /* admin.css - Styles cho giao diện quản trị */
 
+/* Style main header when in admin mode */
+body.admin-mode #main-header {
+    background: #1a252f;
+    border-bottom: 2px solid #e74c3c;
+    position: relative;
+    z-index: 1000;
+}
+
+body.admin-mode #user-info {
+    justify-content: flex-end;
+    width: 100%;
+}
+
+/* Hide main footer when in admin mode, keep header for logout */
+body.admin-mode #main-footer {
+    display: none !important;
+}
+
 /* Navigation styles */
 #admin-nav {
     background: #2c3e50;
@@ -737,21 +755,21 @@
 }
 
 /* Admin Footer */
-#admin-footer {
-    background: #2c3e50;
-    color: #ecf0f1;
+.admin-footer {
+    background: #34495e;
+    color: #bdc3c7;
     text-align: center;
     padding: 20px 0;
     margin-top: 40px;
 }
 
-#admin-footer .footer-container {
+.admin-footer-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
 }
 
-#admin-footer p {
+.admin-footer p {
     margin: 0;
     font-size: 0.9rem;
     opacity: 0.8;
@@ -789,4 +807,26 @@
 /* Fix modal z-index for admin */
 .admin-mode .modal {
     z-index: 10000;
+}
+
+/* Hide main footer when in admin mode, keep header for logout */
+body.admin-mode #main-footer {
+    display: none !important;
+}
+
+/* Style main header when in admin mode */
+body.admin-mode #main-header {
+    background: #1a252f;
+    border-bottom: 2px solid #e74c3c;
+    position: relative;
+    z-index: 1000;
+}
+
+body.admin-mode #main-header h1 {
+    display: none; /* Hide main title, admin has its own */
+}
+
+body.admin-mode #user-info {
+    justify-content: flex-end;
+    width: 100%;
 }

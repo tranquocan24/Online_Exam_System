@@ -1,20 +1,12 @@
 {
   "students": [
     {
-      "id": "SV001",
       "username": "sv001",
       "password": "123456",
-      "name": "Nguyễn Văn A",
-      "class": "CNTT01",
-      "role": "student"
-    },
-    {
-      "username": "sv002",
-      "password": "123456",
-      "name": "Trần Thị Ba",
+      "name": "Nguyễn Văn An",
       "role": "student",
       "class": "CNTT01",
-      "id": "SV002"
+      "id": "SV001"
     },
     {
       "username": "cuong",
@@ -23,6 +15,22 @@
       "role": "student",
       "class": "CIT",
       "id": "SV202451"
+    },
+    {
+      "username": "an",
+      "password": "1",
+      "name": "Trần Quốc An",
+      "role": "student",
+      "class": "CIT",
+      "id": "SV274635"
+    },
+    {
+      "username": "hau",
+      "password": "123456",
+      "name": "Nguyễn Phúc Hậu",
+      "role": "student",
+      "class": "EBS",
+      "id": "SV684783"
     }
   ],
   "teachers": [
