@@ -26,5 +26,14 @@
       "subject": "Lập trình Web",
       "role": "teacher"
     }
+  ],
+  "admins": [
+    {
+      "id": "AD001",
+      "username": "admin",
+      "password": "admin123",
+      "name": "Quản trị viên hệ thống",
+      "role": "admin"
+    }
   ]
 }
