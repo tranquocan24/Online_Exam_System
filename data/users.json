@@ -9,12 +9,12 @@
       "role": "student"
     },
     {
-      "id": "SV002",
       "username": "sv002",
       "password": "123456",
-      "name": "Trần Thị B",
+      "name": "Trần Thị Ba",
+      "role": "student",
       "class": "CNTT01",
-      "role": "student"
+      "id": "SV002"
     },
     {
       "username": "cuong",
