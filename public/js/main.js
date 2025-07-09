@@ -176,6 +176,9 @@ class App {
             } else if (this.currentRole === 'teacher') {
                 layoutFile = 'teacher.html';
                 cssFile = 'css/teacher.css';
+            } else if (this.currentRole === 'admin') {
+                layoutFile = 'admin.html';
+                cssFile = 'css/admin.css';
             }
 
             // Load CSS riêng cho role

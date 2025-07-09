@@ -60,6 +60,15 @@ class Auth {
                     subject: "Lập trình Web",
                     role: "teacher"
                 }
+            ],
+            admins: [
+                {
+                    id: "AD001",
+                    username: "admin",
+                    password: "admin123",
+                    name: "Quản trị viên hệ thống",
+                    role: "admin"
+                }
             ]
         };
     }
@@ -142,6 +151,12 @@ class Auth {
                             Password: 123456<br>
                             <small>Click để điền tự động</small>
                         </div>
+                        <div class="demo-account" onclick="Auth.fillDemoAccount('admin', 'admin123')">
+                            <strong>Quản trị viên:</strong><br>
+                            Username: admin<br>
+                            Password: admin123<br>
+                            <small>Click để điền tự động</small>
+                        </div>
                     </div>
                     <div class="keyboard-shortcuts">
                         <small>
@@ -167,7 +182,7 @@ class Auth {
                 }
                 .demo-grid {
                     display: grid;
-                    grid-template-columns: 1fr 1fr;
+                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
                     gap: 15px;
                     margin-bottom: 15px;
                 }
@@ -381,16 +396,29 @@ class Auth {
         if (!this.users) return null;
         
         // Kiểm tra trong danh sách sinh viên
-        for (const student of this.users.students) {
-            if (student.username === username && student.password === password) {
-                return student;
+        if (this.users.students) {
+            for (const student of this.users.students) {
+                if (student.username === username && student.password === password) {
+                    return student;
+                }
             }
         }
         
         // Kiểm tra trong danh sách giáo viên
-        for (const teacher of this.users.teachers) {
-            if (teacher.username === username && teacher.password === password) {
-                return teacher;
+        if (this.users.teachers) {
+            for (const teacher of this.users.teachers) {
+                if (teacher.username === username && teacher.password === password) {
+                    return teacher;
+                }
+            }
+        }
+        
+        // Kiểm tra trong danh sách admin
+        if (this.users.admins) {
+            for (const admin of this.users.admins) {
+                if (admin.username === username && admin.password === password) {
+                    return admin;
+                }
             }
         }
         
