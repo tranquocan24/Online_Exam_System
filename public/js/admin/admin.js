@@ -593,8 +593,5 @@ class AdminPanel {
     }
 }
 
-// Initialize admin panel when page loads
-let adminPanel;
-document.addEventListener('DOMContentLoaded', () => {
-    adminPanel = new AdminPanel();
-});
+// Export AdminPanel class to global scope for main.js to access
+window.AdminPanel = AdminPanel;

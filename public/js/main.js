@@ -130,9 +130,34 @@ class App {
     showUserInfo() {
         const userInfo = document.getElementById('user-info');
         const welcomeText = document.getElementById('welcome-text');
+        const headerTitle = document.querySelector('#main-header h1');
         
         if (this.currentUser && userInfo && welcomeText) {
-            welcomeText.textContent = `Xin chào, ${this.currentUser.name}`;
+            let roleText = '';
+            switch (this.currentUser.role) {
+                case 'admin':
+                    roleText = 'Quản trị viên';
+                    if (headerTitle) {
+                        headerTitle.textContent = 'Quản trị hệ thống';
+                    }
+                    break;
+                case 'teacher':
+                    roleText = 'Giáo viên';
+                    if (headerTitle) {
+                        headerTitle.textContent = 'Hệ thống thi online - Giáo viên';
+                    }
+                    break;
+                case 'student':
+                    roleText = 'Học sinh';
+                    if (headerTitle) {
+                        headerTitle.textContent = 'Hệ thống thi online - Học sinh';
+                    }
+                    break;
+                default:
+                    roleText = '';
+            }
+            
+            welcomeText.textContent = `Xin chào, ${this.currentUser.name} (${roleText})`;
             userInfo.style.display = 'flex';
         }
     }
@@ -177,7 +202,7 @@ class App {
                 layoutFile = 'teacher.html';
                 cssFile = 'css/teacher.css';
             } else if (this.currentRole === 'admin') {
-                layoutFile = 'admin.html';
+                layoutFile = 'admin-layout.html';
                 cssFile = 'css/admin.css';
             }
 
@@ -189,6 +214,9 @@ class App {
             const html = await response.text();
             this.renderContent(html);
             
+            // Load role-specific scripts
+            await this.loadRoleScripts();
+            
             // Bind navigation events
             this.bindNavigationEvents();
             
@@ -198,6 +226,26 @@ class App {
         } catch (error) {
             console.error('Lỗi load layout:', error);
             this.renderContent('<p>Lỗi tải giao diện</p>');
+        }
+    }
+
+    // Load role-specific scripts
+    async loadRoleScripts() {
+        try {
+            if (this.currentRole === 'admin') {
+                // Load admin script
+                await this.loadScript('js/admin/admin.js');
+                
+                // Initialize admin panel after script is loaded
+                setTimeout(() => {
+                    if (window.AdminPanel && !window.adminPanel) {
+                        window.adminPanel = new window.AdminPanel();
+                    }
+                }, 100);
+            }
+            // Add other role scripts here if needed
+        } catch (error) {
+            console.error('Error loading role scripts:', error);
         }
     }
 
@@ -380,6 +428,13 @@ class App {
     // Helper function để load script
     loadScript(src) {
         return new Promise((resolve, reject) => {
+            // Check if script is already loaded
+            const existingScript = document.querySelector(`script[src="${src}"]`);
+            if (existingScript) {
+                resolve();
+                return;
+            }
+
             const script = document.createElement('script');
             script.src = src;
             script.onload = resolve;
