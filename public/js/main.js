@@ -22,10 +22,12 @@ class App {
     }
 
     bindEvents() {
-        // Sự kiện đăng xuất
-        const logoutBtn = document.getElementById('logout-btn');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => this.logout());
+        // Sự kiện đăng xuất - only bind if not in admin mode
+        if (this.currentRole !== 'admin') {
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => this.logout());
+            }
         }
     }
 
@@ -655,6 +657,8 @@ class App {
 
     // Đăng xuất
     logout() {
+        console.log('Logout called from:', this.currentRole);
+        
         // Log logout activity
         if (this.currentUser) {
             this.logUserActivity('logout', `User ${this.currentUser.username} logged out`);
@@ -667,6 +671,25 @@ class App {
         
         // Clean up page instances
         this.cleanupPageInstances();
+        
+        // Restore main layout if in admin mode
+        if (this.currentRole === 'admin') {
+            console.log('Restoring main layout from admin mode');
+            
+            // Show main header/footer again
+            const mainHeader = document.getElementById('main-header');
+            if (mainHeader) {
+                mainHeader.style.display = '';
+            }
+            
+            const mainFooter = document.getElementById('main-footer');
+            if (mainFooter) {
+                mainFooter.style.display = '';
+            }
+            
+            // Remove admin mode class
+            document.body.classList.remove('admin-mode');
+        }
         
         // Xóa session
         localStorage.removeItem('currentUser');
