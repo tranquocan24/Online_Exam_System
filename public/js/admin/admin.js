@@ -13,6 +13,8 @@ class AdminPanel {
     }
 
     async init() {
+        console.log('AdminPanel init started');
+        
         // Kiểm tra quyền admin
         this.currentUser = this.getCurrentUser();
         if (!this.currentUser || this.currentUser.role !== 'admin') {
@@ -20,6 +22,8 @@ class AdminPanel {
             window.location.href = '/';
             return;
         }
+
+        console.log('Admin user verified:', this.currentUser);
 
         // Hiển thị thông tin user
         this.displayUserInfo();
@@ -32,6 +36,8 @@ class AdminPanel {
         
         // Hiển thị tab mặc định
         this.showTab('dashboard');
+        
+        console.log('AdminPanel init completed');
     }
 
     getCurrentUser() {
@@ -40,10 +46,9 @@ class AdminPanel {
     }
 
     displayUserInfo() {
-        if (this.currentUser) {
-            document.getElementById('welcome-text').textContent = 
-                `Chào ${this.currentUser.name}`;
-        }
+        // User info đã được hiển thị bởi main.js ở header
+        // Không cần làm gì thêm ở đây
+        console.log('User info already displayed in header by main.js');
     }
 
     async loadAllData() {
@@ -143,19 +148,40 @@ class AdminPanel {
     }
 
     showTab(tabName) {
+        console.log('showTab called with:', tabName);
+        
         // Hide all tabs
-        document.querySelectorAll('.tab-content').forEach(tab => {
+        const allTabs = document.querySelectorAll('.tab-content');
+        console.log('Found tabs:', allTabs.length);
+        allTabs.forEach(tab => {
             tab.classList.remove('active');
         });
 
         // Remove active from nav tabs
-        document.querySelectorAll('.nav-tab').forEach(tab => {
+        const navTabs = document.querySelectorAll('.nav-tab');
+        console.log('Found nav tabs:', navTabs.length);
+        navTabs.forEach(tab => {
             tab.classList.remove('active');
         });
 
         // Show selected tab
-        document.getElementById(tabName + '-tab').classList.add('active');
-        document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        const targetTab = document.getElementById(tabName + '-tab');
+        const targetNavTab = document.querySelector(`[data-tab="${tabName}"]`);
+        
+        console.log('Target tab:', targetTab);
+        console.log('Target nav tab:', targetNavTab);
+        
+        if (targetTab) {
+            targetTab.classList.add('active');
+        } else {
+            console.error('Tab not found:', tabName + '-tab');
+        }
+        
+        if (targetNavTab) {
+            targetNavTab.classList.add('active');
+        } else {
+            console.error('Nav tab not found for:', tabName);
+        }
 
         this.currentTab = tabName;
 

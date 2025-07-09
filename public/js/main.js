@@ -234,14 +234,19 @@ class App {
         try {
             if (this.currentRole === 'admin') {
                 // Load admin script
+                console.log('Loading admin script...');
                 await this.loadScript('js/admin/admin.js');
                 
                 // Initialize admin panel after script is loaded
+                console.log('Initializing admin panel...');
                 setTimeout(() => {
-                    if (window.AdminPanel && !window.adminPanel) {
+                    if (window.AdminPanel) {
+                        console.log('Creating AdminPanel instance...');
                         window.adminPanel = new window.AdminPanel();
+                    } else {
+                        console.error('AdminPanel class not found!');
                     }
-                }, 100);
+                }, 200);
             }
             // Add other role scripts here if needed
         } catch (error) {
