@@ -204,6 +204,34 @@ class App {
             } else if (this.currentRole === 'admin') {
                 layoutFile = 'admin-layout.html';
                 cssFile = 'css/admin.css';
+                
+                // Hide main header for admin (admin layout will have its own)
+                const mainHeader = document.getElementById('main-header');
+                if (mainHeader) {
+                    mainHeader.style.display = 'none';
+                }
+                
+                // Also hide main footer for admin
+                const mainFooter = document.getElementById('main-footer');
+                if (mainFooter) {
+                    mainFooter.style.display = 'none';
+                }
+                
+                // Add admin class to body for special styling
+                document.body.classList.add('admin-mode');
+            } else {
+                // Show main header/footer for other roles
+                const mainHeader = document.getElementById('main-header');
+                if (mainHeader) {
+                    mainHeader.style.display = '';
+                }
+                
+                const mainFooter = document.getElementById('main-footer');
+                if (mainFooter) {
+                    mainFooter.style.display = '';
+                }
+                
+                document.body.classList.remove('admin-mode');
             }
 
             // Load CSS riêng cho role
@@ -220,8 +248,11 @@ class App {
             // Bind navigation events
             this.bindNavigationEvents();
             
-            // Load dashboard mặc định
-            this.loadPage('dashboard');
+            // Load dashboard mặc định (chỉ cho student và teacher)
+            if (this.currentRole !== 'admin') {
+                this.loadPage('dashboard');
+            }
+            // Admin không cần loadPage vì layout đã có sẵn tất cả content
             
         } catch (error) {
             console.error('Lỗi load layout:', error);
@@ -256,6 +287,11 @@ class App {
 
     // Bind events cho navigation
     bindNavigationEvents() {
+        // Admin có navigation riêng, không cần bind ở đây
+        if (this.currentRole === 'admin') {
+            return;
+        }
+        
         const navLinks = document.querySelectorAll('.nav-link[data-page]');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {

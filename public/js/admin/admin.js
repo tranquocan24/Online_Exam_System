@@ -46,9 +46,17 @@ class AdminPanel {
     }
 
     displayUserInfo() {
-        // User info đã được hiển thị bởi main.js ở header
-        // Không cần làm gì thêm ở đây
-        console.log('User info already displayed in header by main.js');
+        // Hiển thị thông tin user trong admin header
+        const welcomeText = document.getElementById('welcome-text');
+        const userInfo = document.getElementById('user-info');
+        
+        if (this.currentUser && welcomeText && userInfo) {
+            welcomeText.textContent = `Xin chào, ${this.currentUser.name}`;
+            userInfo.style.display = 'flex'; // Show user info
+            console.log('User info displayed in admin header');
+        } else {
+            console.warn('Could not display user info - elements not found or no user');
+        }
     }
 
     async loadAllData() {
@@ -81,62 +89,87 @@ class AdminPanel {
     }
 
     bindEvents() {
+        console.log('Binding admin events...');
+        
         // Tab navigation
-        document.querySelectorAll('.nav-tab').forEach(tab => {
+        const navTabs = document.querySelectorAll('.nav-tab');
+        console.log('Found nav tabs:', navTabs.length);
+        navTabs.forEach(tab => {
             tab.addEventListener('click', (e) => {
                 e.preventDefault();
                 const tabName = e.target.dataset.tab;
+                console.log('Tab clicked:', tabName);
                 this.showTab(tabName);
             });
         });
 
-        // Logout
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('currentUser');
-            window.location.href = '/';
-        });
-
+        // Don't bind logout here - will be handled by main.js
+        // But ensure logout button is visible and works
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                // Call main app logout
+                if (window.app && window.app.logout) {
+                    window.app.logout();
+                } else {
+                    // Fallback logout
+                    localStorage.removeItem('currentUser');
+                    localStorage.removeItem('sessionExpiry');
+                    window.location.href = '/';
+                }
+            });
+            console.log('Admin logout button bound');
+        }
+        
         // Add user button
-        document.getElementById('add-user-btn').addEventListener('click', () => {
-            this.showUserModal();
-        });
+        const addUserBtn = document.getElementById('add-user-btn');
+        if (addUserBtn) {
+            addUserBtn.addEventListener('click', () => {
+                this.showUserModal();
+            });
+        }
 
-        // User form
-        document.getElementById('user-form').addEventListener('submit', (e) => {
-            this.handleUserFormSubmit(e);
-        });
+        // User form - will be re-bound in bindModalEvents when modal opens
+        // Don't bind here to avoid conflicts
+        console.log('Initial user form binding skipped - will bind in modal');
 
-        // Role change in user form
-        document.getElementById('user-role').addEventListener('change', (e) => {
-            this.toggleUserFields(e.target.value);
-        });
+        // Role change in user form - will be re-bound in modal
+        // Don't bind here to avoid conflicts
+        console.log('Initial role change binding skipped - will bind in modal');
 
-        // Modal close
-        document.querySelector('.close').addEventListener('click', () => {
-            this.closeModal();
-        });
-
-        document.getElementById('cancel-user-btn').addEventListener('click', () => {
-            this.closeModal();
-        });
+        // Modal close buttons - will be re-bound in bindModalEvents when modal opens
+        // Don't bind here to avoid conflicts
+        console.log('Initial modal close binding skipped - will bind in modal');
 
         // User filters
-        document.getElementById('user-type-filter').addEventListener('change', () => {
-            this.filterUsers();
-        });
+        const userTypeFilter = document.getElementById('user-type-filter');
+        if (userTypeFilter) {
+            userTypeFilter.addEventListener('change', () => {
+                this.filterUsers();
+            });
+        }
 
-        document.getElementById('search-users').addEventListener('input', () => {
-            this.filterUsers();
-        });
+        const searchUsers = document.getElementById('search-users');
+        if (searchUsers) {
+            searchUsers.addEventListener('input', () => {
+                this.filterUsers();
+            });
+        }
 
         // Settings
-        document.getElementById('save-settings-btn').addEventListener('click', () => {
-            this.saveSettings();
-        });
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', () => {
+                this.saveSettings();
+            });
+        }
 
-        document.getElementById('reset-settings-btn').addEventListener('click', () => {
-            this.resetSettings();
-        });
+        const resetSettingsBtn = document.getElementById('reset-settings-btn');
+        if (resetSettingsBtn) {
+            resetSettingsBtn.addEventListener('click', () => {
+                this.resetSettings();
+            });
+        }
 
         // Click outside modal to close
         window.addEventListener('click', (e) => {
@@ -145,6 +178,8 @@ class AdminPanel {
                 this.closeModal();
             }
         });
+        
+        console.log('Admin events bound successfully');
     }
 
     showTab(tabName) {
@@ -380,40 +415,180 @@ class AdminPanel {
     }
 
     showUserModal(userId = null, userType = null) {
+        console.log('showUserModal called', { userId, userType });
         this.editingUserId = userId;
         const modal = document.getElementById('user-modal');
         const form = document.getElementById('user-form');
         const title = document.getElementById('modal-title');
         
         if (!modal || !form || !title) {
-            console.error('Modal elements not found');
+            console.error('Modal elements not found', { modal: !!modal, form: !!form, title: !!title });
             return;
         }
+        
+        // Reset form first
+        form.reset();
+        
+        // Reset handler flags to ensure re-binding
+        form.hasCustomSubmitHandler = false;
+        const submitBtn = document.querySelector('#user-form button[type="submit"]');
+        if (submitBtn) submitBtn.hasCustomClickHandler = false;
+        const roleSelect = document.getElementById('user-role');
+        if (roleSelect) roleSelect.hasCustomChangeHandler = false;
+        const cancelBtn = document.getElementById('cancel-user-btn');
+        if (cancelBtn) cancelBtn.hasCustomClickHandler = false;
+        const closeBtn = document.querySelector('#user-modal .close');
+        if (closeBtn) closeBtn.hasCustomClickHandler = false;
         
         if (userId) {
             // Edit mode
             title.textContent = 'Chỉnh sửa tài khoản';
             const user = this.findUserInType(userId, userType);
             if (user) {
-                document.getElementById('user-username').value = user.username;
-                document.getElementById('user-password').value = user.password;
-                document.getElementById('user-name').value = user.name;
-                document.getElementById('user-role').value = user.role;
-                document.getElementById('user-class').value = user.class || '';
-                document.getElementById('user-subject').value = user.subject || '';
-                this.toggleUserFields(user.role);
+                // Wait a bit for form reset to take effect
+                setTimeout(() => {
+                    document.getElementById('user-username').value = user.username || '';
+                    document.getElementById('user-password').value = user.password || '';
+                    document.getElementById('user-name').value = user.name || '';
+                    document.getElementById('user-role').value = user.role || 'student';
+                    document.getElementById('user-class').value = user.class || '';
+                    document.getElementById('user-subject').value = user.subject || '';
+                    this.toggleUserFields(user.role);
+                }, 50);
             }
         } else {
             // Add mode
             title.textContent = 'Thêm tài khoản mới';
-            form.reset();
-            this.toggleUserFields('student');
+            // Wait a bit for form reset to take effect
+            setTimeout(() => {
+                document.getElementById('user-role').value = 'student';
+                this.toggleUserFields('student');
+            }, 50);
         }
         
         // Show modal with proper display
         modal.style.display = 'block';
         modal.classList.add('show');
         document.body.style.overflow = 'hidden'; // Prevent background scroll
+        
+        // Bind modal events after form is ready
+        setTimeout(() => {
+            this.bindModalEvents();
+        }, 100);
+        
+        console.log('Modal opened successfully');
+    }
+
+    // Bind events specifically for modal
+    bindModalEvents() {
+        console.log('Binding modal events...');
+        
+        // For form, we don't clone because it will lose the input values
+        // Instead we use a different approach
+        const form = document.getElementById('user-form');
+        if (form) {
+            // Remove existing submit listeners by setting a flag
+            if (!form.hasCustomSubmitHandler) {
+                form.addEventListener('submit', (e) => {
+                    console.log('Modal form submit triggered via form event');
+                    this.handleUserFormSubmit(e);
+                });
+                form.hasCustomSubmitHandler = true;
+                console.log('Form submit event bound');
+            }
+        }
+        
+        // Also bind directly to submit button as backup
+        const submitBtn = document.querySelector('#user-form button[type="submit"]');
+        if (submitBtn && !submitBtn.hasCustomClickHandler) {
+            submitBtn.addEventListener('click', (e) => {
+                console.log('Submit button clicked directly');
+                // Let the form submit event handle it, just log for debug
+            });
+            submitBtn.hasCustomClickHandler = true;
+            console.log('Submit button click event bound');
+        }
+
+        // Backup: Direct binding to submit button with form data extraction
+        const submitBtnBackup = document.querySelector('#user-form button[type="submit"]');
+        if (submitBtnBackup) {
+            submitBtnBackup.onclick = (e) => {
+                console.log('Submit button onclick backup triggered');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Create a fake form submit event
+                const form = document.getElementById('user-form');
+                const fakeEvent = new Event('submit');
+                fakeEvent.preventDefault = () => {};
+                
+                this.handleUserFormSubmit(fakeEvent);
+                return false;
+            };
+            console.log('Submit button onclick backup bound');
+        }
+        
+        // Bind role change event
+        const roleSelect = document.getElementById('user-role');
+        if (roleSelect && !roleSelect.hasCustomChangeHandler) {
+            roleSelect.addEventListener('change', (e) => {
+                console.log('Role changed to:', e.target.value);
+                this.toggleUserFields(e.target.value);
+            });
+            roleSelect.hasCustomChangeHandler = true;
+            console.log('Role change event bound');
+        }
+        
+        // Bind cancel button
+        const cancelBtn = document.getElementById('cancel-user-btn');
+        if (cancelBtn && !cancelBtn.hasCustomClickHandler) {
+            cancelBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Cancel button clicked');
+                this.closeModal();
+            });
+            cancelBtn.hasCustomClickHandler = true;
+            console.log('Cancel button event bound');
+        }
+        
+        // Bind close button (X)
+        const closeBtn = document.querySelector('#user-modal .close');
+        if (closeBtn && !closeBtn.hasCustomClickHandler) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Close button clicked');
+                this.closeModal();
+            });
+            closeBtn.hasCustomClickHandler = true;
+            console.log('Close button event bound');
+        }
+        
+        // === BACKUP HANDLERS MOVED HERE ===
+        // Set backup handlers after other events are bound
+        setTimeout(() => {
+            const saveButton = document.querySelector('#user-form button[type="submit"]');
+            if (saveButton) {
+                // Keep existing handlers but add backup onclick
+                const originalOnClick = saveButton.onclick;
+                
+                saveButton.onclick = (event) => {
+                    console.log('=== BACKUP SAVE BUTTON CLICKED ===');
+                    event.preventDefault();
+                    event.stopPropagation();
+                    
+                    // Call handleUserFormSubmit directly with proper context
+                    this.handleUserFormSubmit(event);
+                    
+                    return false;
+                };
+                
+                console.log('Backup save button handler set');
+            }
+        }, 100);
+        
+        console.log('Modal events bound successfully');
     }
 
     findUserInType(userId, userType) {
@@ -424,39 +599,99 @@ class AdminPanel {
     }
 
     toggleUserFields(role) {
+        console.log('toggleUserFields called with role:', role);
         const studentFields = document.getElementById('student-fields');
         const teacherFields = document.getElementById('teacher-fields');
+        
+        if (!studentFields || !teacherFields) {
+            console.error('Student or teacher fields not found');
+            return;
+        }
         
         studentFields.style.display = role === 'student' ? 'block' : 'none';
         teacherFields.style.display = role === 'teacher' ? 'block' : 'none';
         
         // Set required attributes
-        document.getElementById('user-class').required = role === 'student';
-        document.getElementById('user-subject').required = role === 'teacher';
+        const classField = document.getElementById('user-class');
+        const subjectField = document.getElementById('user-subject');
+        
+        if (classField) {
+            classField.required = role === 'student';
+        }
+        if (subjectField) {
+            subjectField.required = role === 'teacher';
+        }
+        
+        console.log('User fields toggled successfully');
     }
 
     async handleUserFormSubmit(e) {
         e.preventDefault();
+        console.log('=== Form submit triggered ===');
+        console.log('Event:', e);
+        console.log('Form element:', e.target);
+        
+        const usernameEl = document.getElementById('user-username');
+        const passwordEl = document.getElementById('user-password');
+        const nameEl = document.getElementById('user-name');
+        const roleEl = document.getElementById('user-role');
+        
+        console.log('Form elements found:', {
+            username: !!usernameEl,
+            password: !!passwordEl,
+            name: !!nameEl,
+            role: !!roleEl
+        });
+        
+        if (!usernameEl || !passwordEl || !nameEl || !roleEl) {
+            console.error('Form elements not found');
+            this.showAlert('Lỗi: Không tìm thấy các trường dữ liệu', 'error');
+            return;
+        }
         
         const userData = {
-            username: document.getElementById('user-username').value,
-            password: document.getElementById('user-password').value,
-            name: document.getElementById('user-name').value,
-            role: document.getElementById('user-role').value
+            username: usernameEl.value.trim(),
+            password: passwordEl.value,
+            name: nameEl.value.trim(),
+            role: roleEl.value
         };
+        
+        console.log('User data collected:', userData);
+
+        // Validate required fields
+        if (!userData.username || !userData.password || !userData.name || !userData.role) {
+            console.log('Validation failed - missing required fields');
+            this.showAlert('Vui lòng điền đầy đủ thông tin', 'error');
+            return;
+        }
 
         // Add role-specific fields
         if (userData.role === 'student') {
-            userData.class = document.getElementById('user-class').value;
+            const classEl = document.getElementById('user-class');
+            userData.class = classEl ? classEl.value.trim() : '';
+            console.log('Student class:', userData.class);
+            if (!userData.class) {
+                this.showAlert('Vui lòng nhập lớp cho học sinh', 'error');
+                return;
+            }
         } else if (userData.role === 'teacher') {
-            userData.subject = document.getElementById('user-subject').value;
+            const subjectEl = document.getElementById('user-subject');
+            userData.subject = subjectEl ? subjectEl.value.trim() : '';
+            console.log('Teacher subject:', userData.subject);
+            if (!userData.subject) {
+                this.showAlert('Vui lòng nhập môn học cho giáo viên', 'error');
+                return;
+            }
         }
+
+        console.log('Final user data:', userData);
 
         try {
             let response;
             if (this.editingUserId) {
                 // Update user
                 userData.id = this.editingUserId;
+                console.log('Updating user:', userData);
                 response = await fetch(`/api/users/${this.editingUserId}`, {
                     method: 'PUT',
                     headers: {
@@ -467,6 +702,7 @@ class AdminPanel {
             } else {
                 // Create new user
                 userData.id = this.generateUserId(userData.role);
+                console.log('Creating new user:', userData);
                 response = await fetch('/api/users', {
                     method: 'POST',
                     headers: {
@@ -476,7 +712,15 @@ class AdminPanel {
                 });
             }
 
+            console.log('Response status:', response.status);
+            console.log('Response ok:', response.ok);
+            console.log('Response headers:', response.headers);
+
             if (response.ok) {
+                console.log('User saved successfully');
+                const responseData = await response.json();
+                console.log('Response data:', responseData);
+                
                 this.showAlert(
                     this.editingUserId ? 'Cập nhật tài khoản thành công!' : 'Thêm tài khoản thành công!',
                     'success'
@@ -485,7 +729,16 @@ class AdminPanel {
                 await this.loadAllData();
                 this.displayUsers();
             } else {
-                const errorData = await response.json();
+                const errorText = await response.text();
+                console.error('Server error response:', errorText);
+                
+                let errorData;
+                try {
+                    errorData = JSON.parse(errorText);
+                } catch (e) {
+                    errorData = { error: errorText || 'Server error' };
+                }
+                
                 throw new Error(errorData.error || 'Server error');
             }
         } catch (error) {
@@ -543,11 +796,15 @@ class AdminPanel {
     }
 
     closeModal() {
+        console.log('closeModal called');
         const modal = document.getElementById('user-modal');
         if (modal) {
             modal.style.display = 'none';
             modal.classList.remove('show');
             document.body.style.overflow = ''; // Restore scroll
+            console.log('Modal closed');
+        } else {
+            console.error('Modal not found when trying to close');
         }
         this.editingUserId = null;
     }
@@ -617,7 +874,35 @@ class AdminPanel {
             }
         }, 3000);
     }
+
+    // Debug method to test form submission manually
+    testFormSubmit() {
+        console.log('=== TESTING FORM SUBMIT ===');
+        const form = document.getElementById('user-form');
+        if (form) {
+            const fakeEvent = { preventDefault: () => {} };
+            this.handleUserFormSubmit(fakeEvent);
+        } else {
+            console.error('Form not found for testing');
+        }
+    }
 }
 
 // Export AdminPanel class to global scope for main.js to access
 window.AdminPanel = AdminPanel;
+
+// Auto-initialize if we're on admin page and not already initialized
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!window.adminPanel && window.location.pathname.includes('admin')) {
+            console.log('Auto-initializing AdminPanel...');
+            window.adminPanel = new AdminPanel();
+        }
+    });
+} else {
+    // DOM already loaded
+    if (!window.adminPanel && (window.location.pathname.includes('admin') || document.getElementById('user-modal'))) {
+        console.log('Auto-initializing AdminPanel (DOM ready)...');
+        window.adminPanel = new AdminPanel();
+    }
+}

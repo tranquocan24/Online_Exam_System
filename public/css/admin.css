@@ -701,3 +701,92 @@
     background: #ffe0b2;
     border-color: #ff9800;
 }
+
+/* Admin Header */
+#admin-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+#admin-header .header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#admin-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+#admin-header #user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+#admin-header #welcome-text {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Admin Footer */
+#admin-footer {
+    background: #2c3e50;
+    color: #ecf0f1;
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px;
+}
+
+#admin-footer .footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+#admin-footer p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Admin mode body adjustments */
+.admin-mode {
+    background: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-mode #app-container {
+    flex: 1;
+    padding: 0;
+    max-width: none;
+    margin: 0;
+}
+
+/* Ensure admin content is properly sized */
+#admin-content {
+    min-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+    background: white;
+    margin: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Ensure tabs are visible and properly styled */
+.tab-content.active {
+    display: block !important;
+}
+
+/* Fix modal z-index for admin */
+.admin-mode .modal {
+    z-index: 10000;
+}

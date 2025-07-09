@@ -15,6 +15,14 @@
       "name": "Trần Thị B",
       "class": "CNTT01",
       "role": "student"
+    },
+    {
+      "username": "cuong",
+      "password": "1",
+      "name": "Đặng Cao Cường",
+      "role": "student",
+      "class": "CIT",
+      "id": "SV202451"
     }
   ],
   "teachers": [

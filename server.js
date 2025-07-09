@@ -540,6 +540,73 @@ class ExamServer {
             const data = fs.readFileSync(usersFile, 'utf8');
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(data);
+        } else if (req.method === 'POST') {
+            // Add new user
+            let body = '';
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+            
+            req.on('end', () => {
+                try {
+                    const newUser = JSON.parse(body);
+                    const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                    
+                    console.log('Adding new user:', newUser);
+                    
+                    // Validate required fields
+                    if (!newUser.username || !newUser.password || !newUser.name || !newUser.role) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Missing required fields' }));
+                        return;
+                    }
+                    
+                    // Check if username already exists
+                    const allUsers = [
+                        ...(data.students || []),
+                        ...(data.teachers || []),
+                        ...(data.admins || [])
+                    ];
+                    
+                    if (allUsers.find(user => user.username === newUser.username)) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Username already exists' }));
+                        return;
+                    }
+                    
+                    // Add to appropriate role array
+                    const roleKey = newUser.role + 's'; // student -> students, teacher -> teachers, admin -> admins
+                    if (!data[roleKey]) {
+                        data[roleKey] = [];
+                    }
+                    
+                    data[roleKey].push(newUser);
+                    
+                    // Save to file
+                    fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                    
+                    console.log('User added successfully:', newUser.username);
+                    
+                    res.writeHead(201, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'User created successfully', user: newUser }));
+                    
+                } catch (error) {
+                    console.error('Error adding user:', error);
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid JSON or server error' }));
+                }
+            });
+        } else if (req.method === 'PUT') {
+            // Update user (for future use)
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not implemented yet' }));
+        } else if (req.method === 'DELETE') {
+            // Delete user (for future use)
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not implemented yet' }));
+        } else {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
         }
     }
 
