@@ -199,6 +199,206 @@
       "timeSpent": 102,
       "submittedAt": "2025-07-08T06:47:32.571Z",
       "isTimeUp": false
+    },
+    {
+      "id": "result_1752076796129_SV684783",
+      "examId": "exam_001",
+      "examTitle": "Kiểm tra Lập trình Web",
+      "examQuestions": [
+        {
+          "id": 1,
+          "question": "HTML là gì?",
+          "options": [
+            "HyperText Markup Language",
+            "High Tech Modern Language",
+            "Home Tool Markup Language",
+            "Hyperlink and Text Markup Language"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": 2,
+          "question": "CSS được sử dụng để làm gì?",
+          "options": [
+            "Tạo cấu trúc trang web",
+            "Định dạng và trang trí trang web",
+            "Xử lý logic trang web",
+            "Kết nối cơ sở dữ liệu"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": 0,
+        "1": 1
+      },
+      "timeSpent": 7,
+      "submittedAt": "2025-07-09T15:59:56.122Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1752076877900_SV684783",
+      "examId": "exam_1751893918219",
+      "examTitle": "1",
+      "examQuestions": [
+        {
+          "id": "q_1751893869302_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751893908083_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 1
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": 0,
+        "1": 1
+      },
+      "timeSpent": 6,
+      "submittedAt": "2025-07-09T16:01:17.892Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1752077131273_SV684783",
+      "examId": "exam_1751899116115",
+      "examTitle": "2",
+      "examQuestions": [
+        {
+          "id": "q_1751899074767_1",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "7"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899074867_2",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "8"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899100720_3",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751899110717_4",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": 0,
+        "1": 0,
+        "2": 0,
+        "3": 2
+      },
+      "timeSpent": 5,
+      "submittedAt": "2025-07-09T16:05:31.264Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1752077821105_SV684783",
+      "examId": "exam_1751957123339",
+      "examTitle": "3",
+      "examQuestions": [
+        {
+          "id": "q_1751957078459_1",
+          "type": "multiple-choice",
+          "question": "5",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "5",
+            "6",
+            "4",
+            "3"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1751957078559_2",
+          "type": "multiple-choice",
+          "question": "3",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "3",
+            "5",
+            "4",
+            "7"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": 0,
+        "1": 0
+      },
+      "timeSpent": 3,
+      "submittedAt": "2025-07-09T16:17:01.098Z",
+      "isTimeUp": false
     }
   ]
 }

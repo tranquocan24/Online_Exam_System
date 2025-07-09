@@ -295,6 +295,8 @@ class ExamServer {
                 await this.handleExamApi(req, res, pathname);
             } else if (pathname.startsWith('/api/result/')) {
                 await this.handleResultApi(req, res, pathname);
+            } else if (pathname.startsWith('/api/users/')) {
+                await this.handleUserById(req, res, pathname);
             } else {
                 switch (pathname) {
                     case '/api/users':
@@ -540,6 +542,215 @@ class ExamServer {
             const data = fs.readFileSync(usersFile, 'utf8');
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(data);
+        } else if (req.method === 'POST') {
+            // Add new user
+            let body = '';
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+            
+            req.on('end', () => {
+                try {
+                    const newUser = JSON.parse(body);
+                    const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                    
+                    console.log('Adding new user:', newUser);
+                    
+                    // Validate required fields
+                    if (!newUser.username || !newUser.password || !newUser.name || !newUser.role) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Missing required fields' }));
+                        return;
+                    }
+                    
+                    // Check if username already exists
+                    const allUsers = [
+                        ...(data.students || []),
+                        ...(data.teachers || []),
+                        ...(data.admins || [])
+                    ];
+                    
+                    if (allUsers.find(user => user.username === newUser.username)) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Username already exists' }));
+                        return;
+                    }
+                    
+                    // Add to appropriate role array
+                    const roleKey = newUser.role + 's'; // student -> students, teacher -> teachers, admin -> admins
+                    if (!data[roleKey]) {
+                        data[roleKey] = [];
+                    }
+                    
+                    data[roleKey].push(newUser);
+                    
+                    // Save to file
+                    fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                    
+                    console.log('User added successfully:', newUser.username);
+                    
+                    res.writeHead(201, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'User created successfully', user: newUser }));
+                    
+                } catch (error) {
+                    console.error('Error adding user:', error);
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid JSON or server error' }));
+                }
+            });
+        } else if (req.method === 'PUT') {
+            // Update user - handled by handleUserById
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Use /api/users/{id} for updates' }));
+        } else if (req.method === 'DELETE') {
+            // Delete user - handled by handleUserById
+            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Use /api/users/{id} for deletion' }));
+        } else {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
+        }
+    }
+
+    // Handle individual user operations (/api/users/{id})
+    async handleUserById(req, res, pathname) {
+        const usersFile = path.join(this.dataDir, 'users.json');
+        const userId = pathname.split('/').pop(); // Get ID from URL
+        
+        console.log(`${req.method} request for user: ${userId}`);
+        
+        if (req.method === 'PUT') {
+            // Update user
+            let body = '';
+            req.on('data', chunk => {
+                body += chunk.toString();
+            });
+            
+            req.on('end', () => {
+                try {
+                    const updatedUser = JSON.parse(body);
+                    const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                    
+                    console.log('Updating user:', updatedUser);
+                    
+                    // Validate required fields
+                    if (!updatedUser.username || !updatedUser.password || !updatedUser.name || !updatedUser.role) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'Missing required fields' }));
+                        return;
+                    }
+                    
+                    // Find and update user
+                    let userFound = false;
+                    const roleKey = updatedUser.role + 's'; // student -> students, etc.
+                    
+                    if (data[roleKey]) {
+                        const userIndex = data[roleKey].findIndex(user => user.id === userId);
+                        if (userIndex !== -1) {
+                            // Keep the original ID
+                            updatedUser.id = userId;
+                            data[roleKey][userIndex] = updatedUser;
+                            userFound = true;
+                        }
+                    }
+                    
+                    // If not found in expected role, search all roles
+                    if (!userFound) {
+                        const allRoles = ['students', 'teachers', 'admins'];
+                        for (const role of allRoles) {
+                            if (data[role]) {
+                                const userIndex = data[role].findIndex(user => user.id === userId);
+                                if (userIndex !== -1) {
+                                    // Remove from old role
+                                    data[role].splice(userIndex, 1);
+                                    
+                                    // Add to new role
+                                    const newRoleKey = updatedUser.role + 's';
+                                    if (!data[newRoleKey]) {
+                                        data[newRoleKey] = [];
+                                    }
+                                    updatedUser.id = userId;
+                                    data[newRoleKey].push(updatedUser);
+                                    userFound = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (!userFound) {
+                        res.writeHead(404, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ error: 'User not found' }));
+                        return;
+                    }
+                    
+                    // Save to file
+                    fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                    
+                    console.log('User updated successfully:', updatedUser.username);
+                    
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'User updated successfully', user: updatedUser }));
+                    
+                } catch (error) {
+                    console.error('Error updating user:', error);
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid JSON or server error' }));
+                }
+            });
+            
+        } else if (req.method === 'DELETE') {
+            // Delete user
+            try {
+                const data = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                
+                console.log('Deleting user:', userId);
+                
+                // Protect main admin
+                if (userId === 'AD001') {
+                    res.writeHead(403, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Cannot delete main admin account' }));
+                    return;
+                }
+                
+                // Find and delete user
+                let userFound = false;
+                const allRoles = ['students', 'teachers', 'admins'];
+                
+                for (const role of allRoles) {
+                    if (data[role]) {
+                        const userIndex = data[role].findIndex(user => user.id === userId);
+                        if (userIndex !== -1) {
+                            data[role].splice(userIndex, 1);
+                            userFound = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (!userFound) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'User not found' }));
+                    return;
+                }
+                
+                // Save to file
+                fs.writeFileSync(usersFile, JSON.stringify(data, null, 2));
+                
+                console.log('User deleted successfully:', userId);
+                
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'User deleted successfully' }));
+                
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Server error' }));
+            }
+            
+        } else {
+            res.writeHead(405, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ error: 'Method not allowed' }));
         }
     }
 

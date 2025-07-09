@@ -1,20 +1,36 @@
 {
   "students": [
     {
-      "id": "SV001",
       "username": "sv001",
       "password": "123456",
-      "name": "Nguyễn Văn A",
+      "name": "Nguyễn Văn An",
+      "role": "student",
       "class": "CNTT01",
-      "role": "student"
+      "id": "SV001"
     },
     {
-      "id": "SV002",
-      "username": "sv002",
+      "username": "cuong",
+      "password": "1",
+      "name": "Đặng Cao Cường",
+      "role": "student",
+      "class": "CIT",
+      "id": "SV202451"
+    },
+    {
+      "username": "an",
+      "password": "1",
+      "name": "Trần Quốc An",
+      "role": "student",
+      "class": "CIT",
+      "id": "SV274635"
+    },
+    {
+      "username": "hau",
       "password": "123456",
-      "name": "Trần Thị B",
-      "class": "CNTT01",
-      "role": "student"
+      "name": "Nguyễn Phúc Hậu",
+      "role": "student",
+      "class": "EBS",
+      "id": "SV684783"
     }
   ],
   "teachers": [
@@ -25,6 +41,15 @@
       "name": "PGS.TS Nguyễn Văn C",
       "subject": "Lập trình Web",
       "role": "teacher"
+    }
+  ],
+  "admins": [
+    {
+      "id": "AD001",
+      "username": "admin",
+      "password": "admin123",
+      "name": "Quản trị viên hệ thống",
+      "role": "admin"
     }
   ]
 }

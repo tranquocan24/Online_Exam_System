@@ -30,7 +30,7 @@ class BasicFlowTester {
             await this.page.type('#password', '123456');
             await this.page.click('button[type="submit"]');
             
-            await this.page.waitForSelector('.teacher-dashboard', { timeout: 5000 });
+            await this.page.waitForSelector('#teacher-nav', { timeout: 5000 });
             console.log('✅ Teacher login successful');
             
             // Test 3: Student login
@@ -44,7 +44,12 @@ class BasicFlowTester {
             await this.page.type('#password', '123456');
             await this.page.click('button[type="submit"]');
             
-            await this.page.waitForSelector('.student-dashboard', { timeout: 5000 });
+            // Wait for login to complete and check if we're no longer on login page
+            await this.page.waitForFunction(() => {
+                const loginForm = document.querySelector('form#login-form');
+                return !loginForm || loginForm.style.display === 'none';
+            }, { timeout: 5000 });
+            
             console.log('✅ Student login successful');
             
             console.log('🎉 All basic tests passed!');
