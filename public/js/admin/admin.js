@@ -8,6 +8,7 @@ class AdminPanel {
         this.results = null;
         this.currentUser = null;
         this.editingUserId = null;
+        this.refreshInterval = null; // Auto refresh timer
         
         this.init();
     }
@@ -38,6 +39,9 @@ class AdminPanel {
         
         // Hiển thị tab mặc định
         this.showTab('dashboard');
+        
+        // Start auto refresh for dashboard stats (every 30 seconds)
+        this.startAutoRefresh();
         
         console.log('AdminPanel init completed');
     }
@@ -111,6 +115,14 @@ class AdminPanel {
         if (addUserBtn) {
             addUserBtn.addEventListener('click', () => {
                 this.showUserModal();
+            });
+        }
+
+        // Refresh data button
+        const refreshDataBtn = document.getElementById('refresh-data-btn');
+        if (refreshDataBtn) {
+            refreshDataBtn.addEventListener('click', () => {
+                this.refreshData();
             });
         }
 
@@ -208,7 +220,10 @@ class AdminPanel {
         // Load tab-specific data
         switch (tabName) {
             case 'dashboard':
-                this.updateDashboard();
+                // Refresh data when showing dashboard
+                this.loadAllData().then(() => {
+                    this.updateDashboard();
+                });
                 break;
             case 'users':
                 this.displayUsers();
@@ -228,7 +243,7 @@ class AdminPanel {
         // Count statistics
         const totalStudents = this.users.students ? this.users.students.length : 0;
         const totalTeachers = this.users.teachers ? this.users.teachers.length : 0;
-        const totalExams = this.exams && this.exams.exams ? this.exams.exams.length : 0;
+        const totalExams = this.exams && Array.isArray(this.exams) ? this.exams.length : 0;
         const todayAttempts = this.getTodayAttempts();
 
         // Update stats display
@@ -299,8 +314,8 @@ class AdminPanel {
     }
 
     findExamById(examId) {
-        if (!this.exams || !this.exams.exams) return null;
-        return this.exams.exams.find(exam => exam.id === examId);
+        if (!this.exams || !Array.isArray(this.exams)) return null;
+        return this.exams.find(exam => exam.id === examId);
     }
 
     getTimeAgo(dateString) {
@@ -795,8 +810,41 @@ class AdminPanel {
     }
 
     displayStats() {
-        // Placeholder for charts - would need Chart.js or similar library
         console.log('Displaying statistics...');
+        
+        if (!this.users || !this.exams || !this.results) {
+            console.log('Data not loaded yet for stats');
+            return;
+        }
+
+        // Calculate statistics
+        const totalUsers = (this.users.students ? this.users.students.length : 0) +
+                          (this.users.teachers ? this.users.teachers.length : 0) +
+                          (this.users.admins ? this.users.admins.length : 0);
+        
+        const activeExams = Array.isArray(this.exams) ? this.exams.length : 0;
+        const weeklyAttempts = this.getWeeklyAttempts();
+
+        // Update stats display in the stats tab
+        const totalUsersElement = document.getElementById('total-users');
+        const activeExamsElement = document.getElementById('active-exams');
+        const weeklyAttemptsElement = document.getElementById('weekly-attempts');
+
+        if (totalUsersElement) totalUsersElement.textContent = totalUsers;
+        if (activeExamsElement) activeExamsElement.textContent = activeExams;
+        if (weeklyAttemptsElement) weeklyAttemptsElement.textContent = weeklyAttempts;
+    }
+
+    getWeeklyAttempts() {
+        if (!this.results || !this.results.results) return 0;
+        
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        
+        return this.results.results.filter(result => {
+            const resultDate = new Date(result.submittedAt);
+            return resultDate >= oneWeekAgo;
+        }).length;
     }
 
     loadSettings() {
@@ -870,6 +918,80 @@ class AdminPanel {
         } else {
             console.error('Form not found for testing');
         }
+    }
+
+    async refreshData() {
+        console.log('Refreshing admin data...');
+        
+        // Show loading state
+        const refreshBtn = document.getElementById('refresh-data-btn');
+        if (refreshBtn) {
+            refreshBtn.disabled = true;
+            refreshBtn.textContent = '🔄 Đang tải...';
+        }
+
+        try {
+            await this.loadAllData();
+            
+            // Refresh current tab display
+            switch (this.currentTab) {
+                case 'dashboard':
+                    this.updateDashboard();
+                    break;
+                case 'users':
+                    this.displayUsers();
+                    break;
+                case 'stats':
+                    this.displayStats();
+                    break;
+            }
+            
+            this.showAlert('Dữ liệu đã được cập nhật!', 'success');
+            console.log('Admin data refreshed successfully');
+        } catch (error) {
+            console.error('Error refreshing data:', error);
+            this.showAlert('Có lỗi khi cập nhật dữ liệu!', 'error');
+        } finally {
+            // Reset button state
+            if (refreshBtn) {
+                refreshBtn.disabled = false;
+                refreshBtn.textContent = '🔄 Làm mới dữ liệu';
+            }
+        }
+    }
+
+    startAutoRefresh() {
+        // Clear existing interval if any
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+        
+        // Auto refresh dashboard stats every 30 seconds
+        this.refreshInterval = setInterval(() => {
+            if (this.currentTab === 'dashboard') {
+                console.log('Auto refreshing dashboard data...');
+                this.loadAllData().then(() => {
+                    this.updateDashboard();
+                }).catch(error => {
+                    console.error('Auto refresh failed:', error);
+                });
+            }
+        }, 30000); // 30 seconds
+        
+        console.log('Auto refresh started (30s interval)');
+    }
+
+    stopAutoRefresh() {
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+            console.log('Auto refresh stopped');
+        }
+    }
+
+    // Call this when admin panel is destroyed or user logs out
+    destroy() {
+        this.stopAutoRefresh();
     }
 
 }

@@ -10,21 +10,44 @@ class ResultViewer {
 
     async init() {
         try {
-            // Get result ID from URL parameters
-            const urlParams = new URLSearchParams(window.location.search);
-            this.resultId = urlParams.get('result');
+            // Get result ID from URL hash or localStorage
+            let resultId = null;
+
+            // Try to get from URL hash first (e.g., #result/123)
+            const hash = window.location.hash;
+            if (hash.startsWith('#result/')) {
+                resultId = hash.replace('#result/', '');
+            }
+
+            // Fallback to localStorage
+            if (!resultId) {
+                resultId = localStorage.getItem('selectedResultId');
+            }
+
+            // Fallback to URL parameters
+            if (!resultId) {
+                const urlParams = new URLSearchParams(window.location.search);
+                resultId = urlParams.get('result');
+            }
+
+            this.resultId = resultId;
 
             if (!this.resultId) {
                 this.showError('Không tìm thấy ID kết quả thi');
                 return;
             }
 
+            console.log('Loading result with ID:', this.resultId);
+
             // Load result data
             await this.loadResult();
 
             // Hide loading screen
-            document.getElementById('loadingScreen').style.display = 'none';
-            document.getElementById('resultsContainer').style.display = 'block';
+            const loadingScreen = document.getElementById('loadingScreen');
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            if (loadingScreen) loadingScreen.style.display = 'none';
+            if (resultsContainer) resultsContainer.style.display = 'block';
 
         } catch (error) {
             console.error('Error initializing result viewer:', error);
@@ -34,21 +57,50 @@ class ResultViewer {
 
     async loadResult() {
         try {
-            const user = JSON.parse(sessionStorage.getItem('user'));
+            // Get current user data
+            let user = null;
+
+            // Try to get from current app instance
+            if (window.app && window.app.currentUser) {
+                user = window.app.currentUser;
+            } else {
+                // Fallback to localStorage
+                const userData = localStorage.getItem('currentUser');
+                if (userData) {
+                    user = JSON.parse(userData);
+                }
+            }
+
+            if (!user) {
+                throw new Error('Người dùng chưa đăng nhập');
+            }
+
+            console.log('Loading result for user:', user.id, 'result ID:', this.resultId);
+
             const response = await fetch(`/api/result/${this.resultId}?userId=${user.id}`);
 
             if (!response.ok) {
-                throw new Error('Failed to load result');
+                if (response.status === 404) {
+                    throw new Error('Không tìm thấy kết quả thi');
+                } else if (response.status === 403) {
+                    throw new Error('Bạn không có quyền xem kết quả này');
+                } else {
+                    throw new Error('Lỗi tải dữ liệu từ server');
+                }
             }
 
             const data = await response.json();
             this.resultData = data.result;
             this.examData = data.exam;
 
+            console.log('Result data loaded:', this.resultData);
+            console.log('Exam data loaded:', this.examData);
+
             // Render result data
             this.renderResult();
 
         } catch (error) {
+            console.error('Error in loadResult:', error);
             throw new Error('Không thể tải dữ liệu kết quả: ' + error.message);
         }
     }
@@ -271,23 +323,53 @@ function toggleDetails() {
 function printResult() {
     // Hide navigation and other non-essential elements for printing
     const actions = document.querySelector('.actions-section');
-    const originalDisplay = actions.style.display;
-    actions.style.display = 'none';
+    const originalDisplay = actions ? actions.style.display : '';
+    if (actions) actions.style.display = 'none';
 
     window.print();
 
     // Restore original display
-    actions.style.display = originalDisplay;
+    if (actions) actions.style.display = originalDisplay;
 }
 
-// Initialize result viewer when page loads
-document.addEventListener('DOMContentLoaded', () => {
+// Export to global scope
+window.ResultViewer = ResultViewer;
+
+// Initialize result viewer when needed
+function initResultViewer() {
+    console.log('Initializing ResultViewer...');
+
     // Check if user is logged in
-    const user = sessionStorage.getItem('user');
+    let user = null;
+    if (window.app && window.app.currentUser) {
+        user = window.app.currentUser;
+    } else {
+        const userData = localStorage.getItem('currentUser');
+        if (userData) {
+            user = JSON.parse(userData);
+        }
+    }
+
     if (!user) {
-        window.location.href = '/';
+        console.error('User not logged in, cannot view result');
+        alert('Bạn cần đăng nhập để xem kết quả thi');
         return;
     }
 
-    new ResultViewer();
-});
+    // Create or reuse result viewer instance
+    if (!window.resultViewer) {
+        window.resultViewer = new ResultViewer();
+    }
+
+    return window.resultViewer;
+}
+
+// Auto-initialize if we're on the result page
+if (window.location.hash.includes('result') || window.location.search.includes('result')) {
+    // Delay initialization to ensure DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initResultViewer);
+    } else {
+        setTimeout(initResultViewer, 100);
+    }
+}

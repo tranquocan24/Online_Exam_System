@@ -473,6 +473,23 @@ class App {
                     }
                     break;
 
+                case 'result':
+                    if (this.currentRole === 'student') {
+                        console.log('Loading result page...');
+                        if (window.ResultViewer) {
+                            if (!window.resultViewer) {
+                                console.log('Creating new result viewer instance...');
+                                window.resultViewer = new window.ResultViewer();
+                            } else {
+                                console.log('Reinitializing existing result viewer...');
+                                await window.resultViewer.init();
+                            }
+                        } else {
+                            console.warn('ResultViewer class not found');
+                        }
+                    }
+                    break;
+
                 case 'exam':
                     if (this.currentRole === 'student') {
                         // Exam luôn tạo mới để tránh conflict
