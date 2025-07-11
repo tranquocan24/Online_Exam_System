@@ -2,8 +2,8 @@
 
 /* Style main header when in admin mode */
 body.admin-mode #main-header {
-    background: #1a252f;
-    border-bottom: 2px solid #e74c3c;
+    background: #112444;
+    border-bottom: 2px solid #2d5aa0;
     position: relative;
     z-index: 1000;
 }
@@ -34,8 +34,8 @@ body.admin-mode #main-footer img {
 
 /* Navigation styles */
 #admin-nav {
-    background: #2c3e50;
-    border-bottom: 3px solid #3498db;
+    background: #1a365d;
+    border-bottom: 3px solid #2d5aa0;
     margin-bottom: 20px;
 }
 
@@ -67,8 +67,8 @@ body.admin-mode #main-footer img {
 
 .nav-tab:hover,
 .nav-tab.active {
-    background: #34495e;
-    border-bottom-color: #3498db;
+    background: #2d5aa0;
+    border-bottom-color: #112444;
     color: #fff;
 }
 
@@ -98,12 +98,12 @@ body.admin-mode #main-footer img {
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    border-left: 4px solid #3498db;
+    border-left: 4px solid #112444;
 }
 
 .stats-card h3 {
     margin: 0 0 15px 0;
-    color: #2c3e50;
+    color: #2d3748;
     font-size: 16px;
     font-weight: 600;
 }
@@ -111,7 +111,7 @@ body.admin-mode #main-footer img {
 .stat-number {
     font-size: 2.5em;
     font-weight: bold;
-    color: #3498db;
+    color: #112444;
     margin: 10px 0;
 }
 
@@ -124,7 +124,7 @@ body.admin-mode #main-footer img {
 
 .recent-activities h3 {
     margin-top: 0;
-    color: #2c3e50;
+    color: #2d3748;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 10px;
 }
@@ -139,7 +139,7 @@ body.admin-mode #main-footer img {
 
 .users-header h2 {
     margin: 0;
-    color: #2c3e50;
+    color: #2d3748;
 }
 
 .users-filters {
@@ -177,7 +177,7 @@ body.admin-mode #main-footer img {
 }
 
 #users-table th {
-    background: #2c3e50;
+    background: #112444;
     color: #fff;
     padding: 15px;
     text-align: left;
@@ -231,12 +231,12 @@ body.admin-mode #main-footer img {
 }
 
 .btn-edit {
-    background: #3498db;
+    background: #112444;
     color: #fff;
 }
 
 .btn-edit:hover {
-    background: #2980b9;
+    background: #1a365d;
 }
 
 .btn-delete {
@@ -264,7 +264,7 @@ body.admin-mode #main-footer img {
 
 .chart-container h3 {
     margin-top: 0;
-    color: #2c3e50;
+    color: #2d3748;
     text-align: center;
     margin-bottom: 20px;
 }
@@ -285,7 +285,7 @@ body.admin-mode #main-footer img {
 
 .settings-section h3 {
     margin-top: 0;
-    color: #2c3e50;
+    color: #2d3748;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 10px;
     margin-bottom: 20px;
@@ -298,7 +298,7 @@ body.admin-mode #main-footer img {
 .setting-item label {
     display: block;
     margin-bottom: 5px;
-    color: #2c3e50;
+    color: #2d3748;
     font-weight: 500;
 }
 
@@ -353,7 +353,7 @@ body.admin-mode #main-footer img {
     align-items: center;
     padding: 20px 25px;
     border-bottom: 1px solid #ecf0f1;
-    background: #2c3e50;
+    background: #112444;
     color: #fff;
     border-radius: 8px 8px 0 0;
 }
@@ -385,7 +385,7 @@ body.admin-mode #main-footer img {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    color: #2c3e50;
+    color: #2d3748;
     font-weight: 500;
 }
 
@@ -402,8 +402,8 @@ body.admin-mode #main-footer img {
 .form-group input:focus,
 .form-group select:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    border-color: #112444;
+    box-shadow: 0 0 5px rgba(17, 36, 68, 0.3);
 }
 
 .form-actions {
@@ -430,12 +430,12 @@ body.admin-mode #main-footer img {
 }
 
 .btn-primary {
-    background: #3498db;
+    background: #112444;
     color: #fff;
 }
 
 .btn-primary:hover {
-    background: #2980b9;
+    background: #1a365d;
 }
 
 .btn-secondary {
@@ -528,7 +528,7 @@ body.admin-mode #main-footer img {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #3498db, #2980b9);
+    background: linear-gradient(90deg, #112444, #1a365d);
 }
 
 .stats-card:nth-child(2)::before {
@@ -578,7 +578,7 @@ body.admin-mode #main-footer img {
     left: -100%;
     width: 100%;
     height: 3px;
-    background: #3498db;
+    background: #112444;
     transition: left 0.3s ease;
 }
 
@@ -590,8 +590,8 @@ body.admin-mode #main-footer img {
 /* Enhanced form styles */
 .form-group input:focus,
 .form-group select:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    border-color: #112444;
+    box-shadow: 0 0 0 2px rgba(17, 36, 68, 0.2);
     transform: translateY(-1px);
 }
 
@@ -606,7 +606,7 @@ body.admin-mode #main-footer img {
     bottom: 120%;
     left: 50%;
     transform: translateX(-50%);
-    background: #2c3e50;
+    background: #2d3748;
     color: white;
     padding: 8px 12px;
     border-radius: 4px;
@@ -625,7 +625,7 @@ body.admin-mode #main-footer img {
     left: 50%;
     transform: translateX(-50%);
     border: 5px solid transparent;
-    border-top-color: #2c3e50;
+    border-top-color: #2d3748;
     opacity: 0;
     visibility: hidden;
     transition: all 0.3s ease;
@@ -737,7 +737,7 @@ body.admin-mode #main-footer img {
 
 /* Admin Header */
 #admin-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #112444 0%, #1a365d 100%);
     color: white;
     padding: 15px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -816,8 +816,8 @@ body.admin-mode #main-footer {
 
 /* Style main header when in admin mode */
 body.admin-mode #main-header {
-    background: #1a252f;
-    border-bottom: 2px solid #e74c3c;
+    background: #112444;
+    border-bottom: 2px solid #2d5aa0;
     position: relative;
     z-index: 1000;
 }

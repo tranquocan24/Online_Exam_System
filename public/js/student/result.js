@@ -4,7 +4,7 @@ class ResultViewer {
         this.resultId = null;
         this.resultData = null;
         this.examData = null;
-        
+
         this.init();
     }
 
@@ -13,7 +13,7 @@ class ResultViewer {
             // Get result ID from URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             this.resultId = urlParams.get('result');
-            
+
             if (!this.resultId) {
                 this.showError('Không tìm thấy ID kết quả thi');
                 return;
@@ -21,11 +21,11 @@ class ResultViewer {
 
             // Load result data
             await this.loadResult();
-            
+
             // Hide loading screen
             document.getElementById('loadingScreen').style.display = 'none';
             document.getElementById('resultsContainer').style.display = 'block';
-            
+
         } catch (error) {
             console.error('Error initializing result viewer:', error);
             this.showError('Có lỗi xảy ra khi tải kết quả thi');
@@ -36,18 +36,18 @@ class ResultViewer {
         try {
             const user = JSON.parse(sessionStorage.getItem('user'));
             const response = await fetch(`/api/result/${this.resultId}?userId=${user.id}`);
-            
+
             if (!response.ok) {
                 throw new Error('Failed to load result');
             }
-            
+
             const data = await response.json();
             this.resultData = data.result;
             this.examData = data.exam;
-            
+
             // Render result data
             this.renderResult();
-            
+
         } catch (error) {
             throw new Error('Không thể tải dữ liệu kết quả: ' + error.message);
         }
@@ -56,25 +56,25 @@ class ResultViewer {
     renderResult() {
         // Update exam title
         document.getElementById('examTitle').textContent = this.examData.title;
-        
+
         // Calculate and display scores
         const { correct, incorrect, unanswered } = this.calculateStats();
         const totalQuestions = this.examData.questions.length;
         const score = Math.round((correct / totalQuestions) * 10 * 100) / 100; // Scale to 10 points
         const percentage = Math.round((correct / totalQuestions) * 100);
-        
+
         document.getElementById('scoreValue').textContent = score.toFixed(1);
         document.getElementById('percentValue').textContent = `${percentage}%`;
-        
+
         // Update stats
         document.getElementById('correctCount').textContent = correct;
         document.getElementById('incorrectCount').textContent = incorrect;
         document.getElementById('unansweredCount').textContent = unanswered;
         document.getElementById('timeSpent').textContent = this.formatTime(this.resultData.timeSpent);
-        
+
         // Update header color based on score
         this.updateHeaderColor(percentage);
-        
+
         // Render question details
         this.renderQuestionDetails();
     }
@@ -83,11 +83,11 @@ class ResultViewer {
         let correct = 0;
         let incorrect = 0;
         let unanswered = 0;
-        
+
         this.examData.questions.forEach((question, index) => {
             const userAnswer = this.resultData.answers[index];
             const isAnswered = this.isAnswerProvided(userAnswer);
-            
+
             if (!isAnswered) {
                 unanswered++;
             } else if (this.isAnswerCorrect(question, userAnswer)) {
@@ -96,7 +96,7 @@ class ResultViewer {
                 incorrect++;
             }
         });
-        
+
         return { correct, incorrect, unanswered };
     }
 
@@ -112,11 +112,11 @@ class ResultViewer {
             if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) {
                 return false;
             }
-            
+
             // Sort both arrays for comparison
             const sortedUserAnswer = [...userAnswer].sort();
             const sortedCorrectAnswer = [...question.correctAnswer].sort();
-            
+
             return JSON.stringify(sortedUserAnswer) === JSON.stringify(sortedCorrectAnswer);
         } else if (question.type === 'text') {
             // For text questions, we'll do a simple comparison
@@ -130,11 +130,11 @@ class ResultViewer {
 
     updateHeaderColor(percentage) {
         const header = document.getElementById('resultHeader');
-        
+
         if (percentage >= 80) {
-            header.style.background = 'linear-gradient(135deg, #27ae60, #229954)';
+            header.style.background = 'linear-gradient(135deg, #112444, #1a365d)';
         } else if (percentage >= 60) {
-            header.style.background = 'linear-gradient(135deg, #f39c12, #e67e22)';
+            header.style.background = 'linear-gradient(135deg, #2d5aa0, #1a365d)';
         } else {
             header.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
         }
@@ -143,7 +143,7 @@ class ResultViewer {
     renderQuestionDetails() {
         const container = document.getElementById('detailsContent');
         container.innerHTML = '';
-        
+
         this.examData.questions.forEach((question, index) => {
             const questionDiv = this.createQuestionElement(question, index);
             container.appendChild(questionDiv);
@@ -154,7 +154,7 @@ class ResultViewer {
         const userAnswer = this.resultData.answers[index];
         const isAnswered = this.isAnswerProvided(userAnswer);
         const isCorrect = isAnswered && this.isAnswerCorrect(question, userAnswer);
-        
+
         // Determine status
         let status, statusClass;
         if (!isAnswered) {
@@ -167,7 +167,7 @@ class ResultViewer {
             status = 'Sai';
             statusClass = 'status-incorrect';
         }
-        
+
         const questionDiv = document.createElement('div');
         questionDiv.className = 'question-result';
         questionDiv.innerHTML = `
@@ -180,7 +180,7 @@ class ResultViewer {
                 ${this.renderAnswerOptions(question, userAnswer)}
             </div>
         `;
-        
+
         return questionDiv;
     }
 
@@ -197,14 +197,14 @@ class ResultViewer {
                 </div>
             `;
         }
-        
+
         let optionsHtml = '';
-        
+
         question.options.forEach((option, optionIndex) => {
             let optionClass = 'answer-option';
             let isUserAnswer = false;
             let isCorrectAnswer = false;
-            
+
             // Check if this is the correct answer
             if (question.type === 'multiple-select') {
                 isCorrectAnswer = question.correctAnswer.includes(optionIndex);
@@ -213,22 +213,22 @@ class ResultViewer {
                 isCorrectAnswer = question.correctAnswer === optionIndex;
                 isUserAnswer = userAnswer === optionIndex;
             }
-            
+
             // Apply appropriate classes
             if (isCorrectAnswer) {
                 optionClass += ' correct';
             }
-            
+
             if (isUserAnswer) {
                 optionClass += ' user-answer';
                 if (!isCorrectAnswer) {
                     optionClass += ' incorrect';
                 }
             }
-            
+
             optionsHtml += `<div class="${optionClass}">${option}</div>`;
         });
-        
+
         return optionsHtml;
     }
 
@@ -236,7 +236,7 @@ class ResultViewer {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const remainingSeconds = seconds % 60;
-        
+
         if (hours > 0) {
             return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
         } else {
@@ -248,7 +248,7 @@ class ResultViewer {
         const errorDiv = document.getElementById('errorMessage');
         errorDiv.textContent = message;
         errorDiv.style.display = 'block';
-        
+
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('resultsContainer').style.display = 'block';
     }
@@ -258,7 +258,7 @@ class ResultViewer {
 function toggleDetails() {
     const content = document.getElementById('detailsContent');
     const button = document.querySelector('.toggle-details');
-    
+
     if (content.classList.contains('show')) {
         content.classList.remove('show');
         button.textContent = 'Xem chi tiết';
@@ -273,9 +273,9 @@ function printResult() {
     const actions = document.querySelector('.actions-section');
     const originalDisplay = actions.style.display;
     actions.style.display = 'none';
-    
+
     window.print();
-    
+
     // Restore original display
     actions.style.display = originalDisplay;
 }
@@ -288,6 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/';
         return;
     }
-    
+
     new ResultViewer();
 });

@@ -1,8 +1,14 @@
-# Hệ thống thi online tối giản
+# Hệ thống thi online tối giản - EIU
 
-# Hệ thống thi online tối giản
+# Hệ thống thi online tối giản - Trường Đại Học Quốc Tế Miền Đông
 
 Hệ thống thi online đơn giản được xây dựng bằng Node.js thuần, lưu trữ dữ liệu bằng file JSON.
+
+## 🎨 Thiết kế & Giao diện
+- **EIU Brand Colors**: Sử dụng bảng màu chủ đạo của Trường Đại Học Quốc Tế Miền Đông
+- **Responsive Design**: Tối ưu cho mọi thiết bị
+- **Modern UI/UX**: Giao diện hiện đại, thân thiện người dùng
+- **Accessibility**: Hỗ trợ accessibility standards
 
 ## 🚀 Tính năng chính
 
@@ -86,6 +92,7 @@ npm test
 │       ├── student/        # Nội dung sinh viên
 │       └── teacher/        # Nội dung giáo viên
 │
+├── EIU_COLORS.md          # Documentation về bảng màu EIU
 └── README.md
 ```
 

@@ -10,7 +10,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f5f5f5;
-    color: #333;
+    color: #2d3748;
     line-height: 1.6;
     min-height: 100vh;
     display: flex;
@@ -19,10 +19,10 @@ body {
 
 /* Header chung */
 #main-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #112444 0%, #1a365d 100%);
     color: white;
     padding: 1rem 0;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header-container {
@@ -64,29 +64,29 @@ body {
 }
 
 .btn-logout {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(255, 255, 255, 0.2);
     color: white;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .btn-logout:hover {
-    background-color: rgba(255,255,255,0.3);
+    background-color: rgba(255, 255, 255, 0.3);
     transform: translateY(-1px);
 }
 
 .btn-primary {
-    background-color: #667eea;
+    background-color: #112444;
     color: white;
 }
 
 .btn-primary:hover {
-    background-color: #5a67d8;
+    background-color: #1a365d;
     transform: translateY(-1px);
 }
 
 .btn-secondary {
     background-color: #e2e8f0;
-    color: #4a5568;
+    color: #2d3748;
 }
 
 .btn-secondary:hover {
@@ -106,7 +106,7 @@ body {
 .role-nav {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
     overflow: hidden;
 }
@@ -132,7 +132,7 @@ body {
     justify-content: center;
     padding: 15px 20px;
     text-decoration: none;
-    color: #4a5568;
+    color: #2d3748;
     transition: all 0.3s ease;
     border-right: 1px solid #e2e8f0;
     gap: 8px;
@@ -144,11 +144,11 @@ body {
 
 .nav-link:hover {
     background-color: #f7fafc;
-    color: #667eea;
+    color: #112444;
 }
 
 .nav-link.active {
-    background-color: #667eea;
+    background-color: #112444;
     color: white;
 }
 
@@ -164,13 +164,14 @@ body {
 .main-content {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 30px;
     min-height: 500px;
 }
 
 /* Loading states */
-.loading, .content-loading {
+.loading,
+.content-loading {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -181,7 +182,7 @@ body {
 
 /* Footer */
 #main-footer {
-    background-color: #2d3748;
+    background-color: #112444;
     color: white;
     padding: 20px 0;
     margin-top: auto;
@@ -217,15 +218,15 @@ body {
 
 .form-input:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #112444;
+    box-shadow: 0 0 0 3px rgba(17, 36, 68, 0.1);
 }
 
 /* Cards */
 .card {
     background: white;
     border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
 }
@@ -248,28 +249,28 @@ body {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     #main-header h1 {
         font-size: 1.5rem;
     }
-    
+
     .nav-menu {
         flex-direction: column;
     }
-    
+
     .nav-link {
         border-right: none;
         border-bottom: 1px solid #e2e8f0;
     }
-    
+
     .nav-menu li:last-child .nav-link {
         border-bottom: none;
     }
-    
+
     #app-container {
         padding: 10px;
     }
-    
+
     .main-content {
         padding: 20px;
     }
@@ -279,11 +280,11 @@ body {
     .nav-text {
         display: none;
     }
-    
+
     .nav-link {
         padding: 12px;
     }
-    
+
     .nav-icon {
         font-size: 20px;
     }

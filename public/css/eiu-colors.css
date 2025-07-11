@@ -1,0 +1,230 @@
+/* EIU Color Palette - Định nghĩa màu sắc chủ đạo của Trường Đại Học Quốc Tế Miền Đông */
+
+:root {
+    /* Primary Colors - Màu chính */
+    --eiu-primary: #112444;
+    /* Xanh đậm - màu chính của logo EIU */
+    --eiu-primary-light: #1a365d;
+    /* Xanh nhạt hơn */
+    --eiu-primary-lighter: #2d5aa0;
+    /* Xanh trung bình */
+
+    /* Secondary Colors - Màu phụ */
+    --eiu-secondary: #e2e8f0;
+    /* Xanh nhạt cho background */
+    --eiu-secondary-light: #f7fafc;
+    /* Xanh rất nhạt */
+
+    /* Text Colors - Màu chữ */
+    --eiu-text-primary: #2d3748;
+    /* Xám đậm cho text chính */
+    --eiu-text-secondary: #718096;
+    /* Xám nhạt cho text phụ */
+    --eiu-text-light: #a0aec0;
+    /* Xám rất nhạt */
+
+    /* Background Colors - Màu nền */
+    --eiu-bg-primary: #ffffff;
+    /* Trắng */
+    --eiu-bg-secondary: #f5f5f5;
+    /* Xám nhạt */
+    --eiu-bg-light: #f8f9fa;
+    /* Xám rất nhạt */
+
+    /* Status Colors - Màu trạng thái */
+    --eiu-success: #27ae60;
+    /* Xanh lá cho thành công */
+    --eiu-warning: #f39c12;
+    /* Cam cho cảnh báo */
+    --eiu-error: #e74c3c;
+    /* Đỏ cho lỗi */
+    --eiu-info: #3498db;
+    /* Xanh dương cho thông tin */
+
+    /* Border Colors - Màu viền */
+    --eiu-border-light: #e2e8f0;
+    /* Viền nhạt */
+    --eiu-border-medium: #cbd5e0;
+    /* Viền trung bình */
+
+    /* Shadow Colors - Màu bóng */
+    --eiu-shadow-light: rgba(0, 0, 0, 0.1);
+    --eiu-shadow-medium: rgba(0, 0, 0, 0.15);
+    --eiu-shadow-heavy: rgba(0, 0, 0, 0.2);
+
+    /* Gradient Colors - Màu gradient */
+    --eiu-gradient-primary: linear-gradient(135deg, var(--eiu-primary) 0%, var(--eiu-primary-light) 100%);
+    --eiu-gradient-secondary: linear-gradient(135deg, var(--eiu-primary-light) 0%, var(--eiu-primary-lighter) 100%);
+}
+
+/* Utility Classes - Các class tiện ích */
+.text-eiu-primary {
+    color: var(--eiu-primary) !important;
+}
+
+.text-eiu-secondary {
+    color: var(--eiu-text-secondary) !important;
+}
+
+.text-eiu-light {
+    color: var(--eiu-text-light) !important;
+}
+
+.bg-eiu-primary {
+    background-color: var(--eiu-primary) !important;
+}
+
+.bg-eiu-secondary {
+    background-color: var(--eiu-secondary) !important;
+}
+
+.bg-eiu-light {
+    background-color: var(--eiu-bg-light) !important;
+}
+
+.border-eiu-primary {
+    border-color: var(--eiu-primary) !important;
+}
+
+.border-eiu-light {
+    border-color: var(--eiu-border-light) !important;
+}
+
+.btn-eiu-primary {
+    background: var(--eiu-gradient-primary) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-eiu-primary:hover {
+    background: var(--eiu-gradient-secondary) !important;
+    transform: translateY(-1px) !important;
+}
+
+/* Header gradient */
+.header-eiu-gradient {
+    background: var(--eiu-gradient-primary) !important;
+}
+
+/* Card styling */
+.card-eiu {
+    border-left: 4px solid var(--eiu-primary) !important;
+    transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+
+.card-eiu:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 25px var(--eiu-shadow-medium) !important;
+}
+
+/* Form styling */
+.form-eiu input:focus,
+.form-eiu select:focus,
+.form-eiu textarea:focus {
+    border-color: var(--eiu-primary) !important;
+    box-shadow: 0 0 0 3px rgba(17, 36, 68, 0.1) !important;
+}
+
+/* Navigation styling */
+.nav-eiu .nav-link.active {
+    background-color: var(--eiu-primary) !important;
+    color: white !important;
+}
+
+.nav-eiu .nav-link:hover {
+    color: var(--eiu-primary) !important;
+}
+
+/* Footer styling */
+.footer-eiu {
+    background-color: var(--eiu-primary) !important;
+    color: white !important;
+}
+
+/* Status badges */
+.badge-eiu-success {
+    background-color: var(--eiu-success) !important;
+    color: white !important;
+}
+
+.badge-eiu-warning {
+    background-color: var(--eiu-warning) !important;
+    color: white !important;
+}
+
+.badge-eiu-error {
+    background-color: var(--eiu-error) !important;
+    color: white !important;
+}
+
+.badge-eiu-info {
+    background-color: var(--eiu-info) !important;
+    color: white !important;
+}
+
+/* Animation keyframes */
+@keyframes eiu-fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-eiu-fadeInUp {
+    animation: eiu-fadeInUp 0.6s ease-out;
+}
+
+/* Responsive utilities */
+@media (max-width: 768px) {
+    .mobile-eiu-padding {
+        padding: 15px !important;
+    }
+
+    .mobile-eiu-text {
+        font-size: 0.9rem !important;
+    }
+}
+
+/* Print styles */
+@media print {
+    .print-eiu-header {
+        background: var(--eiu-primary) !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --eiu-primary: #000000;
+        --eiu-text-primary: #000000;
+        --eiu-border-light: #000000;
+    }
+}
+
+/* Dark mode support (for future implementation) */
+@media (prefers-color-scheme: dark) {
+    /* Will be implemented later */
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .animate-eiu-fadeInUp {
+        animation: none !important;
+    }
+
+    .card-eiu:hover {
+        transform: none !important;
+    }
+
+    .btn-eiu-primary:hover {
+        transform: none !important;
+    }
+}
