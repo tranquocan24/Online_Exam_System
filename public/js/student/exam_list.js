@@ -343,16 +343,35 @@ class ExamList {
     }
 
     viewResult(resultId) {
-        // Navigate to result page
-        window.location.hash = `result/${resultId}`;
-        window.app.loadPage('result');
+        console.log('viewResult called with resultId:', resultId);
         
-        // Pass result ID to result page
-        setTimeout(() => {
-            if (window.resultController) {
-                window.resultController.loadResult(resultId);
+        if (!resultId) {
+            console.error('No result ID provided');
+            alert('Không tìm thấy kết quả thi. Vui lòng thử lại.');
+            return;
+        }
+
+        try {
+            // Store result ID for the result page
+            localStorage.setItem('selectedResultId', resultId);
+            
+            // Navigate to result page
+            window.location.hash = `result/${resultId}`;
+            
+            // Use app navigation if available
+            if (window.app && typeof window.app.loadPage === 'function') {
+                window.app.loadPage('result');
+            } else {
+                console.warn('App navigation not available, using direct navigation');
+                // Direct navigation fallback
+                window.location.href = `student.html#result/${resultId}`;
             }
-        }, 100);
+            
+            console.log('Navigation to result page initiated');
+        } catch (error) {
+            console.error('Error navigating to result page:', error);
+            alert('Có lỗi khi mở trang kết quả. Vui lòng thử lại.');
+        }
     }
 
     retakeExam(examId) {

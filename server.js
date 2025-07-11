@@ -486,7 +486,6 @@ class ExamServer {
         }
     }
 
-    // Handle single result retrieval
     async handleSingleResult(req, res, resultId) {
         if (req.method !== 'GET') {
             res.writeHead(405, { 'Content-Type': 'application/json' });
@@ -499,6 +498,8 @@ class ExamServer {
             const query = url.parse(req.url, true).query;
             const userId = query.userId;
             
+            console.log('handleSingleResult called:', { resultId, userId });
+            
             const resultsFile = path.join(this.dataDir, 'results.json');
             const questionsFile = path.join(this.dataDir, 'questions.json');
             
@@ -506,6 +507,11 @@ class ExamServer {
             const questionsData = JSON.parse(fs.readFileSync(questionsFile, 'utf8'));
             
             const result = resultsData.submissions.find(r => r.id === resultId);
+            
+            console.log('Found result:', result ? 'Yes' : 'No');
+            if (result) {
+                console.log('Result belongs to user:', result.userId);
+            }
             
             if (!result) {
                 res.writeHead(404, { 'Content-Type': 'application/json' });
@@ -515,6 +521,7 @@ class ExamServer {
             
             // Check if user has permission to view this result
             if (result.userId !== userId) {
+                console.log('Access denied:', { resultUserId: result.userId, requestUserId: userId });
                 res.writeHead(403, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ error: 'Access denied' }));
                 return;
