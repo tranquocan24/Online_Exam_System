@@ -1,0 +1,207 @@
+<!-- Admin Header -->
+<header id="admin-header">
+    <div class="header-container">
+        <h1>Quản trị hệ thống</h1>
+        <div id="user-info">
+            <span id="welcome-text"></span>
+            <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
+        </div>
+    </div>
+</header>
+
+<!-- Admin Navigation -->
+<nav id="admin-nav">
+    <div class="nav-container">
+        <ul class="nav-tabs">
+            <li><a href="#" data-tab="dashboard" class="nav-tab active">Tổng quan</a></li>
+            <li><a href="#" data-tab="users" class="nav-tab">Quản lý tài khoản</a></li>
+            <li><a href="#" data-tab="stats" class="nav-tab">Thống kê</a></li>
+            <li><a href="#" data-tab="settings" class="nav-tab">Cài đặt</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Admin Content -->
+<div id="admin-content">
+    <!-- Dashboard Tab -->
+    <div id="dashboard-tab" class="tab-content active">
+        <div class="dashboard-grid">
+            <div class="stats-card">
+                <h3>Tổng số học sinh</h3>
+                <div class="stat-number" id="total-students">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Tổng số giáo viên</h3>
+                <div class="stat-number" id="total-teachers">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Tổng số bài thi</h3>
+                <div class="stat-number" id="total-exams">0</div>
+            </div>
+            <div class="stats-card">
+                <h3>Lượt thi hôm nay</h3>
+                <div class="stat-number" id="today-attempts">0</div>
+            </div>
+        </div>
+        
+        <div class="recent-activities">
+            <h3>Hoạt động gần đây</h3>
+            <div id="recent-activities-list">
+                <!-- Danh sách hoạt động sẽ được load động -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Management Tab -->
+    <div id="users-tab" class="tab-content">
+        <div class="users-header">
+            <h2>Quản lý tài khoản</h2>
+            <button id="add-user-btn" class="btn btn-primary">Thêm tài khoản mới</button>
+        </div>
+        
+        <div class="users-filters">
+            <select id="user-type-filter">
+                <option value="all">Tất cả</option>
+                <option value="student">Học sinh</option>
+                <option value="teacher">Giáo viên</option>
+                <option value="admin">Quản trị viên</option>
+            </select>
+            <input type="text" id="search-users" placeholder="Tìm kiếm theo tên hoặc username...">
+        </div>
+        
+        <div class="users-table-container">
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Tên</th>
+                        <th>Vai trò</th>
+                        <th>Thông tin bổ sung</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="users-table-body">
+                    <!-- Dữ liệu users sẽ được load động -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Statistics Tab -->
+    <div id="stats-tab" class="tab-content">
+        <div class="stats-header">
+            <h2>Thống kê hệ thống</h2>
+        </div>
+        <div class="stats-content">
+            <div class="chart-container">
+                <h3>Biểu đồ hoạt động hệ thống</h3>
+                <p>Tính năng biểu đồ sẽ được phát triển trong phiên bản sau.</p>
+            </div>
+            <div class="stats-summary">
+                <h3>Báo cáo tổng quan</h3>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="label">Tổng số người dùng:</span>
+                        <span class="value" id="total-users">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Bài thi hoạt động:</span>
+                        <span class="value" id="active-exams">0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="label">Lượt thi trong tuần:</span>
+                        <span class="value" id="weekly-attempts">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="settings-tab" class="tab-content">
+        <div class="settings-header">
+            <h2>Cài đặt hệ thống</h2>
+        </div>
+        <div class="settings-content">
+            <div class="settings-section">
+                <h3>Cài đặt chung</h3>
+                <div class="form-group">
+                    <label for="system-name">Tên hệ thống:</label>
+                    <input type="text" id="system-name" value="Hệ thống thi online">
+                </div>
+                <div class="form-group">
+                    <label for="default-exam-time">Thời gian thi mặc định (phút):</label>
+                    <input type="number" id="default-exam-time" value="60" min="1" max="300">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="allow-registration">
+                        Cho phép đăng ký tài khoản mới
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <h3>Bảo mật</h3>
+                <div class="form-group">
+                    <label for="min-password-length">Độ dài mật khẩu tối thiểu:</label>
+                    <input type="number" id="min-password-length" value="6" min="4" max="20">
+                </div>
+                <div class="form-group">
+                    <label for="session-timeout">Thời gian hết hạn phiên (phút):</label>
+                    <input type="number" id="session-timeout" value="30" min="5" max="480">
+                </div>
+            </div>
+            
+            <div class="settings-actions">
+                <button id="save-settings-btn" class="btn btn-primary">Lưu cài đặt</button>
+                <button id="reset-settings-btn" class="btn btn-secondary">Đặt lại mặc định</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Modal -->
+<div id="user-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title">Thêm tài khoản mới</h3>
+            <span class="close">&times;</span>
+        </div>
+        <form id="user-form">
+            <div class="form-group">
+                <label for="user-username">Username:</label>
+                <input type="text" id="user-username" required>
+            </div>
+            <div class="form-group">
+                <label for="user-password">Mật khẩu:</label>
+                <input type="password" id="user-password" required>
+            </div>
+            <div class="form-group">
+                <label for="user-name">Tên đầy đủ:</label>
+                <input type="text" id="user-name" required>
+            </div>
+            <div class="form-group">
+                <label for="user-role">Vai trò:</label>
+                <select id="user-role" required>
+                    <option value="student">Học sinh</option>
+                    <option value="teacher">Giáo viên</option>
+                    <option value="admin">Quản trị viên</option>
+                </select>
+            </div>
+            <div class="form-group" id="student-fields">
+                <label for="user-class">Lớp:</label>
+                <input type="text" id="user-class">
+            </div>
+            <div class="form-group" id="teacher-fields">
+                <label for="user-subject">Môn học:</label>
+                <input type="text" id="user-subject">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Lưu</button>
+                <button type="button" class="btn btn-secondary" id="cancel-user-btn">Hủy</button>
+            </div>
+        </form>
+    </div>
+</div>
