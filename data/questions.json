@@ -191,6 +191,64 @@
       ],
       "id": "exam_1751957123339",
       "createdAt": "2025-07-08T06:45:23.339Z"
+    },
+    {
+      "title": "abc",
+      "subject": "Hệ điều hành",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV001",
+      "questions": [
+        {
+          "id": "q_1752595197191_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752595208359_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752595208359_3",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correctAnswer": 2
+        }
+      ],
+      "id": "exam_1752595226806",
+      "createdAt": "2025-07-15T16:00:26.806Z"
     }
   ]
 }

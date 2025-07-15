@@ -19,26 +19,31 @@ class CreateExam {
         this.currentUser = window.app?.currentUser || JSON.parse(localStorage.getItem('currentUser') || '{}');
         
         if (!this.currentUser || this.currentUser.role !== 'teacher') {
-            console.error('Unauthorized access');
+            console.error('Unauthorized access - current user:', this.currentUser);
             return;
         }
 
+        console.log('Current user:', this.currentUser);
+
         // Delay binding events to ensure DOM is ready
         setTimeout(() => {
+            console.log('Binding events...');
             this.bindEvents();
             this.setupAutoSave();
             
-            // Add first question by default
-            setTimeout(() => {
-                this.addQuestion();
-            }, 200);
+            // Don't add first question automatically to avoid initialization errors
+            // User can click the add question button instead
+            console.log('CreateExam initialization complete');
         }, 100);
     }
 
     bindEvents() {
+        console.log('Binding events...');
+        
         // Form submission
         const form = document.getElementById('createExamForm');
         if (form) {
+            console.log('Found form, binding submit event');
             form.addEventListener('submit', (e) => this.handleSubmit(e));
         } else {
             console.error('createExamForm not found');
@@ -47,12 +52,13 @@ class CreateExam {
         // Add question button
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         if (addQuestionBtn) {
+            console.log('Found add question button, binding click event');
             addQuestionBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.addQuestion();
             });
         } else {
-            console.error('addQuestionBtn not found');
+            console.warn('addQuestionBtn not found - will rely on onclick fallback');
         }
 
         // Save as draft button
@@ -113,6 +119,7 @@ class CreateExam {
 
     addQuestion(questionData = null) {
         try {
+            console.log('Adding question...', questionData);
             this.questionCounter++;
             const questionId = `q_${Date.now()}_${this.questionCounter}`;
             
@@ -146,6 +153,7 @@ class CreateExam {
             }
             
             // Add initial options for multiple choice
+            console.log('Setting up question options...');
             this.setupQuestionOptions(questionItem);
             
             // Insert question
@@ -155,6 +163,7 @@ class CreateExam {
                 return;
             }
             
+            console.log('Appending question to container...');
             container.appendChild(questionElement);
             
             // Hide empty state
@@ -187,11 +196,17 @@ class CreateExam {
             
             // Focus on question text
             setTimeout(() => {
-                questionItem.querySelector('.question-text').focus();
+                const questionText = questionItem.querySelector('.question-text');
+                if (questionText) {
+                    questionText.focus();
+                }
             }, 100);
+            
+            console.log('Question added successfully');
             
         } catch (error) {
             console.error('Error adding question:', error);
+            this.showMessage('Có lỗi khi thêm câu hỏi: ' + error.message, 'error');
         }
     }
 
@@ -206,10 +221,20 @@ class CreateExam {
 
     addOptionToQuestion(questionContainer, text = '', isCorrect = false) {
         const template = document.getElementById('optionTemplate');
+        if (!template) {
+            console.error('Option template not found');
+            return;
+        }
+        
         const optionElement = template.content.cloneNode(true);
         
         const optionInput = optionElement.querySelector('.option-text');
         const correctRadio = optionElement.querySelector('.correct-indicator');
+        
+        if (!optionInput || !correctRadio) {
+            console.error('Option elements not found in template');
+            return;
+        }
         
         optionInput.value = text;
         if (isCorrect) {
@@ -221,8 +246,12 @@ class CreateExam {
         correctRadio.name = `correct-${questionId}`;
         
         const optionsContainer = questionContainer.querySelector('.options-container');
-        optionsContainer.appendChild(optionElement);
+        if (!optionsContainer) {
+            console.error('Options container not found');
+            return;
+        }
         
+        optionsContainer.appendChild(optionElement);
         this.markAsModified();
     }
 
@@ -234,17 +263,29 @@ class CreateExam {
     // Method to add option with container and text (for Markdown import)
     addOptionWithText(optionsContainer, text = '') {
         const template = document.getElementById('optionTemplate');
+        if (!template) {
+            console.error('Option template not found');
+            return;
+        }
+        
         const optionElement = template.content.cloneNode(true);
         
         const optionInput = optionElement.querySelector('.option-text');
         const correctRadio = optionElement.querySelector('.correct-indicator');
         
+        if (!optionInput || !correctRadio) {
+            console.error('Option elements not found in template');
+            return;
+        }
+        
         optionInput.value = text;
         
         // Make radio buttons unique within this question
         const questionContainer = optionsContainer.closest('.question-item');
-        const questionId = questionContainer.getAttribute('data-question-id');
-        correctRadio.name = `correct-${questionId}`;
+        if (questionContainer) {
+            const questionId = questionContainer.getAttribute('data-question-id');
+            correctRadio.name = `correct-${questionId}`;
+        }
         
         optionsContainer.appendChild(optionElement);
         this.markAsModified();
@@ -380,7 +421,9 @@ class CreateExam {
             
             if (type === 'multiple-choice') {
                 const correctRadio = questionContainer.querySelector('.correct-indicator:checked');
-                const correctIndex = Array.from(questionContainer.querySelectorAll('.correct-indicator')).indexOf(correctRadio);
+                const correctIndex = correctRadio ? 
+                    Array.from(questionContainer.querySelectorAll('.correct-indicator')).indexOf(correctRadio) : 
+                    -1;
                 questionData.correctAnswer = correctIndex;
             } else {
                 // multiple-select
@@ -460,15 +503,21 @@ class CreateExam {
 
     async handleSubmit(e) {
         e.preventDefault();
+        console.log('Form submitted!');
         
         if (!this.validateForm()) {
+            console.log('Form validation failed');
             return;
         }
+        
+        console.log('Form validation passed');
         
         try {
             this.showLoading(true);
             
             const examData = this.collectFormData();
+            console.log('Exam data collected:', examData);
+            
             const response = await fetch('/api/questions', {
                 method: 'POST',
                 headers: {
@@ -477,8 +526,11 @@ class CreateExam {
                 body: JSON.stringify(examData)
             });
             
+            console.log('Response received:', response.status);
+            
             if (response.ok) {
                 const result = await response.json();
+                console.log('Exam created successfully:', result);
                 this.showMessage('Tạo bài thi thành công!', 'success');
                 
                 // Clear auto-save
@@ -486,102 +538,133 @@ class CreateExam {
                 
                 // Redirect to manage exams
                 setTimeout(() => {
+                    console.log('Redirecting to manage_exams...');
                     window.app.loadPage('manage_exams');
                 }, 1500);
             } else {
-                throw new Error('Failed to create exam');
+                const errorText = await response.text();
+                console.error('Server error:', response.status, errorText);
+                throw new Error(`Server responded with ${response.status}: ${errorText}`);
             }
             
         } catch (error) {
             console.error('Error creating exam:', error);
-            this.showMessage('Có lỗi xảy ra khi tạo bài thi. Vui lòng thử lại.', 'error');
+            this.showMessage('Có lỗi xảy ra khi tạo bài thi: ' + error.message, 'error');
         } finally {
             this.showLoading(false);
         }
     }
 
     collectFormData() {
+        console.log('Collecting form data...');
         const form = document.getElementById('createExamForm');
+        if (!form) {
+            console.error('Form not found!');
+            return null;
+        }
+        
         const formData = new FormData(form);
         
         const examData = {
-            title: formData.get('title'),
-            subject: formData.get('subject'),
-            description: formData.get('description'),
-            duration: parseInt(formData.get('duration')),
+            title: formData.get('title') || '',
+            subject: formData.get('subject') || '',
+            description: formData.get('description') || '',
+            duration: parseInt(formData.get('duration')) || 60,
             maxAttempts: parseInt(formData.get('maxAttempts')) || 1,
             shuffleQuestions: formData.has('shuffleQuestions'),
             shuffleAnswers: formData.has('shuffleAnswers'),
             showResults: formData.has('showResults'),
             allowReview: formData.has('allowReview'),
-            createdBy: this.currentUser.id,
+            createdBy: this.currentUser?.id || 'unknown',
             questions: []
         };
         
+        console.log('Basic form data:', examData);
+        
         // Collect questions data
         const questionItems = document.querySelectorAll('.question-item');
-        questionItems.forEach(questionContainer => {
+        console.log(`Found ${questionItems.length} question items`);
+        
+        questionItems.forEach((questionContainer, index) => {
+            console.log(`Processing question ${index + 1}...`);
             const questionData = this.extractQuestionData(questionContainer);
-            if (questionData.question.trim()) {
+            if (questionData && questionData.question.trim()) {
                 examData.questions.push(questionData);
+                console.log(`Added question ${index + 1}:`, questionData);
+            } else {
+                console.log(`Skipped empty question ${index + 1}`);
             }
         });
         
+        console.log('Final exam data:', examData);
         return examData;
     }
 
     validateForm() {
+        console.log('Starting form validation...');
         const examData = this.collectFormData();
+        console.log('Form data:', examData);
         
         // Basic validation
         if (!examData.title.trim()) {
+            console.log('Validation failed: No title');
             this.showMessage('Vui lòng nhập tiêu đề bài thi', 'error');
             return false;
         }
         
         if (!examData.subject) {
+            console.log('Validation failed: No subject');
             this.showMessage('Vui lòng chọn môn học', 'error');
             return false;
         }
         
         if (examData.questions.length === 0) {
+            console.log('Validation failed: No questions');
             this.showMessage('Bài thi phải có ít nhất 1 câu hỏi', 'error');
             return false;
         }
+        
+        console.log(`Validating ${examData.questions.length} questions...`);
         
         // Validate each question
         for (let i = 0; i < examData.questions.length; i++) {
             const question = examData.questions[i];
             
             if (!question.question.trim()) {
+                console.log(`Validation failed: Question ${i + 1} empty`);
                 this.showMessage(`Câu hỏi ${i + 1} không được để trống`, 'error');
                 return false;
             }
             
             if (question.type === 'text') {
                 if (!question.correctAnswer.trim()) {
+                    console.log(`Validation failed: Question ${i + 1} no correct answer`);
                     this.showMessage(`Câu hỏi ${i + 1} phải có đáp án đúng`, 'error');
                     return false;
                 }
             } else {
                 // Multiple choice validation
                 if (question.options.some(opt => !opt.trim())) {
+                    console.log(`Validation failed: Question ${i + 1} has empty options`);
                     this.showMessage(`Câu hỏi ${i + 1} có đáp án trống`, 'error');
                     return false;
                 }
                 
-                if (question.type === 'multiple-choice' && question.correctAnswer === -1) {
+                if (question.type === 'multiple-choice' && (question.correctAnswer === -1 || question.correctAnswer === null || question.correctAnswer === undefined)) {
+                    console.log(`Validation failed: Question ${i + 1} no correct answer selected`);
                     this.showMessage(`Câu hỏi ${i + 1} phải chọn đáp án đúng`, 'error');
                     return false;
                 }
                 
                 if (question.type === 'multiple-select' && question.correctAnswer.length === 0) {
+                    console.log(`Validation failed: Question ${i + 1} no correct answers selected`);
                     this.showMessage(`Câu hỏi ${i + 1} phải chọn ít nhất 1 đáp án đúng`, 'error');
                     return false;
                 }
             }
         }
         
+        console.log('Form validation passed!');
         return true;
     }
 
@@ -692,7 +775,7 @@ class CreateExam {
 
     handleMarkdownFile(event) {
         const file = event.target.files[0];
-        if (file && file.type === 'text/markdown' || file.name.endsWith('.md')) {
+        if (file && (file.type === 'text/markdown' || file.name.endsWith('.md'))) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 const content = e.target.result;
@@ -948,27 +1031,53 @@ class CreateExam {
     }
 
     showMessage(message, type = 'info') {
-        const messageEl = document.createElement('div');
-        messageEl.className = `message message-${type}`;
-        messageEl.textContent = message;
-        messageEl.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ed8936' : '#667eea'};
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease-out;
+        // Create toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <span class="toast-icon">${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️'}</span>
+                <span class="toast-message">${message}</span>
+            </div>
         `;
 
-        document.body.appendChild(messageEl);
-        
+        // Style the toast
+        Object.assign(toast.style, {
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            background: type === 'success' ? '#48bb78' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ed8936' : '#667eea',
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+            zIndex: '10000',
+            fontSize: '14px',
+            fontWeight: '500',
+            maxWidth: '400px',
+            opacity: '0',
+            transform: 'translateX(100%)',
+            transition: 'all 0.3s ease'
+        });
+
+        document.body.appendChild(toast);
+
+        // Animate in
         setTimeout(() => {
-            messageEl.remove();
-        }, 4000);
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(0)';
+        }, 100);
+
+        // Auto remove
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 5000);
     }
 
     reset() {
@@ -996,14 +1105,25 @@ class CreateExam {
     }
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.app?.currentRole === 'teacher') {
-        window.createExam = new CreateExam();
-    }
-});
-
-// Also initialize if loaded dynamically
-if (window.app?.currentRole === 'teacher') {
-    window.createExam = new CreateExam();
+// Initialize when page loads (only in browser environment)
+if (typeof window !== 'undefined') {
+    (() => {
+        // Wait for DOM and app to be ready
+        const init = () => {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+                return;
+            }
+            
+            // Check if we're on the create exam page and user is teacher
+            if (window.location.hash?.includes('create_exam') || 
+                document.querySelector('#createExamForm') ||
+                (window.app?.currentRole === 'teacher' && !window.createExam)) {
+                console.log('Initializing CreateExam...');
+                window.createExam = new CreateExam();
+            }
+        };
+        
+        init();
+    })();
 }
