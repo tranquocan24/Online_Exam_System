@@ -806,18 +806,21 @@ body.admin-mode #main-footer img {
 }
 
 /* Admin mode body adjustments */
-.admin-mode {
+body.admin-mode {
     background: #f8f9fa;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    /* overflow-y: hidden; */
+    overflow-y: auto;
 }
 
-.admin-mode #app-container {
+body.admin-mode #app-container {
     flex: 1;
     padding: 0;
     max-width: none;
     margin: 0;
+    overflow-y: visible;
 }
 
 /* Ensure admin content is properly sized */

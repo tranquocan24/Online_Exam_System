@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,7 +78,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             border-left: 4px solid #3498db;
         }
@@ -112,7 +113,7 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -326,8 +327,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
@@ -383,6 +389,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
@@ -391,7 +398,7 @@
 
     <div class="results-container" id="resultsContainer" style="display: none;">
         <div class="error-message" id="errorMessage"></div>
-        
+
         <div class="result-header" id="resultHeader">
             <h1>Kết quả bài thi</h1>
             <div class="exam-title" id="examTitle">Đang tải...</div>
@@ -453,29 +460,6 @@
 
     <script src="../../js/main.js"></script>
     <script src="../../js/student/result.js"></script>
-
-    <!-- Footer -->
-<footer id="main-footer" style="
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    background: #f8f9fa; 
-    padding: 15px 0; 
-    border-top: 1px solid #e9ecef;
-    z-index: 1000;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-">
-    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-        <div class="footer-content" style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-            <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/12/Logo-DH-Quoc-Te-Mien-Dong-EIU.png" 
-                 alt="Logo EIU" 
-                 style="height: 35px; width: auto;">
-            <p style="color: #112444; margin: 0; font-size: 13px; text-align: center;">
-                &copy; 2025 Hệ thống thi online - Trường Đại Học Quốc Tế Miền Đông
-            </p>
-        </div>
-    </div>
-</footer>
 </body>
+
 </html>

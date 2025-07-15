@@ -70,16 +70,16 @@
             <select id="classFilter" class="filter-select">
                 <option value="">Tất cả lớp</option>
             </select>
-            
+
             <select id="scoreRangeFilter" class="filter-select">
                 <option value="">Tất cả điểm</option>
                 <option value="excellent">Xuất sắc (90-100%)</option>
                 <option value="good">Khá (80-89%)</option>
                 <option value="average">Trung bình (70-79%)</option>
                 <option value="weak">Yếu (60-69%)</option>
-                <option value="poor">Kém (<60%)</option>
+                <option value="poor">Kém (<60%)< /option>
             </select>
-            
+
             <input type="text" id="studentSearch" class="search-input" placeholder="Tìm sinh viên...">
         </div>
     </div>
@@ -105,7 +105,8 @@
                 <thead>
                     <tr>
                         <th>
-                            <input type="checkbox" id="selectAllCheckbox" onchange="viewResults.toggleSelectAll(this.checked)">
+                            <input type="checkbox" id="selectAllCheckbox"
+                                onchange="viewResults.toggleSelectAll(this.checked)">
                         </th>
                         <th>STT</th>
                         <th>Mã SV</th>
@@ -164,7 +165,7 @@
                     <strong>Ngày nộp:</strong> <span id="modalSubmitTime"></span>
                 </div>
             </div>
-            
+
             <div class="detailed-answers" id="modalDetailedAnswers">
                 <!-- Detailed answers will be populated here -->
             </div>
@@ -179,27 +180,3 @@
         </div>
     </div>
 </div>
-
-<!-- Footer -->
-<footer id="main-footer" style="
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    background: #f8f9fa; 
-    padding: 15px 0; 
-    border-top: 1px solid #e9ecef;
-    z-index: 1000;
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-">
-    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
-        <div class="footer-content" style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
-            <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/12/Logo-DH-Quoc-Te-Mien-Dong-EIU.png" 
-                 alt="Logo EIU" 
-                 style="height: 35px; width: auto;">
-            <p style="color: #112444; margin: 0; font-size: 13px; text-align: center;">
-                &copy; 2025 Hệ thống thi online - Trường Đại Học Quốc Tế Miền Đông
-            </p>
-        </div>
-    </div>
-</footer>
