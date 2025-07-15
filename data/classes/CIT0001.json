@@ -10,14 +10,21 @@
   ],
   "students": [
     {
+      "id": "SV001",
+      "name": "Nguyễn Văn An"
+    },
+    {
       "id": "SV202451",
       "name": "Đặng Cao Cường"
     },
     {
       "id": "SV274635",
       "name": "Trần Quốc An"
+    },
+    {
+      "id": "SV684783",
+      "name": "Nguyễn Phúc Hậu"
     }
   ],
-  "createdAt": "2025-07-15T11:56:48.906Z",
-  "updatedAt": "2025-07-15T11:56:48.906Z"
+  "updatedAt": "2025-07-15T14:25:55.373Z"
 }

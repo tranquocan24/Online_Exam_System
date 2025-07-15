@@ -1,5 +1,8 @@
 // admin.js - Quản lý giao diện admin
 
+const TEACHERS_PER_PAGE = 10;
+const STUDENTS_PER_PAGE = 10;
+
 class AdminPanel {
     constructor() {
         this.currentTab = 'dashboard';
@@ -1039,11 +1042,13 @@ class AdminPanel {
         const tbody = document.getElementById('classes-table-body');
         if (!tbody) return;
         const rows = this.classes.map(cls => {
-            // Hiển thị tối đa 2 giáo viên, 3 học sinh, còn lại hiển thị số lượng và tooltip
-            const teacherBadges = (cls.teachers || []).slice(0, 2).map(t => `<span class="user-badge teacher" title="${t.name}">👨‍🏫 ${t.name}</span>`).join(' ');
+            const studentBadges = (cls.students || []).slice(0, 3).map(s => `<span class="user-badge student" title="${s.name}">${s.name}</span>`).join(' ');
+            let moreStudents = '';
+            if ((cls.students || []).length > 3) {
+                moreStudents = `<a href="#" class="see-all-students" data-class-id="${cls.id}" style="margin-left:6px;font-size:13px;">Xem tất cả</a>`;
+            }
+            const teacherBadges = (cls.teachers || []).slice(0, 2).map(t => `<span class="user-badge teacher" title="${t.name}">${t.name}</span>`).join(' ');
             const moreTeachers = (cls.teachers || []).length > 2 ? `<span class="user-badge teacher" title="${cls.teachers.slice(2).map(t => t.name).join(', ')}">+${cls.teachers.length - 2}</span>` : '';
-            const studentBadges = (cls.students || []).slice(0, 3).map(s => `<span class="user-badge student" title="${s.name}">👤 ${s.name}</span>`).join(' ');
-            const moreStudents = (cls.students || []).length > 3 ? `<span class="user-badge student" title="${cls.students.slice(3).map(s => s.name).join(', ')}">+${cls.students.length - 3}</span>` : '';
             return `
                 <tr data-class-id="${cls.id}">
                     <td>${cls.id}</td>
@@ -1051,14 +1056,45 @@ class AdminPanel {
                     <td>${cls.description || ''}</td>
                     <td><div class="user-list">${teacherBadges} ${moreTeachers}</div></td>
                     <td><div class="user-list">${studentBadges} ${moreStudents}</div></td>
-                    <td><div class="action-btns">
-                        <button class="btn-sm btn-edit" onclick="adminPanel.editClass('${cls.id}')">✏️ Sửa</button>
-                        <button class="btn-sm btn-delete" onclick="adminPanel.deleteClass('${cls.id}')">🗑️ Xóa</button>
-                    </div></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn-sm btn-edit" onclick="adminPanel.editClass('${cls.id}')">Sửa</button>
+                            <button class="btn-sm btn-delete" onclick="adminPanel.deleteClass('${cls.id}')">Xóa</button>
+                        </div>
+                    </td>
                 </tr>
             `;
-        }).join('');
-        tbody.innerHTML = rows;
+        });
+        tbody.innerHTML = rows.join('');
+        // Gán sự kiện cho các link 'Xem tất cả'
+        setTimeout(() => {
+            document.querySelectorAll('.see-all-students').forEach(link => {
+                link.onclick = (e) => {
+                    e.preventDefault();
+                    const classId = link.getAttribute('data-class-id');
+                    this.showAllStudentsModal(classId);
+                };
+            });
+            // Sự kiện đóng modal
+            const closeBtn = document.getElementById('close-students-list-modal');
+            if (closeBtn) {
+                closeBtn.onclick = () => {
+                    const modal = document.getElementById('students-list-modal');
+                    modal.classList.remove('show');
+                    modal.style.display = 'none';
+                };
+            }
+            // Đóng modal khi click nền
+            const modal = document.getElementById('students-list-modal');
+            if (modal) {
+                modal.onclick = (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('show');
+                        modal.style.display = 'none';
+                    }
+                };
+            }
+        }, 0);
     }
 
     async editClass(classId) {
@@ -1228,9 +1264,7 @@ class AdminPanel {
         const modal = document.getElementById('class-modal');
         if (modal) {
             modal.style.display = 'none';
-            modal.style.visibility = '';
-            modal.style.opacity = '';
-            modal.style.zIndex = '';
+            modal.classList.remove('show');
         }
     }
     async handleClassFormSubmit(e) {
@@ -1284,6 +1318,22 @@ class AdminPanel {
         } catch (error) {
             this.showAlert('Có lỗi khi kết nối server!', 'error');
         }
+    }
+
+    showAllStudentsModal(classId) {
+        const cls = (this.classes || []).find(c => c.id === classId);
+        const modal = document.getElementById('students-list-modal');
+        const body = document.getElementById('students-list-modal-body');
+        const title = document.getElementById('students-list-modal-title');
+        if (!cls || !modal || !body || !title) return;
+        title.textContent = `Danh sách học sinh lớp ${cls.name}`;
+        if (!cls.students || !cls.students.length) {
+            body.innerHTML = '<div style="color:#888;">Không có học sinh nào.</div>';
+        } else {
+            body.innerHTML = '<ul style="padding-left:18px;">' + cls.students.map(s => `<li>${s.name}</li>`).join('') + '</ul>';
+        }
+        modal.style.display = 'block';
+        modal.classList.add('show');
     }
 
 }
