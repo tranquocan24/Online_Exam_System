@@ -1983,3 +1983,9 @@
         animation: none;
     }
 }
+
+/* Đảm bảo không ghi đè màu nền và màu chữ của footer, nếu có thì sửa lại như sau */
+#main-footer {
+    background-color: #112444 !important;
+    color: #fff !important;
+}

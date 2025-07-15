@@ -15,8 +15,8 @@ body.admin-mode #user-info {
 
 /* Show main footer in admin mode with proper styling */
 body.admin-mode #main-footer {
-    background: #f8f9fa !important;
-    color: #112444 !important;
+    background: #112444 !important;
+    color: #fff !important;
     box-shadow: none !important;
     border-top: 1px solid #e9ecef !important;
 }
@@ -25,7 +25,7 @@ body.admin-mode #main-footer .footer-content,
 body.admin-mode #main-footer .footer-container,
 body.admin-mode #main-footer span,
 body.admin-mode #main-footer p {
-    color: #112444 !important;
+    color: #fff !important;
 }
 
 body.admin-mode #main-footer img {

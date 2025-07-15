@@ -252,3 +252,9 @@
 .stat-card:nth-child(4) {
     animation-delay: 0.4s;
 }
+
+/* Đảm bảo không ghi đè màu nền và màu chữ của footer, nếu có thì sửa lại như sau */
+#main-footer {
+    background-color: #112444 !important;
+    color: #fff !important;
+}
