@@ -213,23 +213,16 @@ class ViewResults {
     }
 
     drawScoreChart(scores) {
-        const canvas = document.getElementById('scoreChart');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, width, height);
+        const chartContainer = document.getElementById('scoreChart');
+        if (!chartContainer) return;
 
         // Score ranges
         const ranges = [
-            { label: '0-59%', min: 0, max: 59, color: '#e53e3e' },
-            { label: '60-69%', min: 60, max: 69, color: '#ed8936' },
-            { label: '70-79%', min: 70, max: 79, color: '#ecc94b' },
-            { label: '80-89%', min: 80, max: 89, color: '#48bb78' },
-            { label: '90-100%', min: 90, max: 100, color: '#38a169' }
+            { range: '0-59', min: 0, max: 59 },
+            { range: '60-69', min: 60, max: 69 },
+            { range: '70-79', min: 70, max: 79 },
+            { range: '80-89', min: 80, max: 89 },
+            { range: '90-100', min: 90, max: 100 }
         ];
 
         // Count scores in each range
@@ -238,29 +231,42 @@ class ViewResults {
             count: scores.filter(score => score >= range.min && score <= range.max).length
         }));
 
-        const maxCount = Math.max(...rangeCounts.map(r => r.count));
-        const barWidth = width / ranges.length - 10;
-        const barMaxHeight = height - 60;
+        const maxCount = Math.max(...rangeCounts.map(r => r.count), 1); // Prevent division by zero
+        const maxBarHeight = 160; // Increased maximum bar height in pixels
 
-        // Draw bars
-        rangeCounts.forEach((range, index) => {
-            const x = index * (barWidth + 10) + 5;
-            const barHeight = (range.count / maxCount) * barMaxHeight;
-            const y = height - barHeight - 30;
+        // Add loading state
+        chartContainer.classList.add('loading');
 
-            // Draw bar
-            ctx.fillStyle = range.color;
-            ctx.fillRect(x, y, barWidth, barHeight);
+        // Update each bar
+        setTimeout(() => {
+            rangeCounts.forEach((rangeData) => {
+                const barElement = chartContainer.querySelector(`[data-range="${rangeData.range}"]`);
+                if (barElement) {
+                    const barFill = barElement.querySelector('.bar-fill');
+                    const barCount = barElement.querySelector('.bar-count');
+                    
+                    if (barFill && barCount) {
+                        // Calculate height in pixels (minimum 12px for visibility if count > 0)
+                        let barHeight = 0;
+                        if (rangeData.count > 0) {
+                            barHeight = Math.max((rangeData.count / maxCount) * maxBarHeight, 12);
+                        }
+                        
+                        // Set height directly
+                        barFill.style.height = `${barHeight}px`;
+                        barFill.style.setProperty('--bar-height', `${barHeight}px`);
+                        
+                        // Update count
+                        barCount.textContent = rangeData.count.toString();
+                        barCount.style.opacity = '1';
+                    }
+                }
+            });
 
-            // Draw count on top
-            ctx.fillStyle = '#2d3748';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(range.count.toString(), x + barWidth/2, y - 5);
-
-            // Draw label
-            ctx.fillText(range.label, x + barWidth/2, height - 10);
-        });
+            // Remove loading state and trigger animations
+            chartContainer.classList.remove('loading');
+            chartContainer.classList.add('loaded');
+        }, 100);
     }
 
     populateClassFilter() {
