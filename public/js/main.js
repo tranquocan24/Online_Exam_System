@@ -487,6 +487,7 @@ class App {
 
                 case 'create_exam':
                     if (this.currentRole === 'teacher') {
+                        console.log('Initializing create_exam page...');
                         if (window.createExam && typeof window.createExam.reset === 'function') {
                             console.log('Resetting existing create exam...');
                             window.createExam.reset();

@@ -399,6 +399,65 @@
       "timeSpent": 3,
       "submittedAt": "2025-07-09T16:17:01.098Z",
       "isTimeUp": false
+    },
+    {
+      "id": "result_1752590620080_SV001",
+      "examId": "exam_1752590512428",
+      "examTitle": "1",
+      "examQuestions": [
+        {
+          "id": "q_1752590453066_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "14",
+            "16"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752590473498_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752590501456_3",
+          "type": "multiple-choice",
+          "question": "6",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "6",
+            "4",
+            "3",
+            "2"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV001",
+      "userName": "Nguyễn Văn An",
+      "answers": {
+        "0": 0,
+        "1": 0,
+        "2": 2
+      },
+      "timeSpent": 9,
+      "submittedAt": "2025-07-15T14:43:40.070Z",
+      "isTimeUp": false
     }
   ]
 }
