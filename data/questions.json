@@ -191,6 +191,64 @@
       ],
       "id": "exam_1751957123339",
       "createdAt": "2025-07-08T06:45:23.339Z"
+    },
+    {
+      "title": "1",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV001",
+      "questions": [
+        {
+          "id": "q_1752590453066_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "14",
+            "16"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752590473498_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "6"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752590501456_3",
+          "type": "multiple-choice",
+          "question": "6",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "6",
+            "4",
+            "3",
+            "2"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1752590512428",
+      "createdAt": "2025-07-15T14:41:52.428Z"
     }
   ]
 }

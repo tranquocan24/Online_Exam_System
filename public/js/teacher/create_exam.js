@@ -28,18 +28,19 @@ class CreateExam {
             this.bindEvents();
             this.setupAutoSave();
             
-            // Add first question by default
-            setTimeout(() => {
-                this.addQuestion();
-            }, 200);
+            // Don't add question automatically - let user click to add
+            console.log('CreateExam initialized, ready for user interaction');
         }, 100);
     }
 
     bindEvents() {
+        console.log('Binding events for CreateExam...');
+        
         // Form submission
         const form = document.getElementById('createExamForm');
         if (form) {
             form.addEventListener('submit', (e) => this.handleSubmit(e));
+            console.log('Form submit event bound');
         } else {
             console.error('createExamForm not found');
         }
@@ -47,10 +48,16 @@ class CreateExam {
         // Add question button
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         if (addQuestionBtn) {
-            addQuestionBtn.addEventListener('click', (e) => {
+            // Remove existing listeners to prevent duplicates
+            addQuestionBtn.replaceWith(addQuestionBtn.cloneNode(true));
+            const newBtn = document.getElementById('addQuestionBtn');
+            
+            newBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log('Add question button clicked');
                 this.addQuestion();
             });
+            console.log('Add question button event bound');
         } else {
             console.error('addQuestionBtn not found');
         }
@@ -112,6 +119,7 @@ class CreateExam {
     }
 
     addQuestion(questionData = null) {
+        console.log('addQuestion() called', questionData);
         try {
             this.questionCounter++;
             const questionId = `q_${Date.now()}_${this.questionCounter}`;
@@ -156,11 +164,13 @@ class CreateExam {
             }
             
             container.appendChild(questionElement);
+            console.log('Question added to container');
             
             // Hide empty state
             const emptyState = document.getElementById('emptyQuestions');
             if (emptyState) {
                 emptyState.style.display = 'none';
+                console.log('Empty state hidden');
             }
             
             // Update questions array
@@ -978,7 +988,7 @@ class CreateExam {
         this.isDraft = false;
         
         // Reset form fields
-        const form = document.getElementById('examForm');
+        const form = document.getElementById('createExamForm');
         if (form) {
             form.reset();
         }
@@ -989,21 +999,21 @@ class CreateExam {
             questionsContainer.innerHTML = '';
         }
         
-        // Add first question again
+        // Show empty state
+        const emptyState = document.getElementById('emptyQuestions');
+        if (emptyState) {
+            emptyState.style.display = 'block';
+        }
+        
+        // Re-bind events after reset
         setTimeout(() => {
-            this.addQuestion();
+            this.bindEvents();
         }, 100);
     }
 }
 
-// Initialize when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    if (window.app?.currentRole === 'teacher') {
-        window.createExam = new CreateExam();
-    }
-});
-
-// Also initialize if loaded dynamically
-if (window.app?.currentRole === 'teacher') {
-    window.createExam = new CreateExam();
+// Initialize only when needed - removed duplicate initialization
+if (typeof window !== 'undefined') {
+    // Make class available globally for dynamic loading
+    window.CreateExam = CreateExam;
 }
