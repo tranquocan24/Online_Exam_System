@@ -53,7 +53,20 @@
             <h3 class="card-title">Kết quả mới nhất</h3>
         </div>
         <div class="recent-results" id="recent-results">
-            <div class="no-data">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Họ tên</th>
+                        <th>Đề thi</th>
+                        <th>Thời gian nộp</th>
+                        <th>Điểm</th>
+                    </tr>
+                </thead>
+                <tbody id="results-tbody">
+                    <!-- Kết quả sẽ được render ở đây -->
+                </tbody>
+            </table>
+            <div class="no-data" style="display:none">
                 <p>Chưa có kết quả nào</p>
             </div>
         </div>
@@ -230,6 +243,36 @@
         font-style: italic;
     }
 
+    .results-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background: #fff;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        font-size: 1rem;
+    }
+
+    .results-table th {
+        background: #f7fafc;
+        font-weight: 700;
+        color: #112444;
+    }
+
+    .results-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .results-table td strong {
+        color: #112444;
+        font-weight: 700;
+    }
+
     @keyframes fadeInUp {
         from {
             opacity: 0;
@@ -282,10 +325,6 @@
         try {
             // Simulate API call để lấy dữ liệu
             const mockData = {
-                totalExamsCreated: 3,
-                totalStudents: 25,
-                averageClassScore: 7.8,
-                completedSubmissions: 18,
                 recentExams: [
                     {
                         id: 1,
@@ -339,19 +378,21 @@
 
             // Cập nhật kết quả mới nhất
             const recentResultsContainer = document.getElementById('recent-results');
+            const resultsTbody = document.getElementById('results-tbody');
+            const noDataDiv = recentResultsContainer.querySelector('.no-data');
             if (mockData.recentResults.length > 0) {
-                recentResultsContainer.innerHTML = mockData.recentResults.map(result => `
-                <div class="result-item">
-                    <div class="student-info">
-                        <h4>${result.studentName}</h4>
-                        <p>${result.examTitle}</p>
-                    </div>
-                    <div class="result-score">
-                        <div class="score-value">${result.score}/10</div>
-                        <div class="result-time">${formatDateTime(result.submittedAt)}</div>
-                    </div>
-                </div>
-            `).join('');
+                resultsTbody.innerHTML = mockData.recentResults.map(result => `
+                    <tr>
+                        <td>${result.studentName}</td>
+                        <td>${result.examTitle}</td>
+                        <td>${formatDateTime(result.submittedAt)}</td>
+                        <td><strong>${result.score}/10</strong></td>
+                    </tr>
+                `).join('');
+                noDataDiv.style.display = 'none';
+            } else {
+                resultsTbody.innerHTML = '';
+                noDataDiv.style.display = '';
             }
 
         } catch (error) {

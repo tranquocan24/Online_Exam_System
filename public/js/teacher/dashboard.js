@@ -36,7 +36,6 @@ class TeacherDashboard {
                 teacherExams.some(exam => exam.id === result.examId)
             );
 
-            this.displayDashboardStats(teacherExams, teacherResults);
             this.displayRecentExams(teacherExams.slice(0, 3));
             this.displayRecentSubmissions(teacherResults.slice(0, 5));
 
@@ -50,56 +49,7 @@ class TeacherDashboard {
         await this.loadDashboardData();
     }
 
-    displayDashboardStats(exams, results) {
-        const uniqueStudents = new Set(results.map(r => r.userId)).size;
-        const averageScore = this.calculateAverageScore(results);
-
-        // Update individual stat elements
-        const totalExamsEl = document.getElementById('total-exams-created');
-        const totalStudentsEl = document.getElementById('total-students');
-        const averageScoreEl = document.getElementById('average-class-score');
-        const completedSubmissionsEl = document.getElementById('completed-submissions');
-
-        if (totalExamsEl) {
-            totalExamsEl.textContent = exams.length;
-        }
-
-        if (totalStudentsEl) {
-            totalStudentsEl.textContent = uniqueStudents;
-        }
-
-        if (averageScoreEl) {
-            averageScoreEl.textContent = `${averageScore}%`;
-        }
-
-        if (completedSubmissionsEl) {
-            completedSubmissionsEl.textContent = results.length;
-        }
-
-        // Also try the old selector as fallback for compatibility
-        const statsContainer = document.querySelector('.dashboard-stats');
-        if (statsContainer) {
-            statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${exams.length}</div>
-                    <div class="stat-label">Bài thi đã tạo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${results.length}</div>
-                    <div class="stat-label">Lượt thi</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${uniqueStudents}</div>
-                    <div class="stat-label">Sinh viên tham gia</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${averageScore}%</div>
-                    <div class="stat-label">Điểm trung bình lớp</div>
-                </div>
-            `;
-        }
-    }
-
+    // Only keep displayRecentExams, displayRecentSubmissions, and navigation/format helpers
     displayRecentExams(exams) {
         const container = document.getElementById('recent-exams');
         if (container) {
