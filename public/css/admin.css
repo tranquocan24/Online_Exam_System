@@ -427,7 +427,7 @@ body.admin-mode #main-footer img {
 
 .form-group input,
 .form-group select {
-    width: 100%;
+    width: auto;
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -867,4 +867,16 @@ body.admin-mode #main-header h1 {
 body.admin-mode #user-info {
     justify-content: flex-end;
     width: 100%;
+}
+
+.select-all-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin: 6px 0 4px 0;
+    padding: 0;
+}
+
+#student-select-all {
+    display: inline-block;
 }
