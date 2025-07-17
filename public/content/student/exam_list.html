@@ -574,54 +574,78 @@
 
         emptyEl.style.display = 'none';
 
-        gridEl.innerHTML = filteredExams.map(exam => `
-        <div class="exam-card ${exam.status}">
-            <div class="exam-status status-${exam.status}">
-                ${getStatusText(exam.status)}
+        gridEl.innerHTML = filteredExams.map(exam => {
+            const examResult = getExamResult(exam.id);
+            const scoreDisplay = examResult ? `<div class="exam-score">${examResult.score}%</div>` : '';
+
+            return `
+            <div class="exam-card ${exam.status}">
+                <div class="exam-status status-${exam.status}">
+                    ${getStatusText(exam.status)}
+                </div>
+                
+                <h3 class="exam-title">${exam.title}</h3>
+                <div class="exam-subject">${exam.subject}</div>
+                
+                <div class="exam-info">
+                    <div class="info-item">
+                        <span class="info-icon">⏱️</span>
+                        <span>${exam.duration} phút</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">❓</span>
+                        <span>${exam.questions.length} câu hỏi</span>
+                    </div>
+                    ${exam.status === 'completed' && examResult ? `
+                        <div class="info-item">
+                            <span class="info-icon">📅</span>
+                            <span>${formatDateTime(examResult.submittedAt)}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">👨‍🏫</span>
+                            <span>GV: ${getTeacherName(exam.createdBy)}</span>
+                        </div>
+                    ` : `
+                        <div class="info-item">
+                            <span class="info-icon">📅</span>
+                            <span>Còn ${exam.timeLeft}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">👨‍🏫</span>
+                            <span>GV: ${getTeacherName(exam.createdBy)}</span>
+                        </div>
+                    `}
+                </div>
+                
+                ${exam.status === 'completed' && examResult ? `
+                    <div class="exam-score-display">
+                        <div class="score-badge">${examResult.score}%</div>
+                    </div>
+                ` : ''}
+                
+                <div class="exam-actions">
+                    ${exam.status === 'available' ? `
+                        <button class="btn-take-exam" onclick="showExamModal('${exam.id}')">
+                            Bắt đầu thi
+                        </button>
+                    ` : exam.status === 'completed' ? `
+                        <button class="btn-view-result" onclick="viewResult('${exam.id}')">
+                            📊 Xem kết quả
+                        </button>
+                        <button class="btn-retake-exam" onclick="showExamModal('${exam.id}')">
+                            🔄 Thi lại
+                        </button>
+                        <button class="btn-view-detail" onclick="viewExamDetail('${exam.id}')">
+                            👁️ Chi tiết
+                        </button>
+                    ` : `
+                        <button class="btn-take-exam" disabled>
+                            Hết hạn
+                        </button>
+                    `}
+                </div>
             </div>
-            
-            <h3 class="exam-title">${exam.title}</h3>
-            <div class="exam-subject">${exam.subject}</div>
-            
-            <div class="exam-info">
-                <div class="info-item">
-                    <span class="info-icon">⏱️</span>
-                    <span>${exam.duration} phút</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-icon">❓</span>
-                    <span>${exam.questions.length} câu hỏi</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-icon">📅</span>
-                    <span>Còn ${exam.timeLeft}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-icon">👨‍🏫</span>
-                    <span>GV: ${getTeacherName(exam.createdBy)}</span>
-                </div>
-            </div>
-            
-            <div class="exam-actions">
-                ${exam.status === 'available' ? `
-                    <button class="btn-take-exam" onclick="showExamModal('${exam.id}')">
-                        Bắt đầu thi
-                    </button>
-                ` : exam.status === 'completed' ? `
-                    <button class="btn-take-exam" disabled>
-                        Đã hoàn thành
-                    </button>
-                    <button class="btn-view-result" onclick="viewResult('${exam.id}')">
-                        Xem kết quả
-                    </button>
-                ` : `
-                    <button class="btn-take-exam" disabled>
-                        Hết hạn
-                    </button>
-                `}
-            </div>
-        </div>
-    `).join('');
+        `}).join('');
     }
 
     function getStatusText(status) {
@@ -715,5 +739,24 @@
             <button class="btn btn-primary" onclick="loadExamList()">Thử lại</button>
         </div>
     `;
+    }
+
+    function getExamResult(examId) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const results = JSON.parse(localStorage.getItem('examResults') || '[]');
+
+        return results.find(r => r.examId === examId && r.studentId === currentUser.id);
+    }
+
+    function formatDateTime(dateTimeString) {
+        const date = new Date(dateTimeString);
+        return date.toLocaleString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
     }
 </script>
