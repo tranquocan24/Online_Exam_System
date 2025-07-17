@@ -532,6 +532,12 @@ class App {
 
                 case 'view_results':
                     if (this.currentRole === 'teacher') {
+                        // Cleanup existing instance if exists
+                        if (window.viewResults && typeof window.viewResults.cleanup === 'function') {
+                            console.log('Cleaning up existing view results...');
+                            window.viewResults.cleanup();
+                        }
+
                         if (window.viewResults && typeof window.viewResults.refreshData === 'function') {
                             console.log('Refreshing existing view results...');
                             await window.viewResults.refreshData();

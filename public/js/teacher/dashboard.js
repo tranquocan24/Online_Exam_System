@@ -110,49 +110,23 @@ class TeacherDashboard {
     }
 
     displayRecentSubmissions(results) {
-        const container = document.getElementById('recent-results');
-        if (container) {
+        const tbody = document.getElementById('results-tbody');
+        const recentResultsContainer = document.getElementById('recent-results');
+        const noDataDiv = recentResultsContainer ? recentResultsContainer.querySelector('.no-data') : null;
+        if (tbody) {
             if (results.length > 0) {
-                container.innerHTML = results.map(result => `
-                    <div class="submission-item">
-                        <div class="submission-info">
-                            <h4>${result.userName}</h4>
-                            <p>${result.examTitle}</p>
-                            <small>📅 ${new Date(result.submittedAt).toLocaleString('vi-VN')}</small>
-                        </div>
-                        <div class="submission-score">
-                            <span class="score">${this.calculateScore(result)}%</span>
-                        </div>
-                    </div>
+                tbody.innerHTML = results.map(result => `
+                    <tr>
+                        <td>${result.userName || result.studentName || ''}</td>
+                        <td>${result.examTitle || ''}</td>
+                        <td>${result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : ''}</td>
+                        <td><strong>${this.calculateScore ? this.calculateScore(result) : (result.score || 0)}%</strong></td>
+                    </tr>
                 `).join('');
+                if (noDataDiv) noDataDiv.style.display = 'none';
             } else {
-                container.innerHTML = `
-                    <div class="no-data">
-                        <p>Chưa có sinh viên nào nộp bài</p>
-                    </div>
-                `;
-            }
-        } else {
-            // Fallback to old selector
-            const oldContainer = document.querySelector('.recent-submissions');
-            if (oldContainer && results.length > 0) {
-                oldContainer.innerHTML = `
-                    <h3>Bài làm mới nhất</h3>
-                    <div class="submissions-list">
-                        ${results.map(result => `
-                            <div class="submission-item">
-                                <div class="submission-info">
-                                    <h4>${result.userName}</h4>
-                                    <p>${result.examTitle}</p>
-                                    <small>Nộp lúc: ${new Date(result.submittedAt).toLocaleString('vi-VN')}</small>
-                                </div>
-                                <div class="submission-score">
-                                    ${this.calculateScore(result)}%
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                tbody.innerHTML = '';
+                if (noDataDiv) noDataDiv.style.display = '';
             }
         }
     }

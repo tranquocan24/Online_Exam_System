@@ -9,20 +9,38 @@ class ViewResults {
         this.currentExam = null;
         this.currentUser = null;
         this.currentResult = null;
+        this._scoreChartInstance = null;
         this.init();
     }
 
-    init() {
+    async init() {
         console.log('View Results initialized');
         this.currentUser = window.app?.currentUser;
-        
+
         if (!this.currentUser || this.currentUser.role !== 'teacher') {
             console.error('Unauthorized access');
             return;
         }
 
+        // Ensure Chart.js is loaded
+        await this.ensureChartJSLoaded();
+
         this.bindEvents();
         this.loadExams();
+    }
+
+    async ensureChartJSLoaded() {
+        if (typeof Chart === 'undefined') {
+            console.log('Chart.js not found, loading...');
+            try {
+                await this.loadChartJS();
+                console.log('Chart.js loaded successfully');
+            } catch (error) {
+                console.error('Failed to load Chart.js:', error);
+            }
+        } else {
+            console.log('Chart.js already available');
+        }
     }
 
     bindEvents() {
@@ -40,11 +58,11 @@ class ViewResults {
         if (classFilter) {
             classFilter.addEventListener('change', () => this.applyFilters());
         }
-        
+
         if (scoreRangeFilter) {
             scoreRangeFilter.addEventListener('change', () => this.applyFilters());
         }
-        
+
         if (studentSearch) {
             studentSearch.addEventListener('input', () => this.applyFilters());
         }
@@ -55,7 +73,7 @@ class ViewResults {
             const response = await fetch('/api/questions');
             if (response.ok) {
                 const questionsData = await response.json();
-                this.exams = questionsData.exams.filter(exam => 
+                this.exams = questionsData.exams.filter(exam =>
                     exam.createdBy === this.currentUser.id && !exam.isDraft
                 );
                 this.populateExamSelector();
@@ -73,7 +91,7 @@ class ViewResults {
         if (!examSelect) return;
 
         examSelect.innerHTML = '<option value="">-- Chọn bài thi --</option>';
-        
+
         this.exams.forEach(exam => {
             const option = document.createElement('option');
             option.value = exam.id;
@@ -104,7 +122,7 @@ class ViewResults {
             if (response.ok) {
                 const allResults = await response.json();
                 this.results = allResults.filter(result => result.examId === examId);
-                
+
                 if (this.results.length === 0) {
                     this.showEmptyState();
                 } else {
@@ -131,7 +149,7 @@ class ViewResults {
 
         // Sort by score descending
         this.results.sort((a, b) => b.calculatedScore - a.calculatedScore);
-        
+
         this.filteredResults = [...this.results];
         this.updateOverview();
         this.populateClassFilter();
@@ -143,17 +161,17 @@ class ViewResults {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateScore(result);
         }
-        
+
         // Fallback to local implementation
         if (!result.examQuestions || !result.answers) return 0;
-        
+
         let correct = 0;
         const total = result.examQuestions.length;
-        
+
         result.examQuestions.forEach((question, index) => {
             // Try multiple answer formats
             let userAnswer = null;
-            
+
             if (result.answers.hasOwnProperty(question.id)) {
                 userAnswer = result.answers[question.id];
             } else if (result.answers.hasOwnProperty(index.toString())) {
@@ -163,25 +181,25 @@ class ViewResults {
             } else if (result.answers.hasOwnProperty(question.id.toString())) {
                 userAnswer = result.answers[question.id.toString()];
             }
-            
+
             if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
             }
         });
-        
+
         return Math.round((correct / total) * 100);
     }
 
     isAnswerCorrect(question, userAnswer) {
         if (!userAnswer) return false;
-        
+
         switch (question.type) {
             case 'multiple-choice':
                 return userAnswer === question.correctAnswer;
             case 'multiple-select':
                 if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) return false;
                 return userAnswer.length === question.correctAnswer.length &&
-                       userAnswer.every(answer => question.correctAnswer.includes(answer));
+                    userAnswer.every(answer => question.correctAnswer.includes(answer));
             case 'text':
                 return userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
             default:
@@ -209,19 +227,18 @@ class ViewResults {
         document.getElementById('highestScore').textContent = `${highestScore}%`;
         document.getElementById('lowestScore').textContent = `${lowestScore}%`;
 
-        this.drawScoreChart(scores);
+        // Draw chart with a small delay to ensure DOM is ready
+        setTimeout(() => {
+            this.drawScoreChart(scores);
+        }, 100);
     }
 
     drawScoreChart(scores) {
         const canvas = document.getElementById('scoreChart');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        const width = canvas.width;
-        const height = canvas.height;
-
-        // Clear canvas
-        ctx.clearRect(0, 0, width, height);
+        if (!canvas) {
+            console.warn('Canvas element not found');
+            return;
+        }
 
         // Score ranges
         const ranges = [
@@ -233,34 +250,124 @@ class ViewResults {
         ];
 
         // Count scores in each range
-        const rangeCounts = ranges.map(range => ({
-            ...range,
-            count: scores.filter(score => score >= range.min && score <= range.max).length
-        }));
+        const rangeCounts = ranges.map(range =>
+            scores.filter(score => score >= range.min && score <= range.max).length
+        );
 
-        const maxCount = Math.max(...rangeCounts.map(r => r.count));
-        const barWidth = width / ranges.length - 10;
-        const barMaxHeight = height - 60;
+        // Check if Chart.js is available
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded, attempting to load...');
+            this.loadChartJS().then(() => {
+                this.createChart(canvas, ranges, rangeCounts);
+            }).catch(error => {
+                console.error('Failed to load Chart.js:', error);
+                this.showChartError(canvas);
+            });
+            return;
+        }
 
-        // Draw bars
-        rangeCounts.forEach((range, index) => {
-            const x = index * (barWidth + 10) + 5;
-            const barHeight = (range.count / maxCount) * barMaxHeight;
-            const y = height - barHeight - 30;
+        this.createChart(canvas, ranges, rangeCounts);
+    }
 
-            // Draw bar
-            ctx.fillStyle = range.color;
-            ctx.fillRect(x, y, barWidth, barHeight);
+    async loadChartJS() {
+        return new Promise((resolve, reject) => {
+            // Check if already loaded
+            if (typeof Chart !== 'undefined') {
+                resolve();
+                return;
+            }
 
-            // Draw count on top
-            ctx.fillStyle = '#2d3748';
-            ctx.font = '12px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText(range.count.toString(), x + barWidth/2, y - 5);
-
-            // Draw label
-            ctx.fillText(range.label, x + barWidth/2, height - 10);
+            // Load Chart.js from CDN
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+            script.onload = () => {
+                console.log('Chart.js loaded successfully');
+                resolve();
+            };
+            script.onerror = () => {
+                reject(new Error('Failed to load Chart.js'));
+            };
+            document.head.appendChild(script);
         });
+    }
+
+    createChart(canvas, ranges, rangeCounts) {
+        try {
+            // Destroy previous chart if exists
+            if (this._scoreChartInstance) {
+                this._scoreChartInstance.destroy();
+            }
+
+            // Create Chart.js bar chart
+            this._scoreChartInstance = new Chart(canvas, {
+                type: 'bar',
+                data: {
+                    labels: ranges.map(r => r.label),
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: rangeCounts,
+                        backgroundColor: ranges.map(r => r.color),
+                        borderRadius: 8,
+                        maxBarThickness: 50
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return `Số lượng: ${context.parsed.y}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Khoảng điểm (%)'
+                            },
+                            grid: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Số lượng sinh viên'
+                            },
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+
+            console.log('Chart created successfully');
+        } catch (error) {
+            console.error('Error creating chart:', error);
+            this.showChartError(canvas);
+        }
+    }
+
+    showChartError(canvas) {
+        // Show fallback content when chart fails
+        const container = canvas.parentElement;
+        if (container) {
+            container.innerHTML = `
+                <div class="chart-error">
+                    <div class="error-icon">📊</div>
+                    <h4>Không thể hiển thị biểu đồ</h4>
+                    <p>Vui lòng làm mới trang để thử lại</p>
+                </div>
+            `;
+        }
     }
 
     populateClassFilter() {
@@ -268,7 +375,7 @@ class ViewResults {
         if (!classFilter) return;
 
         const classes = [...new Set(this.results.map(r => r.userClass || 'Không xác định'))];
-        
+
         classFilter.innerHTML = '<option value="">Tất cả lớp</option>';
         classes.forEach(className => {
             const option = document.createElement('option');
@@ -311,7 +418,7 @@ class ViewResults {
     renderResults() {
         const tbody = document.getElementById('resultsTableBody');
         const resultsCount = document.getElementById('resultsCount');
-        
+
         if (!tbody) return;
 
         resultsCount.textContent = this.filteredResults.length;
@@ -369,7 +476,7 @@ class ViewResults {
 
     formatTimeSpent(timeSpent) {
         if (!timeSpent) return 'Không xác định';
-        
+
         const hours = Math.floor(timeSpent / 3600);
         const minutes = Math.floor((timeSpent % 3600) / 60);
         const seconds = timeSpent % 60;
@@ -393,7 +500,7 @@ class ViewResults {
 
     showResultDetailModal(result) {
         const modal = document.getElementById('resultDetailModal');
-        
+
         // Populate modal header
         document.getElementById('modalStudentName').textContent = result.userName;
         document.getElementById('modalScore').textContent = `${result.calculatedScore}%`;
@@ -498,7 +605,7 @@ class ViewResults {
 
     toggleSelectAll(selectAll) {
         this.selectedResults.clear();
-        
+
         const checkboxes = document.querySelectorAll('.result-checkbox');
         checkboxes.forEach(checkbox => {
             checkbox.checked = selectAll;
@@ -523,7 +630,7 @@ class ViewResults {
     }
 
     exportSelectedResults() {
-        const selectedResultsData = this.filteredResults.filter(result => 
+        const selectedResultsData = this.filteredResults.filter(result =>
             this.selectedResults.has(result.id)
         );
 
@@ -542,12 +649,12 @@ class ViewResults {
         const dataStr = JSON.stringify(this.currentResult, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `ket_qua_${this.currentResult.userName}_${this.currentExam.title}.json`;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         this.showMessage('Đã tải xuống kết quả', 'success');
     }
@@ -571,12 +678,12 @@ class ViewResults {
         const BOM = '\uFEFF'; // UTF-8 BOM for Excel compatibility
         const dataBlob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(dataBlob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = filename;
         link.click();
-        
+
         URL.revokeObjectURL(url);
         this.showMessage('Đã xuất file CSV', 'success');
     }
@@ -614,27 +721,16 @@ class ViewResults {
     }
 
     showMessage(message, type = 'info') {
-        const messageEl = document.createElement('div');
-        messageEl.className = `message message-${type}`;
-        messageEl.textContent = message;
-        messageEl.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#e53e3e' : type === 'warning' ? '#ed8936' : '#667eea'};
-            color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease-out;
-        `;
+        // Simple message display
+        console.log(`${type.toUpperCase()}: ${message}`);
+    }
 
-        document.body.appendChild(messageEl);
-        
-        setTimeout(() => {
-            messageEl.remove();
-        }, 3000);
+    // Cleanup method to destroy chart when component is destroyed
+    cleanup() {
+        if (this._scoreChartInstance) {
+            this._scoreChartInstance.destroy();
+            this._scoreChartInstance = null;
+        }
     }
 }
 
