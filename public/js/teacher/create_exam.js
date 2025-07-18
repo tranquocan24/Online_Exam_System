@@ -15,7 +15,7 @@ class CreateExam {
     }
 
     init() {
-        console.log('Create Exam initialized');
+        console.log('🧪 EIU TestLab - Create Exam initialized');
         this.currentUser = window.app?.currentUser || JSON.parse(localStorage.getItem('currentUser') || '{}');
         
         if (!this.currentUser || this.currentUser.role !== 'teacher') {

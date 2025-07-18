@@ -9,6 +9,7 @@ class App {
     }
 
     init() {
+        console.log('🧪 EIU TestLab - Application initialized');
         // Kiểm tra session khi load trang
         this.checkSession();
 

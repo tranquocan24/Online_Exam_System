@@ -1,8 +1,8 @@
-# Hệ thống thi online tối giản - EIU
+# EIU TestLab
 
-# Hệ thống thi online tối giản - Trường Đại Học Quốc Tế Miền Đông
+## Hệ thống thi trực tuyến - Đại học Quốc tế Miền Đông
 
-Hệ thống thi online đơn giản được xây dựng bằng Node.js thuần, lưu trữ dữ liệu bằng file JSON.
+**EIU TestLab** là hệ thống thi trực tuyến hiện đại được xây dựng dành riêng cho Đại học Quốc tế Miền Đông (Eastern International University), sử dụng Node.js thuần túy và lưu trữ dữ liệu bằng file JSON.
 
 ## 🎨 Thiết kế & Giao diện
 - **EIU Brand Colors**: Sử dụng bảng màu chủ đạo của Trường Đại Học Quốc Tế Miền Đông
