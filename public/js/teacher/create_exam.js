@@ -68,6 +68,7 @@ class CreateExam {
         if (form) {
             console.log('Found form, binding submit event');
             form.addEventListener('submit', (e) => this.handleSubmit(e));
+            console.log('Form submit event bound');
         } else {
             console.error('createExamForm not found');
         }
@@ -78,8 +79,10 @@ class CreateExam {
             console.log('Found add question button, binding click event');
             addQuestionBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                console.log('Add question button clicked');
                 this.addQuestion();
             });
+            console.log('Add question button event bound');
         } else {
             console.warn('addQuestionBtn not found - will rely on onclick fallback');
         }
@@ -141,6 +144,7 @@ class CreateExam {
     }
 
     addQuestion(questionData = null) {
+        console.log('addQuestion() called', questionData);
         try {
             console.log('Adding question...', questionData);
             this.questionCounter++;
@@ -193,6 +197,7 @@ class CreateExam {
             const emptyState = document.getElementById('emptyQuestions');
             if (emptyState) {
                 emptyState.style.display = 'none';
+                console.log('Empty state hidden');
             }
 
             // Update questions array
@@ -1095,7 +1100,7 @@ class CreateExam {
         this.isDraft = false;
 
         // Reset form fields
-        const form = document.getElementById('examForm');
+        const form = document.getElementById('createExamForm');
         if (form) {
             form.reset();
         }
@@ -1108,10 +1113,11 @@ class CreateExam {
 
         // Add first question again
         setTimeout(() => {
-            this.addQuestion();
+            this.bindEvents();
         }, 100);
     }
 }
+
 
 // Initialize when page loads (only in browser environment)
 if (typeof window !== 'undefined') {

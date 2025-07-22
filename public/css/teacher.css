@@ -2255,7 +2255,7 @@ html {
     max-height: 90vh;
     overflow: hidden;
 }
-
+  
 .large-modal {
     width: 800px;
 }
@@ -2345,7 +2345,6 @@ html {
     .header-actions {
         justify-content: center;
     }
-
     .overview-cards {
         grid-template-columns: 1fr;
     }
@@ -2378,6 +2377,35 @@ html {
     .result-summary {
         grid-template-columns: 1fr;
     }
+    40% {
+        transform: translateY(-20px);
+    }
+    60% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Page transitions */
+.page-transition-enter {
+    opacity: 0;
+    transform: translateX(20px);
+}
+
+.page-transition-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.3s ease;
+}
+
+.page-transition-exit {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.page-transition-exit-active {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.3s ease;
 }
 
 @media (max-width: 480px) {
