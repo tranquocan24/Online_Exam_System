@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Add Question Button</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background: #5a6fd8;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            border-left-color: #dc3545 !important;
+            background: #fff5f5 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Nút Thêm Câu Hỏi</h1>
+        
+        <div>
+            <button class="test-btn" onclick="testCreateExamClass()">
+                1. Test khởi tạo CreateExam class
+            </button>
+            
+            <button class="test-btn" onclick="testAddQuestionMethod()">
+                2. Test method addQuestion()
+            </button>
+            
+            <button class="test-btn" onclick="testTemplateElements()">
+                3. Test template elements
+            </button>
+            
+            <button class="test-btn" onclick="goToActualPage()">
+                4. Đi đến trang tạo đề thi thật
+            </button>
+        </div>
+
+        <div id="result"></div>
+
+        <!-- Mock elements for testing -->
+        <div style="display: none;">
+            <div id="questionsContainer"></div>
+            <div id="emptyQuestions"></div>
+            
+            <template id="questionTemplate">
+                <div class="question-item">
+                    <div class="question-header">
+                        <div class="question-number">Câu <span class="number">1</span></div>
+                        <select class="question-type-select">
+                            <option value="multiple-choice">Trắc nghiệm</option>
+                        </select>
+                    </div>
+                    <div class="question-content">
+                        <textarea class="question-text" placeholder="Nhập câu hỏi"></textarea>
+                        <div class="options-container"></div>
+                        <input type="number" class="question-points" value="1">
+                        <textarea class="question-explanation"></textarea>
+                    </div>
+                </div>
+            </template>
+            
+            <template id="optionTemplate">
+                <div class="option-item">
+                    <div class="option-input">
+                        <input type="radio" class="correct-indicator">
+                        <input type="text" class="option-text" placeholder="Nhập đáp án">
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+
+    <script>
+        // Mock app object
+        window.app = {
+            currentRole: 'teacher',
+            currentUser: { id: 'test-teacher', role: 'teacher' }
+        };
+
+        function log(message, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML += `<div style="color: ${isError ? 'red' : 'green'}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            if (isError) {
+                result.className = 'error';
+            }
+        }
+
+        function clearLog() {
+            document.getElementById('result').innerHTML = '';
+        }
+
+        function testCreateExamClass() {
+            clearLog();
+            try {
+                // Load the CreateExam script
+                const script = document.createElement('script');
+                script.src = '/js/teacher/create_exam.js';
+                script.onload = () => {
+                    log('✅ Script loaded successfully');
+                    if (window.CreateExam) {
+                        log('✅ CreateExam class found');
+                        try {
+                            const instance = new window.CreateExam();
+                            log('✅ CreateExam instance created successfully');
+                        } catch (error) {
+                            log('❌ Error creating CreateExam instance: ' + error.message, true);
+                        }
+                    } else {
+                        log('❌ CreateExam class not found', true);
+                    }
+                };
+                script.onerror = () => {
+                    log('❌ Failed to load script', true);
+                };
+                document.head.appendChild(script);
+            } catch (error) {
+                log('❌ Error: ' + error.message, true);
+            }
+        }
+
+        function testAddQuestionMethod() {
+            clearLog();
+            if (window.createExam && window.createExam.addQuestion) {
+                log('✅ addQuestion method found');
+                try {
+                    window.createExam.addQuestion();
+                    log('✅ addQuestion called successfully');
+                    
+                    // Check if question was added
+                    const container = document.getElementById('questionsContainer');
+                    if (container && container.children.length > 0) {
+                        log('✅ Question element added to container');
+                    } else {
+                        log('⚠️ No question element found in container');
+                    }
+                } catch (error) {
+                    log('❌ Error calling addQuestion: ' + error.message, true);
+                }
+            } else {
+                log('❌ createExam instance or addQuestion method not found', true);
+            }
+        }
+
+        function testTemplateElements() {
+            clearLog();
+            const questionTemplate = document.getElementById('questionTemplate');
+            const optionTemplate = document.getElementById('optionTemplate');
+            
+            if (questionTemplate) {
+                log('✅ Question template found');
+            } else {
+                log('❌ Question template not found', true);
+            }
+            
+            if (optionTemplate) {
+                log('✅ Option template found');
+            } else {
+                log('❌ Option template not found', true);
+            }
+            
+            const questionsContainer = document.getElementById('questionsContainer');
+            if (questionsContainer) {
+                log('✅ Questions container found');
+            } else {
+                log('❌ Questions container not found', true);
+            }
+        }
+
+        function goToActualPage() {
+            window.location.href = '/teacher.html#create_exam';
+        }
+    </script>
+</body>
+</html>

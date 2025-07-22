@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống thi online</title>
+        <title>EIU TestLab - Hệ thống thi trực tuyến</title>
+    <link rel="stylesheet" href="css/eiu-colors.css">
+    <link rel="stylesheet" href="css/eiu-testlab-branding.css">
     <link rel="stylesheet" href="css/common.css">
 </head>
+
 <body>
     <!-- Header chung -->
     <header id="main-header">
         <div class="header-container">
-            <h1>Hệ thống thi online</h1>
+                        <h1>EIU TestLab</h1>
             <div id="user-info" style="display:none;">
                 <span id="welcome-text"></span>
                 <button id="logout-btn" class="btn btn-logout">Đăng xuất</button>
@@ -28,8 +32,16 @@
 
     <!-- Footer chung -->
     <footer id="main-footer">
-        <div class="footer-container">
-            <p>&copy; 2025 Hệ thống thi online - Trường Đại học ABC</p>
+        <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+            <div class="footer-content"
+                style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/12/Logo-DH-Quoc-Te-Mien-Dong-EIU.png"
+                    alt="Logo EIU" style="height: 35px; width: auto;">
+                <p style="color: #112444; margin: 0; font-size: 13px; text-align: center;">
+                    &copy; 2025 <strong>EIU TestLab</strong> - Hệ thống thi trực tuyến<br>
+                    Trường Đại Học Quốc Tế Miền Đông (Eastern International University)
+                </p>
+            </div>
         </div>
     </footer>
 
@@ -37,4 +49,5 @@
     <script src="js/main.js"></script>
     <!-- Auth.js sẽ được load động khi cần thiết -->
 </body>
+
 </html>

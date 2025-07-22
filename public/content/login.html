@@ -2,39 +2,23 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
-            <h2>Đăng nhập hệ thống</h2>
-            <p>Vui lòng nhập thông tin đăng nhập của bạn</p>
+            <h2 class="eiu-testlab-brand">EIU TestLab</h2>
+            <p>Đăng nhập hệ thống thi trực tuyến</p>
         </div>
-        
+
         <form id="loginForm" class="login-form">
             <div class="form-group">
                 <label for="username" class="form-label">Tên đăng nhập</label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    class="form-input" 
-                    placeholder="Nhập tên đăng nhập"
-                    required
-                    autocomplete="username"
-                    maxlength="50"
-                >
+                <input type="text" id="username" name="username" class="form-input" placeholder="Nhập tên đăng nhập"
+                    required autocomplete="username" maxlength="50">
             </div>
-            
+
             <div class="form-group">
                 <label for="password" class="form-label">Mật khẩu</label>
-                <input 
-                    type="password" 
-                    id="password" 
-                    name="password" 
-                    class="form-input" 
-                    placeholder="Nhập mật khẩu"
-                    required
-                    autocomplete="current-password"
-                    maxlength="100"
-                >
+                <input type="password" id="password" name="password" class="form-input" placeholder="Nhập mật khẩu"
+                    required autocomplete="current-password" maxlength="100">
             </div>
-            
+
             <div class="form-group remember-group">
                 <label class="remember-label">
                     <input type="checkbox" id="rememberMe" name="rememberMe" class="remember-checkbox">
@@ -42,9 +26,9 @@
                     Ghi nhớ tên đăng nhập
                 </label>
             </div>
-            
+
             <div id="loginMessage" class="login-message"></div>
-            
+
             <button type="submit" class="btn btn-primary btn-login">
                 <span class="btn-text">Đăng nhập</span>
                 <span class="btn-loading" style="display: none;">
@@ -57,153 +41,158 @@
 </div>
 
 <style>
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 500px;
-    padding: 20px;
-}
+    .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 500px;
+        padding: 20px;
+    }
 
-.login-card {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    padding: 40px;
-    width: 100%;
-    max-width: 400px;
-    border-top: 4px solid #667eea;
-}
-
-.login-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.login-header h2 {
-    color: #2d3748;
-    margin-bottom: 8px;
-    font-size: 1.75rem;
-}
-
-.login-header p {
-    color: #718096;
-    font-size: 0.95rem;
-}
-
-.login-form .form-group {
-    margin-bottom: 20px;
-}
-
-.btn-login {
-    width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    font-weight: 600;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-login:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-}
-
-.btn-login:active {
-    transform: translateY(0);
-}
-
-.login-message {
-    margin: 15px 0;
-    padding: 10px;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: 500;
-    font-size: 14px;
-}
-
-.login-message.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.login-message.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.login-message.info {
-    background: #cce5ff;
-    color: #004085;
-    border: 1px solid #b3d7ff;
-}
-
-.remember-group {
-    margin-bottom: 15px;
-}
-
-.remember-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #4a5568;
-    cursor: pointer;
-    user-select: none;
-}
-
-.remember-checkbox {
-    width: 18px;
-    height: 18px;
-    accent-color: #667eea;
-    cursor: pointer;
-}
-
-.btn-login {
-    position: relative;
-}
-
-.btn-loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.btn-login:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
     .login-card {
-        padding: 30px 20px;
-        margin: 10px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 400px;
+        border-top: 4px solid #112444;
     }
-    
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
     .login-header h2 {
-        font-size: 1.5rem;
+        color: #2d3748;
+        margin-bottom: 8px;
+        font-size: 1.75rem;
     }
-}
+
+    .login-header p {
+        color: #718096;
+        font-size: 0.95rem;
+    }
+
+    .login-form .form-group {
+        margin-bottom: 20px;
+    }
+
+    .btn-login {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #112444 0%, #1a365d 100%);
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(17, 36, 68, 0.4);
+    }
+
+    .btn-login:active {
+        transform: translateY(0);
+    }
+
+    .login-message {
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 6px;
+        text-align: center;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .login-message.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .login-message.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .login-message.info {
+        background: #cce5ff;
+        color: #004085;
+        border: 1px solid #b3d7ff;
+    }
+
+    .remember-group {
+        margin-bottom: 15px;
+    }
+
+    .remember-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #4a5568;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .remember-checkbox {
+        width: 18px;
+        height: 18px;
+        accent-color: #667eea;
+        cursor: pointer;
+    }
+
+    .btn-login {
+        position: relative;
+    }
+
+    .btn-loading {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top: 2px solid white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .btn-login:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+        .login-card {
+            padding: 30px 20px;
+            margin: 10px;
+        }
+
+        .login-header h2 {
+            font-size: 1.5rem;
+        }
+    }
 </style>

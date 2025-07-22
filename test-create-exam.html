@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tạo Đề Thi</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .btn-secondary {
+            background: #6c757d;
+        }
+        .question-item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            background: #f9f9f9;
+        }
+        .option-item {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .option-text {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .error {
+            border-left-color: #dc3545 !important;
+            background: #fff5f5 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Test Tạo Đề Thi</h1>
+        
+        <form id="createExamForm">
+            <div class="form-group">
+                <label for="title">Tiêu đề bài thi *</label>
+                <input type="text" id="title" name="title" value="Bài kiểm tra mẫu" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="subject">Môn học *</label>
+                <select id="subject" name="subject" required>
+                    <option value="">Chọn môn học</option>
+                    <option value="Lập trình Web" selected>Lập trình Web</option>
+                    <option value="Cơ sở dữ liệu">Cơ sở dữ liệu</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="duration">Thời gian (phút) *</label>
+                <input type="number" id="duration" name="duration" value="60" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Mô tả</label>
+                <textarea id="description" name="description">Bài kiểm tra mẫu</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="shuffleQuestions" checked> Trộn thứ tự câu hỏi
+                </label>
+            </div>
+            
+            <h3>Câu hỏi</h3>
+            <div id="questionsContainer">
+                <!-- Câu hỏi mẫu -->
+                <div class="question-item" data-question-id="q_test_1">
+                    <div class="question-header">
+                        <div class="question-number">Câu <span class="number">1</span></div>
+                        <select class="question-type-select">
+                            <option value="multiple-choice" selected>Trắc nghiệm</option>
+                        </select>
+                    </div>
+                    <div class="question-content">
+                        <div class="form-group">
+                            <label>Nội dung câu hỏi *</label>
+                            <textarea class="question-text" required>HTML là viết tắt của gì?</textarea>
+                        </div>
+                        <div class="options-container">
+                            <div class="option-item">
+                                <input type="radio" name="correct-q_test_1" class="correct-indicator" checked>
+                                <input type="text" class="option-text" value="HyperText Markup Language" required>
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-q_test_1" class="correct-indicator">
+                                <input type="text" class="option-text" value="High Tech Modern Language" required>
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-q_test_1" class="correct-indicator">
+                                <input type="text" class="option-text" value="Home Tool Markup Language" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Điểm số</label>
+                            <input type="number" class="question-points" value="1" min="0.5" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Giải thích</label>
+                            <textarea class="question-explanation">HTML là ngôn ngữ đánh dấu siêu văn bản</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <button type="button" onclick="addTestQuestion()" class="btn btn-secondary">Thêm câu hỏi test</button>
+                <button type="submit" class="btn">Tạo bài thi</button>
+            </div>
+        </form>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Mock app object
+        window.app = {
+            currentRole: 'teacher',
+            currentUser: { id: 'test-teacher', role: 'teacher' },
+            loadPage: function(page) {
+                log(`📄 Redirecting to: ${page}`, false);
+            }
+        };
+
+        function log(message, isError = false) {
+            const result = document.getElementById('result');
+            result.innerHTML += `<div style="color: ${isError ? 'red' : 'green'}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            if (isError) {
+                result.classList.add('error');
+            } else {
+                result.classList.remove('error');
+            }
+        }
+
+        function addTestQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const questionNum = container.children.length + 1;
+            const questionId = `q_test_${questionNum}`;
+            
+            const questionHtml = `
+                <div class="question-item" data-question-id="${questionId}">
+                    <div class="question-header">
+                        <div class="question-number">Câu <span class="number">${questionNum}</span></div>
+                        <select class="question-type-select">
+                            <option value="multiple-choice" selected>Trắc nghiệm</option>
+                        </select>
+                    </div>
+                    <div class="question-content">
+                        <div class="form-group">
+                            <label>Nội dung câu hỏi *</label>
+                            <textarea class="question-text" required>Câu hỏi ${questionNum}</textarea>
+                        </div>
+                        <div class="options-container">
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" class="correct-indicator" checked>
+                                <input type="text" class="option-text" value="Đáp án A" required>
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" class="correct-indicator">
+                                <input type="text" class="option-text" value="Đáp án B" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Điểm số</label>
+                            <input type="number" class="question-points" value="1" min="0.5" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label>Giải thích</label>
+                            <textarea class="question-explanation">Giải thích câu ${questionNum}</textarea>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.insertAdjacentHTML('beforeend', questionHtml);
+            log(`✅ Thêm câu hỏi ${questionNum}`);
+        }
+
+        // Load CreateExam script
+        const script = document.createElement('script');
+        script.src = '/js/teacher/create_exam.js';
+        script.onload = () => {
+            log('✅ CreateExam script loaded');
+            
+            // Initialize CreateExam
+            window.createExam = new CreateExam();
+            log('✅ CreateExam initialized');
+        };
+        script.onerror = () => {
+            log('❌ Failed to load CreateExam script', true);
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

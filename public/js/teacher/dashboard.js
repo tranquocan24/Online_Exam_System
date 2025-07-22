@@ -8,15 +8,15 @@ class TeacherDashboard {
 
     init() {
         console.log('Teacher Dashboard initialized');
-        
+
         // Get user from app or storage with fallback
         this.user = window.app?.currentUser || JSON.parse(localStorage.getItem('currentUser') || '{}');
-        
+
         if (!this.user || !this.user.id) {
             console.error('User not found in teacher dashboard');
             return;
         }
-        
+
         console.log('Loading dashboard for teacher:', this.user.id, this.user.name);
         this.loadDashboardData();
         this.bindEvents();
@@ -28,18 +28,17 @@ class TeacherDashboard {
             const examsResponse = await fetch('/api/questions');
             const questionsData = await examsResponse.json();
             const teacherExams = questionsData.exams.filter(exam => exam.createdBy === this.user?.id);
-            
+
             // Load all results for teacher's exams
             const resultsResponse = await fetch('/api/results');
             const allResults = await resultsResponse.json();
-            const teacherResults = allResults.filter(result => 
+            const teacherResults = allResults.filter(result =>
                 teacherExams.some(exam => exam.id === result.examId)
             );
-            
-            this.displayDashboardStats(teacherExams, teacherResults);
+
             this.displayRecentExams(teacherExams.slice(0, 3));
             this.displayRecentSubmissions(teacherResults.slice(0, 5));
-            
+
         } catch (error) {
             console.error('Error loading teacher dashboard data:', error);
         }
@@ -50,56 +49,7 @@ class TeacherDashboard {
         await this.loadDashboardData();
     }
 
-    displayDashboardStats(exams, results) {
-        const uniqueStudents = new Set(results.map(r => r.userId)).size;
-        const averageScore = this.calculateAverageScore(results);
-        
-        // Update individual stat elements
-        const totalExamsEl = document.getElementById('total-exams-created');
-        const totalStudentsEl = document.getElementById('total-students');
-        const averageScoreEl = document.getElementById('average-class-score');
-        const completedSubmissionsEl = document.getElementById('completed-submissions');
-        
-        if (totalExamsEl) {
-            totalExamsEl.textContent = exams.length;
-        }
-        
-        if (totalStudentsEl) {
-            totalStudentsEl.textContent = uniqueStudents;
-        }
-        
-        if (averageScoreEl) {
-            averageScoreEl.textContent = `${averageScore}%`;
-        }
-        
-        if (completedSubmissionsEl) {
-            completedSubmissionsEl.textContent = results.length;
-        }
-        
-        // Also try the old selector as fallback for compatibility
-        const statsContainer = document.querySelector('.dashboard-stats');
-        if (statsContainer) {
-            statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${exams.length}</div>
-                    <div class="stat-label">Bài thi đã tạo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${results.length}</div>
-                    <div class="stat-label">Lượt thi</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${uniqueStudents}</div>
-                    <div class="stat-label">Sinh viên tham gia</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${averageScore}%</div>
-                    <div class="stat-label">Điểm trung bình lớp</div>
-                </div>
-            `;
-        }
-    }
-
+    // Only keep displayRecentExams, displayRecentSubmissions, and navigation/format helpers
     displayRecentExams(exams) {
         const container = document.getElementById('recent-exams');
         if (container) {
@@ -160,49 +110,23 @@ class TeacherDashboard {
     }
 
     displayRecentSubmissions(results) {
-        const container = document.getElementById('recent-results');
-        if (container) {
+        const tbody = document.getElementById('results-tbody');
+        const recentResultsContainer = document.getElementById('recent-results');
+        const noDataDiv = recentResultsContainer ? recentResultsContainer.querySelector('.no-data') : null;
+        if (tbody) {
             if (results.length > 0) {
-                container.innerHTML = results.map(result => `
-                    <div class="submission-item">
-                        <div class="submission-info">
-                            <h4>${result.userName}</h4>
-                            <p>${result.examTitle}</p>
-                            <small>📅 ${new Date(result.submittedAt).toLocaleString('vi-VN')}</small>
-                        </div>
-                        <div class="submission-score">
-                            <span class="score">${this.calculateScore(result)}%</span>
-                        </div>
-                    </div>
+                tbody.innerHTML = results.map(result => `
+                    <tr>
+                        <td>${result.userName || result.studentName || ''}</td>
+                        <td>${result.examTitle || ''}</td>
+                        <td>${result.submittedAt ? new Date(result.submittedAt).toLocaleString('vi-VN') : ''}</td>
+                        <td><strong>${this.calculateScore ? this.calculateScore(result) : (result.score || 0)}%</strong></td>
+                    </tr>
                 `).join('');
+                if (noDataDiv) noDataDiv.style.display = 'none';
             } else {
-                container.innerHTML = `
-                    <div class="no-data">
-                        <p>Chưa có sinh viên nào nộp bài</p>
-                    </div>
-                `;
-            }
-        } else {
-            // Fallback to old selector
-            const oldContainer = document.querySelector('.recent-submissions');
-            if (oldContainer && results.length > 0) {
-                oldContainer.innerHTML = `
-                    <h3>Bài làm mới nhất</h3>
-                    <div class="submissions-list">
-                        ${results.map(result => `
-                            <div class="submission-item">
-                                <div class="submission-info">
-                                    <h4>${result.userName}</h4>
-                                    <p>${result.examTitle}</p>
-                                    <small>Nộp lúc: ${new Date(result.submittedAt).toLocaleString('vi-VN')}</small>
-                                </div>
-                                <div class="submission-score">
-                                    ${this.calculateScore(result)}%
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                tbody.innerHTML = '';
+                if (noDataDiv) noDataDiv.style.display = '';
             }
         }
     }
@@ -212,17 +136,17 @@ class TeacherDashboard {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateScore(result);
         }
-        
+
         // Fallback to local implementation
         if (!result.examQuestions || !result.answers) return 0;
-        
+
         let correct = 0;
         const total = result.examQuestions.length;
-        
+
         result.examQuestions.forEach((question, index) => {
             // Try multiple answer formats
             let userAnswer = null;
-            
+
             if (result.answers.hasOwnProperty(question.id)) {
                 userAnswer = result.answers[question.id];
             } else if (result.answers.hasOwnProperty(index.toString())) {
@@ -232,35 +156,35 @@ class TeacherDashboard {
             } else if (result.answers.hasOwnProperty(question.id.toString())) {
                 userAnswer = result.answers[question.id.toString()];
             }
-            
+
             if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
             }
         });
-        
+
         return Math.round((correct / total) * 100);
     }
 
     calculateAverageScore(results) {
         if (results.length === 0) return 0;
-        
+
         const totalScore = results.reduce((sum, result) => {
             return sum + this.calculateScore(result);
         }, 0);
-        
+
         return Math.round(totalScore / results.length);
     }
 
     isAnswerCorrect(question, userAnswer) {
         if (!userAnswer) return false;
-        
+
         switch (question.type) {
             case 'multiple-choice':
                 return userAnswer === question.correctAnswer;
             case 'multiple-select':
                 if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) return false;
                 return userAnswer.length === question.correctAnswer.length &&
-                       userAnswer.every(answer => question.correctAnswer.includes(answer));
+                    userAnswer.every(answer => question.correctAnswer.includes(answer));
             case 'text':
                 return userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
             default:
@@ -290,6 +214,8 @@ class TeacherDashboard {
         console.log('Teacher dashboard events bound');
     }
 }
+
+window.TeacherDashboard = TeacherDashboard;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {

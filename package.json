@@ -1,7 +1,7 @@
 {
-  "name": "online-exam-system",
+  "name": "eiu-testlab",
   "version": "1.0.0",
-  "description": "Hệ thống thi online tối giản sử dụng Node.js thuần túy",
+  "description": "EIU TestLab - Hệ thống thi trực tuyến của Đại học Quốc tế Miền Đông",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -18,9 +18,12 @@
     "online",
     "education",
     "quiz",
-    "test"
+    "test",
+    "EIU",
+    "testlab",
+    "university"
   ],
-  "author": "Online Exam Project Team",
+  "author": "EIU TestLab Development Team",
   "license": "MIT",
   "engines": {
     "node": ">=14.0.0"

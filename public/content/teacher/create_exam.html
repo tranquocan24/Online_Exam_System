@@ -1,8 +1,8 @@
 <!-- Tạo đề thi mới -->
 <div class="create-exam-page">
     <div class="page-header">
-        <h2>Tạo bài thi mới</h2>
-        <p>Tạo bài thi trắc nghiệm cho sinh viên</p>
+        <h2>EIU TestLab - Tạo bài thi mới</h2>
+        <p>Tạo bài thi trắc nghiệm và tự luận cho sinh viên EIU</p>
     </div>
 
     <!-- Form tạo đề thi -->
@@ -14,8 +14,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="examTitle">Tiêu đề bài thi *</label>
-                        <input type="text" id="examTitle" name="title" required 
-                               placeholder="Nhập tiêu đề bài thi">
+                        <input type="text" id="examTitle" name="title" required placeholder="Nhập tiêu đề bài thi">
                     </div>
                     <div class="form-group">
                         <label for="examSubject">Môn học *</label>
@@ -29,24 +28,30 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="examDuration">Thời gian làm bài (phút) *</label>
-                        <input type="number" id="examDuration" name="duration" required 
-                               min="5" max="300" value="60">
+                        <input type="number" id="examDuration" name="duration" required min="5" max="300" value="60">
                     </div>
                     <div class="form-group">
                         <label for="examMaxAttempts">Số lần làm tối đa</label>
-                        <input type="number" id="examMaxAttempts" name="maxAttempts" 
-                               min="1" max="10" value="1">
+                        <input type="number" id="examMaxAttempts" name="maxAttempts" min="1" max="10" value="1">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="examDescription">Mô tả bài thi</label>
-                    <textarea id="examDescription" name="description" rows="3" 
-                              placeholder="Mô tả ngắn về nội dung bài thi"></textarea>
+                    <textarea id="examDescription" name="description" rows="3"
+                        placeholder="Mô tả ngắn về nội dung bài thi"></textarea>
+                </div>
+            </div>
+
+            <!-- Chọn lớp áp dụng -->
+            <div class="form-section">
+                <h3>Chọn lớp áp dụng *</h3>
+                <div id="classCheckboxes" class="form-group">
+                    <!-- Checkbox lớp sẽ được render bằng JS -->
                 </div>
             </div>
 
@@ -69,7 +74,7 @@
                         </label>
                     </div>
                 </div>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label class="checkbox-label">
@@ -93,7 +98,8 @@
                 <div class="section-header">
                     <h3>Câu hỏi</h3>
                     <div class="section-actions">
-                        <button type="button" id="addQuestionBtn" class="btn btn-secondary">
+                        <button type="button" id="addQuestionBtn" class="btn btn-secondary"
+                            onclick="window.createExam?.addQuestion()">
                             <span class="btn-icon">➕</span>
                             Thêm câu hỏi
                         </button>
@@ -152,18 +158,21 @@
                     </select>
                 </div>
                 <div class="question-actions">
-                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionUp(this)" title="Di chuyển lên">⬆️</button>
-                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionDown(this)" title="Di chuyển xuống">⬇️</button>
-                    <button type="button" class="btn-icon" onclick="window.createExam?.duplicateQuestion(this)" title="Nhân đôi">📋</button>
-                    <button type="button" class="btn-icon" onclick="window.createExam?.deleteQuestion(this)" title="Xóa">🗑️</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionUp(this)"
+                        title="Di chuyển lên">⬆️</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.moveQuestionDown(this)"
+                        title="Di chuyển xuống">⬇️</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.duplicateQuestion(this)"
+                        title="Nhân đôi">📋</button>
+                    <button type="button" class="btn-icon" onclick="window.createExam?.deleteQuestion(this)"
+                        title="Xóa">🗑️</button>
                 </div>
             </div>
 
             <div class="question-content">
                 <div class="form-group">
                     <label>Nội dung câu hỏi *</label>
-                    <textarea class="question-text" rows="3" required 
-                              placeholder="Nhập nội dung câu hỏi"></textarea>
+                    <textarea class="question-text" rows="3" required placeholder="Nhập nội dung câu hỏi"></textarea>
                 </div>
 
                 <!-- Multiple choice options -->
@@ -181,8 +190,8 @@
                 <div class="answer-options text-options" style="display: none;">
                     <div class="form-group">
                         <label>Đáp án đúng *</label>
-                        <input type="text" class="correct-text-answer" 
-                               placeholder="Nhập đáp án đúng (không phân biệt hoa thường)">
+                        <input type="text" class="correct-text-answer"
+                            placeholder="Nhập đáp án đúng (không phân biệt hoa thường)">
                     </div>
                     <div class="form-group">
                         <label class="checkbox-label">
@@ -202,8 +211,8 @@
                         </div>
                         <div class="form-group">
                             <label>Giải thích (tùy chọn)</label>
-                            <textarea class="question-explanation" rows="2" 
-                                      placeholder="Giải thích đáp án đúng"></textarea>
+                            <textarea class="question-explanation" rows="2"
+                                placeholder="Giải thích đáp án đúng"></textarea>
                         </div>
                     </div>
                 </div>
@@ -230,14 +239,15 @@
             <div class="modal-header">
                 <h3>📝 Import đề thi từ Markdown</h3>
                 <button class="modal-close" onclick="createExam.closeMarkdownModal()">&times;</button>
-            </div>        <div class="modal-body">
-            <div class="import-section">
-                <h4>Chọn file Markdown (.md)</h4>
-                <p class="help-text">
-                    <a href="markdown_guide.md" target="_blank">📖 Xem hướng dẫn tạo đề thi Markdown</a> | 
-                    <a href="sample_exam.md" target="_blank">📄 Tải file mẫu</a>
-                </p>
-                <div class="file-upload-area">
+            </div>
+            <div class="modal-body">
+                <div class="import-section">
+                    <h4>Chọn file Markdown (.md)</h4>
+                    <p class="help-text">
+                        <a href="markdown_guide.md" target="_blank">📖 Xem hướng dẫn tạo đề thi Markdown</a> |
+                        <a href="sample_exam.md" target="_blank">📄 Tải file mẫu</a>
+                    </p>
+                    <div class="file-upload-area">
                         <input type="file" id="markdownFile" accept=".md" style="display: none;">
                         <div class="file-upload-zone" onclick="document.getElementById('markdownFile').click()">
                             <div class="upload-icon">📁</div>
@@ -246,16 +256,17 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="import-section">
                     <h4>Hoặc dán nội dung Markdown</h4>
                     <textarea id="markdownContent" rows="10" placeholder="Dán nội dung Markdown vào đây..."></textarea>
                 </div>
-                
+
                 <div class="import-section">
                     <h4>Xem trước</h4>
                     <div id="markdownPreview" class="markdown-preview">
-                        <p class="preview-placeholder">Nội dung sẽ được hiển thị ở đây sau khi chọn file hoặc dán nội dung</p>
+                        <p class="preview-placeholder">Nội dung sẽ được hiển thị ở đây sau khi chọn file hoặc dán nội
+                            dung</p>
                     </div>
                 </div>
             </div>
@@ -279,3 +290,42 @@
         </div>
     </div>
 </div>
+
+<!-- Debug script to check CreateExam initialization -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM loaded - checking CreateExam...');
+
+        setTimeout(() => {
+            if (window.createExam) {
+                console.log('✅ CreateExam is available:', window.createExam);
+
+                // Test form submission
+                const form = document.getElementById('createExamForm');
+                if (form) {
+                    console.log('✅ Form found');
+
+                    // Add debug listener
+                    form.addEventListener('submit', function (e) {
+                        console.log('🔥 Form submit event triggered!');
+                        if (!window.createExam) {
+                            console.error('❌ CreateExam not available on submit');
+                            e.preventDefault();
+                            alert('Lỗi: CreateExam chưa được khởi tạo');
+                        }
+                    });
+                } else {
+                    console.error('❌ Form not found');
+                }
+            } else {
+                console.error('❌ CreateExam not available');
+
+                // Try to initialize manually
+                if (window.CreateExam) {
+                    console.log('Trying to initialize CreateExam manually...');
+                    window.createExam = new CreateExam();
+                }
+            }
+        }, 500);
+    });
+</script>

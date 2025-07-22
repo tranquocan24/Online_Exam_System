@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -77,7 +78,7 @@
             background: white;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             text-align: center;
             border-left: 4px solid #3498db;
         }
@@ -112,7 +113,7 @@
             background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             margin-bottom: 30px;
         }
 
@@ -326,8 +327,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
@@ -383,6 +389,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
@@ -391,7 +398,7 @@
 
     <div class="results-container" id="resultsContainer" style="display: none;">
         <div class="error-message" id="errorMessage"></div>
-        
+
         <div class="result-header" id="resultHeader">
             <h1>Kết quả bài thi</h1>
             <div class="exam-title" id="examTitle">Đang tải...</div>
@@ -454,4 +461,5 @@
     <script src="../../js/main.js"></script>
     <script src="../../js/student/result.js"></script>
 </body>
+
 </html>

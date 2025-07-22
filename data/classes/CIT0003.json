@@ -1,0 +1,18 @@
+{
+  "id": "CIT0003",
+  "name": "CSE 201",
+  "description": "",
+  "teachers": [
+    {
+      "id": "GV279401",
+      "name": "Nguyễn Thị Giáo Viên"
+    }
+  ],
+  "students": [
+    {
+      "id": "SV342529",
+      "name": "Đặng Cao Cường"
+    }
+  ],
+  "updatedAt": "2025-07-18T07:07:11.103Z"
+}

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,7 +14,7 @@
             padding: 20px;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         .exam-header {
@@ -67,9 +68,17 @@
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
         }
 
         .question-progress {
@@ -289,7 +298,7 @@
 
         .question-nav-item:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .question-nav-item.current {
@@ -329,8 +338,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
@@ -399,6 +413,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-spinner"></div>
@@ -407,7 +422,7 @@
 
     <div class="exam-container" id="examContainer" style="display: none;">
         <div class="error-message" id="errorMessage"></div>
-        
+
         <div class="warning-banner" id="warningBanner" style="display: none;">
             <span>⚠️</span>
             <span id="warningText"></span>
@@ -468,4 +483,5 @@
     <script src="../../js/main.js"></script>
     <script src="../../js/student/exam.js"></script>
 </body>
+
 </html>

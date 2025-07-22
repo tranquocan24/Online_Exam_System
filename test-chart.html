@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-container {
+            position: relative;
+            min-height: 300px;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .chart-error {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            min-height: 200px;
+        }
+
+        .chart-error .error-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.6;
+        }
+
+        .chart-error h4 {
+            color: #6c757d;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .chart-error p {
+            color: #adb5bd;
+            margin: 0;
+            font-size: 14px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Test Chart.js</h1>
+        <p>Kiểm tra xem Chart.js có hoạt động không</p>
+
+        <button onclick="testChart()">Test Chart</button>
+        <button onclick="loadChartJS()">Load Chart.js</button>
+
+        <div class="chart-container">
+            <canvas id="testChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let chartInstance = null;
+
+        async function loadChartJS() {
+            if (typeof Chart !== 'undefined') {
+                console.log('Chart.js already loaded');
+                return;
+            }
+
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                script.onload = () => {
+                    console.log('Chart.js loaded successfully');
+                    resolve();
+                };
+                script.onerror = () => {
+                    reject(new Error('Failed to load Chart.js'));
+                };
+                document.head.appendChild(script);
+            });
+        }
+
+        function testChart() {
+            const canvas = document.getElementById('testChart');
+            if (!canvas) {
+                console.error('Canvas not found');
+                return;
+            }
+
+            if (typeof Chart === 'undefined') {
+                console.log('Chart.js not loaded, loading...');
+                loadChartJS().then(() => {
+                    createTestChart(canvas);
+                }).catch(error => {
+                    console.error('Failed to load Chart.js:', error);
+                    showChartError(canvas);
+                });
+                return;
+            }
+
+            createTestChart(canvas);
+        }
+
+        function createTestChart(canvas) {
+            try {
+                // Destroy previous chart if exists
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+
+                // Create test data
+                const data = {
+                    labels: ['0-59%', '60-69%', '70-79%', '80-89%', '90-100%'],
+                    datasets: [{
+                        label: 'Số lượng',
+                        data: [5, 8, 12, 15, 10],
+                        backgroundColor: ['#e53e3e', '#ed8936', '#ecc94b', '#48bb78', '#38a169'],
+                        borderRadius: 8,
+                        maxBarThickness: 50
+                    }]
+                };
+
+                // Create chart
+                chartInstance = new Chart(canvas, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            title: {
+                                display: true,
+                                text: 'Test Chart - Phân bố điểm số'
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Khoảng điểm (%)'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Số lượng sinh viên'
+                                }
+                            }
+                        }
+                    }
+                });
+
+                console.log('Test chart created successfully');
+            } catch (error) {
+                console.error('Error creating test chart:', error);
+                showChartError(canvas);
+            }
+        }
+
+        function showChartError(canvas) {
+            const container = canvas.parentElement;
+            if (container) {
+                container.innerHTML = `
+                    <div class="chart-error">
+                        <div class="error-icon">📊</div>
+                        <h4>Không thể hiển thị biểu đồ</h4>
+                        <p>Vui lòng làm mới trang để thử lại</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto test on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testChart();
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

@@ -8,15 +8,15 @@ class StudentDashboard {
 
     async init() {
         console.log('Student Dashboard initialized');
-        
+
         // Get user from app or storage
         this.user = window.app?.currentUser || JSON.parse(localStorage.getItem('currentUser') || '{}');
-        
+
         if (!this.user || !this.user.id) {
             console.error('User not found in dashboard');
             return;
         }
-        
+
         console.log('Loading dashboard for user:', this.user.id);
         await this.loadDashboardData();
         this.bindEvents();
@@ -25,32 +25,33 @@ class StudentDashboard {
     async loadDashboardData() {
         try {
             console.log('Loading dashboard data...');
-            
+
             // Load recent exams
             console.log('Fetching exams...');
-            const examsResponse = await fetch('/api/exams');
+            // Sửa: truyền userId khi fetch danh sách bài thi
+            const examsResponse = await fetch(`/api/exams?userId=${this.user.id}`);
             const exams = await examsResponse.json();
             console.log('Exams loaded:', exams.length);
-            
+
             // Load user results
             console.log('Fetching results for user:', this.user.id);
             const resultsResponse = await fetch(`/api/results?userId=${this.user.id}`);
             const results = await resultsResponse.json();
             console.log('Results loaded:', results.length);
-            
+
             // Calculate available vs completed stats
             const completedExamIds = results.map(result => result.examId);
             const availableExams = exams.filter(exam => !completedExamIds.includes(exam.id));
             const completedExams = exams.filter(exam => completedExamIds.includes(exam.id));
-            
+
             console.log('Available exams:', availableExams.length);
             console.log('Completed exams:', completedExams.length);
             console.log('Average score:', this.calculateAverageScore(results));
-            
+
             this.displayDashboardStats(availableExams.length, completedExams.length, results);
             this.displayRecentExams(exams.slice(0, 3));
             // Note: displayRecentResults không cần vì dashboard.html không có phần này
-            
+
         } catch (error) {
             console.error('Error loading dashboard data:', error);
             this.showError('Không thể tải dữ liệu dashboard');
@@ -63,45 +64,14 @@ class StudentDashboard {
     }
 
     displayDashboardStats(availableCount, completedCount, results) {
-        // Update individual stat elements
+        // Cập nhật số liệu vào các thẻ id tương ứng
         const totalExamsEl = document.getElementById('total-exams');
         const completedExamsEl = document.getElementById('completed-exams');
         const averageScoreEl = document.getElementById('average-score');
-        
-        const averageScore = this.calculateAverageScore(results);
-        
-        if (totalExamsEl) {
-            totalExamsEl.textContent = availableCount;
-        }
-        
-        if (completedExamsEl) {
-            completedExamsEl.textContent = completedCount;
-        }
-        
-        if (averageScoreEl) {
-            averageScoreEl.textContent = `${averageScore}%`;
-        }
-        
-        console.log('Dashboard stats updated:', { availableCount, completedCount, averageScore });
-        
-        // Also try the old selector as fallback
-        const statsContainer = document.querySelector('.dashboard-stats');
-        if (statsContainer) {
-            statsContainer.innerHTML = `
-                <div class="stat-card">
-                    <div class="stat-number">${availableCount}</div>
-                    <div class="stat-label">Bài thi khả dụng</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${completedCount}</div>
-                    <div class="stat-label">Đã hoàn thành</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">${averageScore}%</div>
-                    <div class="stat-label">Điểm trung bình</div>
-                </div>
-            `;
-        }
+
+        if (totalExamsEl) totalExamsEl.textContent = availableCount;
+        if (completedExamsEl) completedExamsEl.textContent = completedCount;
+        if (averageScoreEl) averageScoreEl.textContent = this.calculateAverageScore(results) + '%';
     }
 
     displayRecentExams(exams) {
@@ -140,10 +110,10 @@ class StudentDashboard {
         if (container && results.length > 0) {
             container.innerHTML = `
                 ${results.map(result => {
-                    const score = this.calculateScore(result);
-                    const scoreClass = score >= 80 ? 'score-excellent' : score >= 60 ? 'score-good' : 'score-poor';
-                    
-                    return `
+                const score = this.calculateScore(result);
+                const scoreClass = score >= 80 ? 'score-excellent' : score >= 60 ? 'score-good' : 'score-poor';
+
+                return `
                         <div class="result-item">
                             <div class="result-content">
                                 <h4>${result.examTitle}</h4>
@@ -154,7 +124,7 @@ class StudentDashboard {
                             </div>
                         </div>
                     `;
-                }).join('')}
+            }).join('')}
                 <div class="view-all-results">
                     <button onclick="window.app?.loadPage('my_results')" class="btn btn-secondary btn-sm">
                         Xem tất cả kết quả
@@ -175,19 +145,19 @@ class StudentDashboard {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateScore(result);
         }
-        
+
         // Fallback to local implementation
         if (!result.examQuestions || !result.answers) {
             console.log('Missing examQuestions or answers for result:', result.id);
             return 0;
         }
-        
+
         let correct = 0;
         const total = result.examQuestions.length;
-        
+
         result.examQuestions.forEach((question, index) => {
             let userAnswer = null;
-            
+
             if (result.answers.hasOwnProperty(question.id)) {
                 userAnswer = result.answers[question.id];
             } else if (result.answers.hasOwnProperty(index.toString())) {
@@ -197,35 +167,35 @@ class StudentDashboard {
             } else if (result.answers.hasOwnProperty(question.id.toString())) {
                 userAnswer = result.answers[question.id.toString()];
             }
-            
+
             if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
             }
         });
-        
+
         return Math.round((correct / total) * 100);
     }
 
     calculateAverageScore(results) {
         if (results.length === 0) return 0;
-        
+
         const totalScore = results.reduce((sum, result) => {
             return sum + this.calculateScore(result);
         }, 0);
-        
+
         return Math.round(totalScore / results.length);
     }
 
     isAnswerCorrect(question, userAnswer) {
         if (!userAnswer) return false;
-        
+
         switch (question.type) {
             case 'multiple-choice':
                 return userAnswer === question.correctAnswer;
             case 'multiple-select':
                 if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) return false;
                 return userAnswer.length === question.correctAnswer.length &&
-                       userAnswer.every(answer => question.correctAnswer.includes(answer));
+                    userAnswer.every(answer => question.correctAnswer.includes(answer));
             case 'text':
                 return userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
             default:
@@ -255,7 +225,7 @@ class StudentDashboard {
 // Initialize when script loads (for dynamic loading)
 function initStudentDashboard() {
     console.log('initStudentDashboard called');
-    
+
     if (window.app?.currentRole === 'student') {
         console.log('Initializing StudentDashboard...');
         // Only create new instance if not already created

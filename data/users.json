@@ -5,32 +5,46 @@
       "password": "123456",
       "name": "Nguyễn Văn An",
       "role": "student",
-      "class": "CNTT01",
+      "classes": [
+        "CIT0004",
+        "CIT0005"
+      ],
       "id": "SV001"
-    },
-    {
-      "username": "cuong",
-      "password": "1",
-      "name": "Đặng Cao Cường",
-      "role": "student",
-      "class": "CIT",
-      "id": "SV202451"
-    },
-    {
-      "username": "an",
-      "password": "1",
-      "name": "Trần Quốc An",
-      "role": "student",
-      "class": "CIT",
-      "id": "SV274635"
     },
     {
       "username": "hau",
       "password": "123456",
       "name": "Nguyễn Phúc Hậu",
       "role": "student",
-      "class": "EBS",
-      "id": "SV684783"
+      "classes": [
+        "CIT0001"
+      ],
+      "id": "SV684783",
+      "class": "CIT0001"
+    },
+    {
+      "username": "quocan",
+      "password": "123456",
+      "name": "Trần Quốc An",
+      "role": "student",
+      "classes": [
+        "CIT0001",
+        "CIT0002"
+      ],
+      "id": "SV317738",
+      "class": "CIT0001"
+    },
+    {
+      "username": "caocuong",
+      "password": "123456",
+      "name": "Đặng Cao Cường",
+      "role": "student",
+      "classes": [
+        "CIT0001",
+        "CIT0003"
+      ],
+      "id": "SV342529",
+      "class": "CIT0001"
     }
   ],
   "teachers": [
@@ -41,6 +55,13 @@
       "name": "PGS.TS Nguyễn Văn C",
       "subject": "Lập trình Web",
       "role": "teacher"
+    },
+    {
+      "username": "giaovien1",
+      "password": "123456",
+      "name": "Nguyễn Thị Giáo Viên",
+      "role": "teacher",
+      "id": "GV279401"
     }
   ],
   "admins": [

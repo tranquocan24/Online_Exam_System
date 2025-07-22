@@ -9,12 +9,13 @@ class App {
     }
 
     init() {
+        console.log('🧪 EIU TestLab - Application initialized');
         // Kiểm tra session khi load trang
         this.checkSession();
-        
+
         // Bind events
         this.bindEvents();
-        
+
         // Load trang đăng nhập nếu chưa đăng nhập
         if (!this.currentUser) {
             this.loadLoginPage();
@@ -30,21 +31,21 @@ class App {
     checkSession() {
         const savedUser = localStorage.getItem('currentUser');
         const sessionExpiry = localStorage.getItem('sessionExpiry');
-        
+
         if (savedUser && sessionExpiry) {
             const now = new Date().getTime();
             const expiry = parseInt(sessionExpiry);
-            
+
             if (now > expiry) {
                 // Session expired
                 this.clearExpiredSession();
                 this.showSessionExpiredMessage();
                 return;
             }
-            
+
             // Extend session
             this.extendSession();
-            
+
             this.currentUser = JSON.parse(savedUser);
             this.currentRole = this.currentUser.role;
             this.showUserInfo();
@@ -75,7 +76,7 @@ class App {
                     </div>
                 </div>
             `;
-            
+
             // Add styles for session expired message
             const style = document.createElement('style');
             style.textContent = `
@@ -117,7 +118,7 @@ class App {
     createSession(user) {
         const sessionDuration = 30 * 60 * 1000; // 30 minutes
         const expiry = new Date().getTime() + sessionDuration;
-        
+
         localStorage.setItem('currentUser', JSON.stringify(user));
         localStorage.setItem('sessionExpiry', expiry.toString());
         localStorage.setItem('loginTime', new Date().toISOString());
@@ -128,7 +129,7 @@ class App {
         const userInfo = document.getElementById('user-info');
         const welcomeText = document.getElementById('welcome-text');
         const headerTitle = document.querySelector('#main-header h1');
-        
+
         if (this.currentUser && userInfo && welcomeText) {
             let roleText = '';
             switch (this.currentUser.role) {
@@ -153,7 +154,7 @@ class App {
                 default:
                     roleText = '';
             }
-            
+
             welcomeText.textContent = `Xin chào, ${this.currentUser.name} (${roleText})`;
             userInfo.style.display = 'flex';
         }
@@ -173,7 +174,7 @@ class App {
             const response = await fetch('content/login.html');
             const html = await response.text();
             this.renderContent(html);
-            
+
             // Load auth.js nếu chưa có
             if (!window.Auth) {
                 await this.loadScript('js/auth.js');
@@ -191,7 +192,7 @@ class App {
         try {
             let layoutFile = '';
             let cssFile = '';
-            
+
             if (this.currentRole === 'student') {
                 layoutFile = 'student.html';
                 cssFile = 'css/student.css';
@@ -201,32 +202,32 @@ class App {
             } else if (this.currentRole === 'admin') {
                 // Admin sử dụng approach khác - load content trực tiếp
                 cssFile = 'css/admin.css';
-                
+
                 // Add admin class to body for special styling
                 document.body.classList.add('admin-mode');
-                
+
                 // Keep main header visible for logout button, hide footer
                 const mainHeader = document.getElementById('main-header');
                 if (mainHeader) {
                     mainHeader.style.display = '';
                 }
-                
+
                 const mainFooter = document.getElementById('main-footer');
                 if (mainFooter) {
                     mainFooter.style.display = 'none';
                 }
-                
+
                 // Load CSS cho admin
                 await this.loadCSS(cssFile);
-                
+
                 // Load admin content trực tiếp
                 const response = await fetch('admin-content.html');
                 const html = await response.text();
                 this.renderContent(html);
-                
+
                 // Load admin script
                 await this.loadRoleScripts();
-                
+
                 // Admin content đã bao gồm layout, không cần load page
                 return;
             } else {
@@ -235,43 +236,43 @@ class App {
                 if (mainHeader) {
                     mainHeader.style.display = '';
                 }
-                
+
                 const mainFooter = document.getElementById('main-footer');
                 if (mainFooter) {
                     mainFooter.style.display = '';
                 }
-                
+
                 // Remove admin mode regardless of current role
                 document.body.classList.remove('admin-mode');
             }
 
             // Load CSS riêng cho role
             await this.loadCSS(cssFile);
-            
+
             // Load layout HTML
             const response = await fetch(layoutFile);
             const html = await response.text();
             this.renderContent(html);
-            
+
             // Load role-specific scripts
             await this.loadRoleScripts();
-            
+
             // Bind logout button for all roles after layout is loaded
             if (this.currentRole !== 'admin') {
                 setTimeout(() => {
                     this.bindLogoutButton();
                 }, 200);
             }
-            
+
             // Bind navigation events
             this.bindNavigationEvents();
-            
+
             // Load dashboard mặc định (chỉ cho student và teacher)
             if (this.currentRole !== 'admin') {
                 this.loadPage('dashboard');
             }
             // Admin không cần loadPage vì layout đã có sẵn tất cả content
-            
+
         } catch (error) {
             console.error('Lỗi load layout:', error);
             this.renderContent('<p>Lỗi tải giao diện</p>');
@@ -285,14 +286,14 @@ class App {
                 // Load admin script
                 console.log('Loading admin script...');
                 await this.loadScript('js/admin/admin.js');
-                
+
                 // Initialize admin panel after script is loaded
                 console.log('Initializing admin panel...');
                 setTimeout(() => {
                     if (window.AdminPanel) {
                         console.log('Creating AdminPanel instance...');
                         window.adminPanel = new window.AdminPanel();
-                        
+
                         // Bind logout button after admin layout is loaded
                         setTimeout(() => {
                             this.bindLogoutButton();
@@ -311,20 +312,20 @@ class App {
     // Bind logout button - unified for all roles  
     bindLogoutButton() {
         console.log('Binding logout button for role:', this.currentRole);
-        
+
         // Wait a bit for DOM to be ready
         setTimeout(() => {
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) {
                 console.log('Logout button found, binding simple event...');
-                
+
                 // Simple logout binding
                 logoutBtn.onclick = (e) => {
                     e.preventDefault();
                     console.log('Logout clicked for role:', this.currentRole);
                     this.logout();
                 };
-                
+
                 console.log('Logout button bound successfully for role:', this.currentRole);
             } else {
                 console.warn('Logout button not found for role:', this.currentRole);
@@ -338,14 +339,14 @@ class App {
         if (this.currentRole === 'admin') {
             return;
         }
-        
+
         const navLinks = document.querySelectorAll('.nav-link[data-page]');
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const page = link.getAttribute('data-page');
                 this.loadPage(page);
-                
+
                 // Update active state
                 navLinks.forEach(l => l.classList.remove('active'));
                 link.classList.add('active');
@@ -358,22 +359,22 @@ class App {
         try {
             const contentPath = `content/${this.currentRole}/${page}.html`;
             const response = await fetch(contentPath);
-            
+
             if (!response.ok) {
                 throw new Error(`Không tìm thấy trang: ${contentPath}`);
             }
-            
+
             const html = await response.text();
             const contentContainer = document.getElementById(`${this.currentRole}-content`);
-            
+
             if (contentContainer) {
                 contentContainer.innerHTML = html;
                 this.currentPage = page;
-                
+
                 // Load JS tương ứng nếu có
                 await this.loadPageScript(page);
             }
-            
+
         } catch (error) {
             console.error('Lỗi load trang:', error);
             const contentContainer = document.getElementById(`${this.currentRole}-content`);
@@ -391,20 +392,20 @@ class App {
     // Load script cho trang cụ thể
     async loadPageScript(page) {
         const scriptPath = `js/${this.currentRole}/${page}.js`;
-        
+
         try {
             // Kiểm tra xem script đã load chưa
             const existingScript = document.querySelector(`script[src="${scriptPath}"]`);
             if (!existingScript) {
                 await this.loadScript(scriptPath);
-                
+
                 // Đợi một chút để script được execute
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
-            
+
             // Khởi tạo instance cho trang cụ thể
             await this.initializePageInstance(page);
-            
+
         } catch (error) {
             // Không bắt buộc phải có JS cho mọi trang
             console.log(`Không có script cho trang ${page}`, error);
@@ -415,7 +416,7 @@ class App {
     async initializePageInstance(page) {
         // Đợi một chút để script load xong
         await new Promise(resolve => setTimeout(resolve, 300));
-        
+
         try {
             switch (page) {
                 case 'dashboard':
@@ -473,6 +474,23 @@ class App {
                     }
                     break;
 
+                case 'result':
+                    if (this.currentRole === 'student') {
+                        console.log('Loading result page...');
+                        if (window.ResultViewer) {
+                            if (!window.resultViewer) {
+                                console.log('Creating new result viewer instance...');
+                                window.resultViewer = new window.ResultViewer();
+                            } else {
+                                console.log('Reinitializing existing result viewer...');
+                                await window.resultViewer.init();
+                            }
+                        } else {
+                            console.warn('ResultViewer class not found');
+                        }
+                    }
+                    break;
+
                 case 'exam':
                     if (this.currentRole === 'student') {
                         // Exam luôn tạo mới để tránh conflict
@@ -516,6 +534,12 @@ class App {
 
                 case 'view_results':
                     if (this.currentRole === 'teacher') {
+                        // Cleanup existing instance if exists
+                        if (window.viewResults && typeof window.viewResults.cleanup === 'function') {
+                            console.log('Cleaning up existing view results...');
+                            window.viewResults.cleanup();
+                        }
+
                         if (window.viewResults && typeof window.viewResults.refreshData === 'function') {
                             console.log('Refreshing existing view results...');
                             await window.viewResults.refreshData();
@@ -563,7 +587,7 @@ class App {
                 resolve();
                 return;
             }
-            
+
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = href;
@@ -585,19 +609,19 @@ class App {
     handleLoginSuccess(user) {
         this.currentUser = user;
         this.currentRole = user.role;
-        
+
         // Tạo session với thời gian hết hạn
         this.createSession(user);
-        
+
         // Log successful login
         this.logUserActivity('login', `User ${user.username} logged in as ${user.role}`);
-        
+
         // Hiển thị thông tin user
         this.showUserInfo();
-        
+
         // Load layout tương ứng
         this.loadRoleLayout();
-        
+
         // Setup session monitoring
         this.setupSessionMonitoring();
     }
@@ -608,7 +632,7 @@ class App {
         this.sessionCheckInterval = setInterval(() => {
             this.checkSessionStatus();
         }, 5 * 60 * 1000);
-        
+
         // Extend session on user activity
         this.setupActivityTracking();
     }
@@ -620,7 +644,7 @@ class App {
             const now = new Date().getTime();
             const expiry = parseInt(sessionExpiry);
             const timeLeft = expiry - now;
-            
+
             // Warn user 5 minutes before expiry
             if (timeLeft > 0 && timeLeft < 5 * 60 * 1000) {
                 this.showSessionWarning(Math.ceil(timeLeft / 60000));
@@ -640,7 +664,7 @@ class App {
                 </button>
             </div>
         `;
-        
+
         // Add styles
         const style = document.createElement('style');
         style.textContent = `
@@ -671,9 +695,9 @@ class App {
             }
         `;
         document.head.appendChild(style);
-        
+
         document.body.appendChild(warningDiv);
-        
+
         // Auto remove after 10 seconds
         setTimeout(() => {
             if (warningDiv.parentElement) {
@@ -689,7 +713,7 @@ class App {
             this.extendSession();
             this.logUserActivity('activity', 'User activity detected');
         };
-        
+
         // Throttle activity tracking
         let lastActivity = 0;
         events.forEach(event => {
@@ -711,61 +735,61 @@ class App {
             timestamp: new Date().toISOString(),
             user: this.currentUser?.username || 'anonymous'
         };
-        
+
         const activities = JSON.parse(localStorage.getItem('userActivities') || '[]');
         activities.push(activity);
-        
+
         // Keep only last 50 activities
         if (activities.length > 50) {
             activities.splice(0, activities.length - 50);
         }
-        
+
         localStorage.setItem('userActivities', JSON.stringify(activities));
     }
 
     // Đăng xuất
     logout() {
         console.log('Logout called from:', this.currentRole);
-        
+
         // Log logout activity
         if (this.currentUser) {
             this.logUserActivity('logout', `User ${this.currentUser.username} logged out`);
         }
-        
+
         // Clear session monitoring
         if (this.sessionCheckInterval) {
             clearInterval(this.sessionCheckInterval);
         }
-        
+
         // Clean up page instances
         this.cleanupPageInstances();
-        
+
         // Remove admin mode class if in admin mode
         if (this.currentRole === 'admin') {
             console.log('Removing admin mode class');
             document.body.classList.remove('admin-mode');
         }
-        
+
         // Xóa session
         localStorage.removeItem('currentUser');
         localStorage.removeItem('sessionExpiry');
         localStorage.removeItem('loginTime');
-        
+
         // Reset state
         this.currentUser = null;
         this.currentRole = null;
         this.currentPage = null;
-        
+
         // Ẩn thông tin user
         this.hideUserInfo();
-        
+
         // Remove session warnings
         const warnings = document.querySelectorAll('.session-warning');
         warnings.forEach(warning => warning.remove());
-        
+
         // Show logout success message
         this.showLogoutMessage();
-        
+
         // Về trang đăng nhập after delay
         setTimeout(() => {
             this.loadLoginPage();
@@ -775,13 +799,13 @@ class App {
     // Clean up all page instances when logout
     cleanupPageInstances() {
         console.log('Cleaning up page instances...');
-        
+
         // Clean up student instances
         window.studentDashboard = null;
         window.examList = null;
         window.myResultsManager = null;
         window.examInstance = null;
-        
+
         // Clean up teacher instances
         window.teacherDashboard = null;
         window.createExam = null;
@@ -801,8 +825,32 @@ class App {
                         <p>Cảm ơn bạn đã sử dụng hệ thống. Đang chuyển về trang đăng nhập...</p>
                     </div>
                 </div>
+                
+                <!-- Footer -->
+                <footer id="main-footer" style="
+                    position: fixed; 
+                    bottom: 0; 
+                    left: 0; 
+                    width: 100%; 
+                    background: #f8f9fa; 
+                    padding: 15px 0; 
+                    border-top: 1px solid #e9ecef;
+                    z-index: 1000;
+                    box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+                ">
+                    <div class="footer-container" style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+                        <div class="footer-content" style="display: flex; align-items: center; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/12/Logo-DH-Quoc-Te-Mien-Dong-EIU.png" 
+                                 alt="Logo EIU" 
+                                 style="height: 35px; width: auto;">
+                            <p style="color: #112444; margin: 0; font-size: 13px; text-align: center;">
+                                &copy; 2025 Hệ thống thi online - Trường Đại Học Quốc Tế Miền Đông
+                            </p>
+                        </div>
+                    </div>
+                </footer>
             `;
-            
+
             // Add styles for logout message
             const style = document.createElement('style');
             style.textContent = `
@@ -811,6 +859,7 @@ class App {
                     justify-content: center;
                     align-items: center;
                     min-height: 400px;
+                    margin-bottom: 80px; /* Add margin to prevent overlap with footer */
                 }
                 .logout-success .message-card {
                     background: white;
@@ -846,14 +895,14 @@ class App {
                     'Content-Type': 'application/json'
                 }
             };
-            
+
             if (data) {
                 options.body = JSON.stringify(data);
             }
-            
+
             const response = await fetch(endpoint, options);
             return await response.json();
-            
+
         } catch (error) {
             console.error('API Error:', error);
             throw error;

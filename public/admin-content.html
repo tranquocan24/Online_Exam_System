@@ -6,6 +6,7 @@
             <li><a href="#" data-tab="users" class="nav-tab">Quản lý tài khoản</a></li>
             <li><a href="#" data-tab="stats" class="nav-tab">Thống kê</a></li>
             <li><a href="#" data-tab="settings" class="nav-tab">Cài đặt</a></li>
+            <li><a href="#" data-tab="classes" class="nav-tab">Quản lý lớp học</a></li>
         </ul>
     </div>
 </nav>
@@ -14,6 +15,10 @@
 <div id="admin-content">
     <!-- Dashboard Tab -->
     <div id="dashboard-tab" class="tab-content active">
+        <div class="dashboard-header">
+            <h2>Tổng quan hệ thống</h2>
+            <button id="refresh-data-btn" class="btn btn-secondary">🔄 Làm mới dữ liệu</button>
+        </div>
         <div class="dashboard-grid">
             <div class="stats-card">
                 <h3>Tổng số học sinh</h3>
@@ -32,7 +37,7 @@
                 <div class="stat-number" id="today-attempts">0</div>
             </div>
         </div>
-        
+
         <div class="recent-activities">
             <h3>Hoạt động gần đây</h3>
             <div id="recent-activities-list">
@@ -47,7 +52,7 @@
             <h2>Quản lý tài khoản</h2>
             <button id="add-user-btn" class="btn btn-primary">Thêm tài khoản mới</button>
         </div>
-        
+
         <div class="users-filters">
             <select id="user-type-filter">
                 <option value="all">Tất cả</option>
@@ -57,7 +62,7 @@
             </select>
             <input type="text" id="search-users" placeholder="Tìm kiếm theo tên hoặc username...">
         </div>
-        
+
         <div class="users-table-container">
             <table id="users-table">
                 <thead>
@@ -130,7 +135,7 @@
                     </label>
                 </div>
             </div>
-            
+
             <div class="settings-section">
                 <h3>Bảo mật</h3>
                 <div class="form-group">
@@ -142,62 +147,552 @@
                     <input type="number" id="session-timeout" value="30" min="5" max="480">
                 </div>
             </div>
-            
+
             <div class="settings-actions">
                 <button id="save-settings-btn" class="btn btn-primary">Lưu cài đặt</button>
                 <button id="reset-settings-btn" class="btn btn-secondary">Đặt lại mặc định</button>
             </div>
         </div>
     </div>
+
+    <!-- Classes Management Tab -->
+    <div id="classes-tab" class="tab-content">
+        <div class="classes-header">
+            <h2>Quản lý lớp học</h2>
+            <button id="add-class-btn" class="btn btn-primary">Thêm lớp học mới</button>
+        </div>
+        <div class="classes-table-container">
+            <table id="classes-table" class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Mã lớp</th>
+                        <th>Tên lớp</th>
+                        <th>Mô tả</th>
+                        <th>Giáo viên</th>
+                        <th>Học sinh</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="classes-table-body">
+                    <!-- Dữ liệu lớp học sẽ được load động -->
+                </tbody>
+            </table>
+        </div>
+        <style>
+            .classes-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 18px;
+                padding: 18px 0 8px 0;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .classes-header h2 {
+                margin: 0;
+                color: #112444;
+                font-size: 2rem;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .classes-header .btn {
+                font-size: 16px;
+                padding: 10px 22px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(17, 36, 68, 0.08);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .styled-table {
+                width: 100%;
+                border-collapse: collapse;
+                background: #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                box-shadow: 0 2px 12px rgba(17, 36, 68, 0.07);
+            }
+
+            .styled-table th,
+            .styled-table td {
+                padding: 14px 12px;
+                text-align: left;
+            }
+
+            .styled-table th {
+                background: #112444;
+                color: #fff;
+                font-weight: 600;
+                font-size: 1rem;
+                border-bottom: 2px solid #e2e8f0;
+            }
+
+            .styled-table tbody tr {
+                border-bottom: 1px solid #e2e8f0;
+                transition: background 0.2s;
+            }
+
+            .styled-table tbody tr:hover {
+                background: #f1f6fb;
+            }
+
+            .styled-table td {
+                font-size: 15px;
+                color: #2d3748;
+            }
+
+            .styled-table td .user-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .styled-table td .user-badge {
+                background: #e2e8f0;
+                color: #112444;
+                border-radius: 12px;
+                padding: 2px 10px;
+                font-size: 13px;
+                font-weight: 500;
+                display: inline-block;
+            }
+
+            .styled-table td .user-badge.teacher {
+                background: #d1e7ff;
+                color: #1a365d;
+            }
+
+            .styled-table td .user-badge.student {
+                background: #e6fffa;
+                color: #229954;
+            }
+
+            .styled-table td .action-btns {
+                display: flex;
+                gap: 8px;
+            }
+
+            .styled-table .btn-sm {
+                padding: 6px 14px;
+                font-size: 14px;
+                border-radius: 6px;
+                border: none;
+                cursor: pointer;
+                transition: background 0.2s, color 0.2s;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+            .styled-table .btn-edit {
+                background: #f6e05e;
+                color: #112444;
+            }
+
+            .styled-table .btn-edit:hover {
+                background: #ffe066;
+            }
+
+            .styled-table .btn-delete {
+                background: #e53e3e;
+                color: #fff;
+            }
+
+            .styled-table .btn-delete:hover {
+                background: #c53030;
+            }
+
+            @media (max-width: 900px) {
+                .classes-header h2 {
+                    font-size: 1.3rem;
+                }
+
+                .styled-table th,
+                .styled-table td {
+                    font-size: 13px;
+                    padding: 8px 6px;
+                }
+            }
+
+            @media (max-width: 600px) {
+                .classes-header {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                .classes-header .btn {
+                    width: 100%;
+                    justify-content: center;
+                }
+
+                .styled-table th,
+                .styled-table td {
+                    font-size: 12px;
+                    padding: 6px 4px;
+                }
+            }
+        </style>
+    </div>
 </div>
 
-<!-- Admin Footer -->
-<footer class="admin-footer">
-    <div class="admin-footer-container">
-        <p>&copy; 2025 Hệ thống thi online - Trang quản trị</p>
-    </div>
-</footer>
+
 
 <!-- User Modal -->
-<div id="user-modal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
+<div id="user-modal" class="modal modern-modal">
+    <div class="modal-content modern-modal-content">
+        <div class="modal-header modern-modal-header">
             <h3 id="modal-title">Thêm tài khoản mới</h3>
-            <span class="close">&times;</span>
+            <span class="close modern-close">&times;</span>
         </div>
         <form id="user-form">
-            <div class="form-group">
+            <div class="form-group modern-form-group">
                 <label for="user-username">Username:</label>
-                <input type="text" id="user-username" required>
+                <input type="text" id="user-username" class="modern-input" required>
             </div>
-            <div class="form-group">
+            <div class="form-group modern-form-group">
                 <label for="user-password">Mật khẩu:</label>
-                <input type="password" id="user-password" required>
+                <input type="password" id="user-password" class="modern-input" required>
             </div>
-            <div class="form-group">
+            <div class="form-group modern-form-group">
                 <label for="user-name">Tên đầy đủ:</label>
-                <input type="text" id="user-name" required>
+                <input type="text" id="user-name" class="modern-input" required>
             </div>
-            <div class="form-group">
+            <div class="form-group modern-form-group">
                 <label for="user-role">Vai trò:</label>
-                <select id="user-role" required>
+                <select id="user-role" class="modern-input" required>
                     <option value="student">Học sinh</option>
                     <option value="teacher">Giáo viên</option>
-                    <option value="admin">Quản trị viên</option>
                 </select>
             </div>
-            <div class="form-group" id="student-fields">
-                <label for="user-class">Lớp:</label>
-                <input type="text" id="user-class">
-            </div>
-            <div class="form-group" id="teacher-fields">
-                <label for="user-subject">Môn học:</label>
-                <input type="text" id="user-subject">
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary">Lưu</button>
+            <div class="form-actions modern-form-actions">
+                <button type="submit" class="btn btn-primary modern-btn">Lưu</button>
                 <button type="button" class="btn btn-secondary" id="cancel-user-btn">Hủy</button>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Modal tạo/sửa lớp học (KHÔNG ICON, ĐẢM BẢO HIỂN THỊ DANH SÁCH) -->
+<div id="class-modal" class="modal modern-modal">
+    <div class="modal-content modern-modal-content">
+        <div class="modal-header modern-modal-header">
+            <h3 id="class-modal-title">Thêm lớp học mới</h3>
+            <span class="close modern-close" id="close-class-modal" title="Đóng">&times;</span>
+        </div>
+        <form id="class-form" autocomplete="off">
+            <div class="form-group modern-form-group">
+                <label for="class-id" class="form-label">Mã lớp *</label>
+                <input type="text" id="class-id" name="id" class="form-input modern-input" required maxlength="30"
+                    placeholder="VD: 12A1">
+            </div>
+            <div class="form-group modern-form-group">
+                <label for="class-name" class="form-label">Tên lớp *</label>
+                <input type="text" id="class-name" name="name" class="form-input modern-input" required maxlength="100"
+                    placeholder="Nhập tên lớp">
+            </div>
+            <div class="form-group modern-form-group">
+                <label for="class-description" class="form-label">Mô tả</label>
+                <textarea id="class-description" name="description" class="form-input modern-input" maxlength="255"
+                    placeholder="Mô tả ngắn về lớp học..."></textarea>
+            </div>
+            <div class="form-group modern-form-group">
+                <label for="teacher-filter" class="form-label">Giáo viên</label>
+                <input type="text" id="teacher-filter" class="form-input modern-input"
+                    placeholder="Tìm kiếm giáo viên...">
+                <div class="select-all-row"><input type="checkbox" id="teacher-select-all"
+                        style="margin-right: 6px;"><label for="teacher-select-all" style="margin-bottom:0;">Chọn tất
+                        cả</label></div>
+                <div id="class-teachers-list" class="checkbox-list modern-checkbox-list"></div>
+                <div id="teacher-pagination" class="pagination modern-pagination"></div>
+            </div>
+            <div class="form-group modern-form-group">
+                <label for="student-filter" class="form-label">Học sinh</label>
+                <input type="text" id="student-filter" class="form-input modern-input"
+                    placeholder="Tìm kiếm học sinh...">
+                <div class="select-all-row"><input type="checkbox" id="student-select-all"
+                        style="margin-right: 6px;"><label for="student-select-all" style="margin-bottom:0;">Chọn tất
+                        cả</label></div>
+                <div id="class-students-list" class="checkbox-list modern-checkbox-list"></div>
+                <div id="student-pagination" class="pagination modern-pagination"></div>
+            </div>
+            <div class="form-actions modern-form-actions">
+                <button type="submit" class="btn btn-primary modern-btn" id="save-class-btn">Lưu</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xem toàn bộ học sinh của lớp -->
+<div id="students-list-modal" class="modal">
+    <div class="modal-content" style="max-width:400px;">
+        <div class="modal-header">
+            <h3 id="students-list-modal-title">Danh sách học sinh</h3>
+            <span class="close" id="close-students-list-modal" style="cursor:pointer;font-size:1.5em;">&times;</span>
+        </div>
+        <div id="students-list-modal-body" style="padding:18px 24px 12px 24px;max-height:350px;overflow-y:auto;"></div>
+    </div>
+</div>
+
+<style>
+    /* MODERN MODAL STYLES */
+    .modern-modal {
+        background: rgba(17, 36, 68, 0.18);
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        overflow-y: auto;
+    }
+
+    .modern-modal.show {
+        display: flex;
+    }
+
+    .modern-modal-content {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 8px 32px rgba(17, 36, 68, 0.18);
+        max-width: 480px;
+        width: 96vw;
+        padding: 0 0 18px 0;
+        animation: modalPop 0.25s cubic-bezier(.4, 2, .6, 1) 1;
+        position: relative;
+    }
+
+    @keyframes modalPop {
+        0% {
+            transform: scale(0.92);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    .modern-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 28px 10px 28px;
+        border-bottom: 1.5px solid #e2e8f0;
+        background: #f7fafc;
+        border-radius: 18px 18px 0 0;
+    }
+
+    .modern-modal-header h3 {
+        margin: 0;
+        font-size: 1.35rem;
+        color: #112444;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .modern-close {
+        font-size: 2.1em;
+        color: #64748b;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin-left: 18px;
+    }
+
+    .modern-close:hover {
+        color: #e53e3e;
+    }
+
+    .modern-form-group {
+        margin: 18px 28px 0 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .modern-form-group label {
+        font-weight: 600;
+        color: #112444;
+        margin-bottom: 2px;
+    }
+
+    .modern-input {
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        transition: border 0.2s, box-shadow 0.2s;
+        outline: none;
+        background: #f9fafb;
+    }
+
+    .modern-input:focus {
+        border: 1.5px solid #3b82f6;
+        box-shadow: 0 0 0 2px #3b82f633;
+        background: #fff;
+    }
+
+    .modern-checkbox-list {
+        background: #f3f6fa;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 12px;
+        margin-top: 6px;
+        max-height: 180px;
+        overflow-y: auto;
+    }
+
+    .modern-checkbox-list label {
+        font-size: 15px;
+        padding: 5px 0;
+        border-radius: 4px;
+        transition: background 0.18s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .modern-checkbox-list label:hover {
+        background: #e6f0fa;
+    }
+
+    .modern-checkbox-list input[type="checkbox"] {
+        accent-color: #3b82f6;
+        width: 16px;
+        height: 16px;
+    }
+
+    .modern-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        margin-top: 8px;
+    }
+
+    .modern-pagination button {
+        padding: 4px 10px;
+        border: 1.5px solid #cbd5e0;
+        background: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background 0.18s, color 0.18s;
+    }
+
+    .modern-pagination button.active {
+        background: #3b82f6;
+        color: #fff;
+        border-color: #3b82f6;
+    }
+
+    .modern-pagination button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .modern-form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        margin: 24px 28px 0 28px;
+    }
+
+    .modern-btn {
+        font-size: 1.1em;
+        padding: 10px 28px;
+        border-radius: 8px;
+        background: linear-gradient(90deg, #3b82f6 60%, #6366f1 100%);
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.08);
+        transition: background 0.18s, box-shadow 0.18s;
+        cursor: pointer;
+    }
+
+    .modern-btn:hover {
+        background: linear-gradient(90deg, #2563eb 60%, #4f46e5 100%);
+        box-shadow: 0 4px 16px rgba(59, 130, 246, 0.13);
+    }
+
+    @media (max-width: 600px) {
+        .modern-modal-content {
+            max-width: 99vw;
+            padding: 0 0 10px 0;
+        }
+
+        .modern-form-group,
+        .modern-form-actions {
+            margin-left: 8px;
+            margin-right: 8px;
+        }
+    }
+</style>
+
+<style>
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(17, 36, 68, 0.18);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal.show,
+    .modal[style*='display: block'] {
+        display: flex !important;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(17, 36, 68, 0.18);
+    }
+</style>
+
+<style>
+    .see-all-students {
+        display: inline-block;
+        color: #2563eb;
+        font-weight: 600;
+        background: #f1f6fb;
+        border-radius: 6px;
+        padding: 2px 10px;
+        margin-left: 6px;
+        text-decoration: none;
+        font-size: 13px;
+        transition: background 0.18s, color 0.18s;
+        cursor: pointer;
+    }
+
+    .see-all-students:hover {
+        background: #dbeafe;
+        color: #1d4ed8;
+        text-decoration: none;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ... (other script logic)
+        // Add padding-bottom to the main content area to prevent footer overlap
+        document.getElementById('admin-content').style.paddingBottom = '70px';
+    });
+</script>

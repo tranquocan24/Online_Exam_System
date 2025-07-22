@@ -1,0 +1,19 @@
+{
+  "id": "CIT0004",
+  "name": "CSE 457",
+  "description": "",
+  "teachers": [
+    {
+      "id": "GV279401",
+      "name": "Nguyễn Thị Giáo Viên"
+    }
+  ],
+  "students": [
+    {
+      "id": "SV001",
+      "name": "Nguyễn Văn An"
+    }
+  ],
+  "createdAt": "2025-07-22T02:15:20.773Z",
+  "updatedAt": "2025-07-22T02:15:20.773Z"
+}

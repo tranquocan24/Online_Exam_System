@@ -1,0 +1,19 @@
+{
+  "id": "CIT0005",
+  "name": "CSE 203",
+  "description": "",
+  "teachers": [
+    {
+      "id": "GV001",
+      "name": "PGS.TS Nguyễn Văn C"
+    }
+  ],
+  "students": [
+    {
+      "id": "SV001",
+      "name": "Nguyễn Văn An"
+    }
+  ],
+  "createdAt": "2025-07-22T02:19:37.976Z",
+  "updatedAt": "2025-07-22T02:19:37.976Z"
+}

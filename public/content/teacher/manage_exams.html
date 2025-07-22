@@ -24,7 +24,7 @@
                 <div class="stat-trend">Tất cả đề thi đã tạo</div>
             </div>
         </div>
-        
+
         <div class="stat-card-improved published">
             <div class="stat-icon-improved">✅</div>
             <div class="stat-content">
@@ -33,7 +33,7 @@
                 <div class="stat-trend">Đang hoạt động</div>
             </div>
         </div>
-        
+
         <div class="stat-card-improved draft">
             <div class="stat-icon-improved">📝</div>
             <div class="stat-content">
@@ -42,7 +42,7 @@
                 <div class="stat-trend">Chờ hoàn thiện</div>
             </div>
         </div>
-        
+
         <div class="stat-card-improved submissions">
             <div class="stat-icon-improved">👥</div>
             <div class="stat-content">
@@ -58,9 +58,10 @@
         <div class="filter-row-main">
             <div class="search-container">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchExams" class="search-input-improved" placeholder="Tìm kiếm đề thi theo tên, môn học...">
+                <input type="text" id="searchExams" class="search-input-improved"
+                    placeholder="Tìm kiếm đề thi theo tên, môn học...">
             </div>
-            
+
             <div class="basic-filters">
                 <div class="filter-group">
                     <span class="filter-icon">📖</span>
@@ -73,7 +74,7 @@
                         <option value="Hệ điều hành">Hệ điều hành</option>
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <span class="filter-icon">📊</span>
                     <select id="statusFilter" class="filter-select-improved">
@@ -83,7 +84,7 @@
                         <option value="archived">Đã lưu trữ</option>
                     </select>
                 </div>
-                
+
                 <div class="filter-group">
                     <span class="filter-icon">🔄</span>
                     <select id="sortBy" class="filter-select-improved">
@@ -94,14 +95,14 @@
                         <option value="submissions-desc">Nhiều lượt thi nhất</option>
                     </select>
                 </div>
-                
+
                 <button class="advanced-filter-toggle" onclick="manageExams.toggleAdvancedFilters()">
                     <span class="btn-icon">⚙️</span>
                     Bộ lọc nâng cao
                 </button>
             </div>
         </div>
-        
+
         <!-- Advanced Filters (Initially Hidden) -->
         <div id="advancedFilters" class="advanced-filters" style="display: none;">
             <div class="advanced-filter-row">
@@ -113,7 +114,7 @@
                         <input type="date" id="dateTo" class="date-input">
                     </div>
                 </div>
-                
+
                 <div class="filter-group">
                     <label>❓ Số câu hỏi</label>
                     <div class="range-filter">
@@ -122,7 +123,7 @@
                         <input type="number" id="questionsMax" placeholder="Tối đa" min="1" class="number-input">
                     </div>
                 </div>
-                
+
                 <div class="filter-group">
                     <label>⏱️ Thời lượng (phút)</label>
                     <div class="range-filter">
@@ -131,7 +132,7 @@
                         <input type="number" id="durationMax" placeholder="Tối đa" min="1" class="number-input">
                     </div>
                 </div>
-                
+
                 <div class="filter-group">
                     <label>👥 Lượt thi</label>
                     <div class="range-filter">
@@ -141,7 +142,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="advanced-filter-actions">
                 <button onclick="manageExams.applyAdvancedFilters()" class="btn btn-primary">
                     Áp dụng bộ lọc
@@ -195,7 +196,7 @@
                         <small>Sửa nội dung đề thi</small>
                     </div>
                 </button>
-                
+
                 <button id="duplicateExamBtn" class="action-btn duplicate-btn">
                     <span class="btn-icon">📋</span>
                     <div class="btn-content">
@@ -203,7 +204,7 @@
                         <small>Tạo bản sao đề thi</small>
                     </div>
                 </button>
-                
+
                 <button id="viewResultsBtn" class="action-btn results-btn">
                     <span class="btn-icon">📊</span>
                     <div class="btn-content">
@@ -211,7 +212,7 @@
                         <small>Thống kê bài làm</small>
                     </div>
                 </button>
-                
+
                 <button id="exportExamBtn" class="action-btn export-btn">
                     <span class="btn-icon">💾</span>
                     <div class="btn-content">
@@ -219,7 +220,7 @@
                         <small>Tải về định dạng JSON</small>
                     </div>
                 </button>
-                
+
                 <button id="publishExamBtn" class="action-btn publish-btn">
                     <span class="btn-icon">🚀</span>
                     <div class="btn-content">
@@ -227,7 +228,7 @@
                         <small>Cho phép sinh viên làm bài</small>
                     </div>
                 </button>
-                
+
                 <button id="archiveExamBtn" class="action-btn archive-btn">
                     <span class="btn-icon">📦</span>
                     <div class="btn-content">
@@ -235,7 +236,7 @@
                         <small>Ẩn khỏi danh sách</small>
                     </div>
                 </button>
-                
+
                 <button id="deleteExamBtn" class="action-btn delete-btn">
                     <span class="btn-icon">🗑️</span>
                     <div class="btn-content">

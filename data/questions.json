@@ -7,6 +7,7 @@
       "duration": 60,
       "createdBy": "GV001",
       "createdAt": "2025-01-01T00:00:00Z",
+      "allowedClasses": [],
       "questions": [
         {
           "id": 1,
@@ -43,6 +44,7 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
+      "allowedClasses": [],
       "questions": [
         {
           "id": "q_1751893869302_1",
@@ -87,6 +89,7 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
+      "allowedClasses": [],
       "questions": [
         {
           "id": "q_1751899074767_1",
@@ -159,6 +162,7 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
+      "allowedClasses": [],
       "questions": [
         {
           "id": "q_1751957078459_1",
@@ -193,7 +197,263 @@
       "createdAt": "2025-07-08T06:45:23.339Z"
     },
     {
-      "title": "1",
+      "title": "abc",
+      "subject": "Hệ điều hành",
+
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV001",
+      "allowedClasses": [],
+      "questions": [
+        {
+          "id": "q_1752595197191_1",
+          "type": "multiple-choice",
+          "question": "1",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752595208359_2",
+          "type": "multiple-choice",
+          "question": "2",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correctAnswer": 0
+        },
+        {
+          "id": "q_1752595208359_3",
+          "type": "multiple-choice",
+          "question": "4",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "correctAnswer": 2
+        }
+      ],
+      "id": "exam_1752595226806",
+      "createdAt": "2025-07-15T16:00:26.806Z"
+    },
+    {
+      "title": "test8",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [],
+      "questions": [
+        {
+          "id": "q_1752822988275_1",
+          "type": "multiple-choice",
+          "question": "hahahah",
+          "points": 10,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1752823011928",
+      "createdAt": "2025-07-18T07:16:51.928Z"
+    },
+    {
+      "title": "test9",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1752823362422_1",
+          "type": "multiple-choice",
+          "question": "hahahah",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1752823382404",
+      "createdAt": "2025-07-18T07:23:02.404Z"
+    },
+    {
+      "title": "test11",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1753149293031_1",
+          "type": "multiple-choice",
+          "question": "hgahah",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753149312718",
+      "createdAt": "2025-07-22T01:55:12.718Z"
+    },
+    {
+      "title": "test12",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1753149794121_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753149813273",
+      "createdAt": "2025-07-22T02:03:33.273Z"
+    },
+    {
+      "title": "test13",
+      "subject": "Cơ sở dữ liệu",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0002"
+      ],
+      "questions": [
+        {
+          "id": "q_1753150139654_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753150155904",
+      "createdAt": "2025-07-22T02:09:15.904Z"
+    },
+    {
+      "title": "test14",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0004"
+      ],
+      "questions": [
+        {
+          "id": "q_1753150547667_1",
+          "type": "multiple-choice",
+          "question": "hahahah",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753150566992",
+      "createdAt": "2025-07-22T02:16:06.992Z"
+    },
+    {
+      "title": "test16",
       "subject": "Lập trình Web",
       "description": "",
       "duration": 60,
@@ -203,52 +463,159 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
+      "allowedClasses": [
+        "CIT0005"
+      ],
       "questions": [
         {
-          "id": "q_1752590453066_1",
+          "id": "q_1753150789553_1",
           "type": "multiple-choice",
-          "question": "1",
+          "question": "hahaha",
           "points": 1,
           "explanation": "",
           "options": [
             "1",
             "2",
-            "14",
-            "16"
-          ],
-          "correctAnswer": 0
-        },
-        {
-          "id": "q_1752590473498_2",
-          "type": "multiple-choice",
-          "question": "2",
-          "points": 1,
-          "explanation": "",
-          "options": [
-            "2",
             "3",
-            "4",
-            "6"
-          ],
-          "correctAnswer": 0
-        },
-        {
-          "id": "q_1752590501456_3",
-          "type": "multiple-choice",
-          "question": "6",
-          "points": 1,
-          "explanation": "",
-          "options": [
-            "6",
-            "4",
-            "3",
-            "2"
+            "4"
           ],
           "correctAnswer": 0
         }
       ],
-      "id": "exam_1752590512428",
-      "createdAt": "2025-07-15T14:41:52.428Z"
+      "id": "exam_1753150805658",
+      "createdAt": "2025-07-22T02:20:05.658Z"
+    },
+    {
+      "title": "test20",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0002"
+      ],
+      "questions": [
+        {
+          "id": "q_1753184123522_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753184148297",
+      "createdAt": "2025-07-22T11:35:48.297Z"
+    },
+    {
+      "title": "test21",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1753184283824_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "34",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753184297191",
+      "createdAt": "2025-07-22T11:38:17.191Z"
+    },
+    {
+      "title": "test22",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1753184689316_1",
+          "type": "multiple-choice",
+          "question": "ahahahah",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753184705623",
+      "createdAt": "2025-07-22T11:45:05.623Z"
+    },
+    {
+      "title": "test23",
+      "subject": "Lập trình Web",
+      "description": "",
+      "duration": 60,
+      "maxAttempts": 1,
+      "shuffleQuestions": true,
+      "shuffleAnswers": true,
+      "showResults": true,
+      "allowReview": true,
+      "createdBy": "GV279401",
+      "allowedClasses": [
+        "CIT0001"
+      ],
+      "questions": [
+        {
+          "id": "q_1753184795702_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "id": "exam_1753184812674",
+      "createdAt": "2025-07-22T11:46:52.674Z"
     }
   ]
 }

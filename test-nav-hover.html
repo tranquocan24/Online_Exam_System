@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Navigation Hover</title>
+    <link rel="stylesheet" href="public/css/eiu-colors.css">
+    <link rel="stylesheet" href="public/css/common.css">
+    <link rel="stylesheet" href="public/css/teacher.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-nav {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-menu li {
+            flex: 1;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #2d3748;
+            transition: all 0.3s ease;
+            border-right: 1px solid #e2e8f0;
+            gap: 8px;
+        }
+
+        .nav-menu li:last-child .nav-link {
+            border-right: none;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+        }
+
+        .nav-text {
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background-color: #f7fafc;
+            color: #112444;
+        }
+
+        .nav-link.active {
+            background-color: #112444;
+            color: white;
+        }
+
+        /* Test CSS từ teacher.css */
+        .test-nav .nav-link.active {
+            background: linear-gradient(135deg, #112444 0%, #1a365d 100%) !important;
+            color: white !important;
+        }
+
+        .test-nav .nav-link.active .nav-icon,
+        .test-nav .nav-link.active .nav-text {
+            color: white !important;
+        }
+
+        .test-nav .nav-link.active:hover {
+            color: white !important;
+            background: linear-gradient(135deg, #112444 0%, #1a365d 100%) !important;
+        }
+
+        .test-nav .nav-link.active:hover .nav-icon,
+        .test-nav .nav-link.active:hover .nav-text {
+            color: white !important;
+        }
+
+        .test-nav .nav-link:hover {
+            color: #112444 !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Test Navigation Hover</h1>
+        <p>Kiểm tra xem khi hover vào menu active thì chữ có giữ màu trắng không</p>
+
+        <div class="test-nav">
+            <ul class="nav-menu">
+                <li>
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">Trang chủ</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link active">
+                        <span class="nav-icon">✏️</span>
+                        <span class="nav-text">Tạo đề thi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">Quản lý đề thi</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">Xem kết quả</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+            <h3>Hướng dẫn test:</h3>
+            <ol>
+                <li>Hover vào menu "Tạo đề thi" (đang active - màu xanh)</li>
+                <li>Kiểm tra xem chữ và icon có giữ màu trắng không</li>
+                <li>Hover vào các menu khác để so sánh</li>
+            </ol>
+        </div>
+    </div>
+</body>
+
+</html>
