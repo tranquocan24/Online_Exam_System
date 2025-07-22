@@ -12,7 +12,7 @@ class ExamList {
     async init() {
         console.log('Exam List initialized');
         this.currentUser = window.app?.currentUser;
-        
+
         if (!this.currentUser) {
             console.error('User not logged in');
             return;
@@ -32,11 +32,11 @@ class ExamList {
         if (subjectFilter) {
             subjectFilter.addEventListener('change', () => this.applyFilters());
         }
-        
+
         if (statusFilter) {
             statusFilter.addEventListener('change', () => this.applyFilters());
         }
-        
+
         if (searchInput) {
             searchInput.addEventListener('input', () => this.applyFilters());
         }
@@ -52,17 +52,15 @@ class ExamList {
         try {
             console.log('Loading exam data...');
             this.showLoading(true);
-            
             // Load exams list
             console.log('Fetching exams from /api/exams...');
-            const examsResponse = await fetch('/api/exams');
+            const examsResponse = await fetch(`/api/exams?userId=${this.currentUser.id}`);
             if (examsResponse.ok) {
                 this.exams = await examsResponse.json();
                 console.log('Exams loaded:', this.exams);
             } else {
                 throw new Error('Failed to load exams');
             }
-            
             // Load user results
             console.log('Fetching user results for user:', this.currentUser.id);
             const resultsResponse = await fetch(`/api/results?userId=${this.currentUser.id}`);
@@ -73,10 +71,8 @@ class ExamList {
                 console.warn('Could not load user results');
                 this.userResults = [];
             }
-            
             this.filteredExams = [...this.exams];
             console.log('Data loading completed successfully');
-            
         } catch (error) {
             console.error('Error loading exam data:', error);
             this.showError('Không thể tải danh sách bài thi. Vui lòng thử lại sau.');
@@ -127,11 +123,11 @@ class ExamList {
 
     getExamStatus(exam) {
         const userResult = this.userResults.find(result => result.examId === exam.id);
-        
+
         if (userResult) {
             return 'completed';
         }
-        
+
         // Check if exam has deadline (you can add deadline to exam data if needed)
         // For now, assume all exams are available
         return 'available';
@@ -141,7 +137,7 @@ class ExamList {
         console.log('renderExams called, filtered exams:', this.filteredExams);
         const container = document.getElementById('exam-grid');
         console.log('Container found:', container);
-        
+
         if (!container) {
             console.error('exam-grid container not found!');
             return;
@@ -175,20 +171,20 @@ class ExamList {
         const score = userResult ? this.calculateScore(userResult) : null;
 
         const statusConfig = {
-            available: { 
-                class: 'status-available', 
-                text: 'Có thể làm', 
-                icon: '✅' 
+            available: {
+                class: 'status-available',
+                text: 'Có thể làm',
+                icon: '✅'
             },
-            completed: { 
-                class: 'status-completed', 
-                text: 'Đã hoàn thành', 
-                icon: '🎯' 
+            completed: {
+                class: 'status-completed',
+                text: 'Đã hoàn thành',
+                icon: '🎯'
             },
-            expired: { 
-                class: 'status-expired', 
-                text: 'Hết hạn', 
-                icon: '⏰' 
+            expired: {
+                class: 'status-expired',
+                text: 'Hết hạn',
+                icon: '⏰'
             }
         };
 
@@ -261,17 +257,17 @@ class ExamList {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateScore(result);
         }
-        
+
         // Fallback to local implementation
         if (!result.examQuestions || !result.answers) return 0;
-        
+
         let correct = 0;
         const total = result.examQuestions.length;
-        
+
         result.examQuestions.forEach((question, index) => {
             // Try multiple answer formats
             let userAnswer = null;
-            
+
             if (result.answers.hasOwnProperty(question.id)) {
                 userAnswer = result.answers[question.id];
             } else if (result.answers.hasOwnProperty(index.toString())) {
@@ -281,25 +277,25 @@ class ExamList {
             } else if (result.answers.hasOwnProperty(question.id.toString())) {
                 userAnswer = result.answers[question.id.toString()];
             }
-            
+
             if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
             }
         });
-        
+
         return Math.round((correct / total) * 100);
     }
 
     isAnswerCorrect(question, userAnswer) {
         if (!userAnswer) return false;
-        
+
         switch (question.type) {
             case 'multiple-choice':
                 return userAnswer === question.correctAnswer;
             case 'multiple-select':
                 if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) return false;
                 return userAnswer.length === question.correctAnswer.length &&
-                       userAnswer.every(answer => question.correctAnswer.includes(answer));
+                    userAnswer.every(answer => question.correctAnswer.includes(answer));
             case 'text':
                 return userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
             default:
@@ -309,10 +305,10 @@ class ExamList {
 
     startExam(examId) {
         console.log('startExam called with examId:', examId);
-        
+
         if (confirm('Bạn có chắc chắn muốn bắt đầu bài thi này? Thời gian sẽ được tính từ khi bạn xác nhận.')) {
             console.log('User confirmed, starting exam...');
-            
+
             // Store exam start time and ID
             const startTime = new Date().toISOString();
             localStorage.setItem('currentExam', JSON.stringify({
@@ -320,12 +316,12 @@ class ExamList {
                 startTime: startTime
             }));
             localStorage.setItem('currentExamId', examId);
-            
+
             // Navigate to exam page using app's loadPage method
             if (window.app && typeof window.app.loadPage === 'function') {
                 console.log('Loading exam page via app.loadPage...');
                 window.app.loadPage('exam');
-                
+
                 // Pass exam ID to exam page after a short delay
                 setTimeout(() => {
                     if (window.examController && typeof window.examController.loadExam === 'function') {
@@ -344,7 +340,7 @@ class ExamList {
 
     viewResult(resultId) {
         console.log('viewResult called with resultId:', resultId);
-        
+
         if (!resultId) {
             console.error('No result ID provided');
             alert('Không tìm thấy kết quả thi. Vui lòng thử lại.');
@@ -354,10 +350,10 @@ class ExamList {
         try {
             // Store result ID for the result page
             localStorage.setItem('selectedResultId', resultId);
-            
+
             // Navigate to result page
             window.location.hash = `result/${resultId}`;
-            
+
             // Use app navigation if available
             if (window.app && typeof window.app.loadPage === 'function') {
                 window.app.loadPage('result');
@@ -366,7 +362,7 @@ class ExamList {
                 // Direct navigation fallback
                 window.location.href = `student.html#result/${resultId}`;
             }
-            
+
             console.log('Navigation to result page initiated');
         } catch (error) {
             console.error('Error navigating to result page:', error);
@@ -446,7 +442,7 @@ class ExamList {
         `;
 
         document.body.appendChild(modal);
-        
+
         // Add modal styles if not already added
         if (!document.querySelector('.modal-styles')) {
             const style = document.createElement('style');
@@ -578,7 +574,7 @@ class ExamList {
         `;
 
         document.body.appendChild(messageEl);
-        
+
         setTimeout(() => {
             messageEl.remove();
         }, 3000);

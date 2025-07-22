@@ -17,6 +17,16 @@ class ExamServer {
 
         // Khởi tạo dữ liệu mẫu
         this.initializeSampleData();
+
+        // Định kỳ đồng bộ lại mảng classes cho học sinh mỗi 1 phút
+        setInterval(() => {
+            try {
+                this.syncAllStudentClassesToUsersJson();
+                console.log('[AutoSync] Đồng bộ lại mảng classes cho học sinh thành công!');
+            } catch (e) {
+                console.error('[AutoSync] Lỗi khi đồng bộ mảng classes:', e);
+            }
+        }, 60 * 1000); // 1 phút
     }
 
     // Đảm bảo thư mục data tồn tại
@@ -331,12 +341,32 @@ class ExamServer {
     // Handle exams list API
     async handleExamsList(req, res) {
         const questionsFile = path.join(this.dataDir, 'questions.json');
+        const usersFile = path.join(this.dataDir, 'users.json');
+        const classesDir = path.join(this.dataDir, 'classes');
 
         if (req.method === 'GET') {
             try {
+                const url = require('url');
+                const query = url.parse(req.url, true).query;
+                const userId = query.userId;
+                let studentClasses = [];
+
+                if (userId) {
+                    // Lấy thông tin học sinh
+                    const usersData = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                    const student = (usersData.students || []).find(u => u.id === userId);
+                    if (student && Array.isArray(student.classes) && student.classes.length > 0) {
+                        studentClasses = student.classes;
+                    } else {
+                        // Nếu không tìm thấy học sinh hoặc không có classes, trả về rỗng
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify([]));
+                        return;
+                    }
+                }
+
                 const data = JSON.parse(fs.readFileSync(questionsFile, 'utf8'));
-                // Only return exam metadata, not questions
-                const examsList = data.exams.map(exam => ({
+                let examsList = data.exams.map(exam => ({
                     id: exam.id,
                     title: exam.title,
                     subject: exam.subject,
@@ -344,8 +374,14 @@ class ExamServer {
                     duration: exam.duration,
                     questionCount: exam.questions.length,
                     createdBy: exam.createdBy,
-                    createdAt: exam.createdAt
+                    createdAt: exam.createdAt,
+                    allowedClasses: exam.allowedClasses || []
                 }));
+
+                // Nếu có userId, chỉ trả về bài thi phù hợp lớp học sinh
+                if (userId && Array.isArray(studentClasses) && studentClasses.length > 0) {
+                    examsList = examsList.filter(exam => Array.isArray(exam.allowedClasses) && studentClasses.some(cls => exam.allowedClasses.includes(cls)));
+                }
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(examsList));
@@ -896,6 +932,11 @@ class ExamServer {
                     newClass.updatedAt = new Date().toISOString();
                     const filePath = path.join(classesDir, `${newClass.id}.json`);
                     fs.writeFileSync(filePath, JSON.stringify(newClass, null, 2), { encoding: 'utf8' });
+
+                    // --- TỰ ĐỘNG ĐỒNG BỘ LẠI CLASSES ---
+                    this.syncAllStudentClassesToUsersJson();
+                    // --- END ---
+
                     res.writeHead(201, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify(newClass));
                 } catch (error) {
@@ -903,6 +944,51 @@ class ExamServer {
                     res.end(JSON.stringify({ error: 'Invalid JSON' }));
                 }
             });
+        } else if (req.method === 'PUT') {
+            // Cập nhật lớp học
+            if (!fs.existsSync(filePath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Class not found' }));
+                return;
+            }
+            let body = '';
+            req.on('data', chunk => { body += chunk.toString(); });
+            req.on('end', () => {
+                try {
+                    const updatedClass = JSON.parse(body);
+                    updatedClass.updatedAt = new Date().toISOString();
+
+                    // Đọc danh sách học sinh cũ
+                    const oldClassData = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+                    const oldStudentIds = (oldClassData.students || []).map(s => s.id);
+                    const newStudentIds = (updatedClass.students || []).map(s => s.id);
+
+                    fs.writeFileSync(filePath, JSON.stringify(updatedClass, null, 2), { encoding: 'utf8' });
+
+                    // --- TỰ ĐỘNG ĐỒNG BỘ LẠI CLASSES ---
+                    this.syncAllStudentClassesToUsersJson();
+                    // --- END ---
+
+                    res.writeHead(200, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify(updatedClass));
+                } catch (error) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Invalid JSON' }));
+                }
+            });
+        } else if (req.method === 'DELETE') {
+            // Xóa lớp học
+            if (!fs.existsSync(filePath)) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Class not found' }));
+                return;
+            }
+            fs.unlinkSync(filePath);
+            // --- TỰ ĐỘNG ĐỒNG BỘ LẠI CLASSES ---
+            this.syncAllStudentClassesToUsersJson();
+            // --- END ---
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ message: 'Class deleted' }));
         } else {
             res.writeHead(405, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Method not allowed' }));
@@ -938,6 +1024,21 @@ class ExamServer {
                     const updatedClass = JSON.parse(body);
                     updatedClass.updatedAt = new Date().toISOString();
                     fs.writeFileSync(filePath, JSON.stringify(updatedClass, null, 2), { encoding: 'utf8' });
+
+                    // --- TỰ ĐỘNG CẬP NHẬT users.json ---
+                    const usersFile = path.join(this.dataDir, 'users.json');
+                    const usersData = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+                    if (Array.isArray(updatedClass.students)) {
+                        for (const stu of updatedClass.students) {
+                            const idx = (usersData.students || []).findIndex(u => u.id === stu.id);
+                            if (idx !== -1) {
+                                usersData.students[idx].class = updatedClass.id;
+                            }
+                        }
+                        fs.writeFileSync(usersFile, JSON.stringify(usersData, null, 2), { encoding: 'utf8' });
+                    }
+                    // --- END ---
+
                     res.writeHead(200, { 'Content-Type': 'application/json' });
                     res.end(JSON.stringify(updatedClass));
                 } catch (error) {
@@ -959,6 +1060,34 @@ class ExamServer {
             res.writeHead(405, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ error: 'Method not allowed' }));
         }
+    }
+
+    // Hàm đồng bộ lại mảng classes cho tất cả học sinh dựa trên các file lớp
+    syncAllStudentClassesToUsersJson() {
+        const usersFile = path.join(this.dataDir, 'users.json');
+        const classesDir = path.join(this.dataDir, 'classes');
+        if (!fs.existsSync(usersFile) || !fs.existsSync(classesDir)) return;
+        const usersData = JSON.parse(fs.readFileSync(usersFile, 'utf8'));
+        // Xây dựng map id học sinh -> mảng lớp
+        const studentClassesMap = {};
+        const classFiles = fs.readdirSync(classesDir).filter(f => f.endsWith('.json'));
+        for (const file of classFiles) {
+            const classData = JSON.parse(fs.readFileSync(path.join(classesDir, file), 'utf8'));
+            const classId = classData.id;
+            if (Array.isArray(classData.students)) {
+                for (const stu of classData.students) {
+                    if (!studentClassesMap[stu.id]) studentClassesMap[stu.id] = [];
+                    if (!studentClassesMap[stu.id].includes(classId)) studentClassesMap[stu.id].push(classId);
+                }
+            }
+        }
+        // Gán lại mảng classes cho từng học sinh
+        if (Array.isArray(usersData.students)) {
+            for (const stu of usersData.students) {
+                stu.classes = studentClassesMap[stu.id] || [];
+            }
+        }
+        fs.writeFileSync(usersFile, JSON.stringify(usersData, null, 2), { encoding: 'utf8' });
     }
 
     // Main request handler

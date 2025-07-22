@@ -1,0 +1,18 @@
+{
+  "id": "CIT0002",
+  "name": "CSE 302",
+  "description": "",
+  "teachers": [
+    {
+      "id": "GV279401",
+      "name": "Nguyễn Thị Giáo Viên"
+    }
+  ],
+  "students": [
+    {
+      "id": "SV317738",
+      "name": "Trần Quốc An"
+    }
+  ],
+  "updatedAt": "2025-07-18T07:07:04.270Z"
+}

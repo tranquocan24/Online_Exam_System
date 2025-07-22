@@ -4,27 +4,23 @@
   "description": "",
   "teachers": [
     {
-      "id": "GV001",
-      "name": "PGS.TS Nguyễn Văn C"
+      "id": "GV279401",
+      "name": "Nguyễn Thị Giáo Viên"
     }
   ],
   "students": [
     {
-      "id": "SV001",
-      "name": "Nguyễn Văn An"
+      "id": "SV684783",
+      "name": "Nguyễn Phúc Hậu"
     },
     {
-      "id": "SV202451",
-      "name": "Đặng Cao Cường"
-    },
-    {
-      "id": "SV274635",
+      "id": "SV317738",
       "name": "Trần Quốc An"
     },
     {
-      "id": "SV684783",
-      "name": "Nguyễn Phúc Hậu"
+      "id": "SV342529",
+      "name": "Đặng Cao Cường"
     }
   ],
-  "updatedAt": "2025-07-15T14:25:55.373Z"
+  "updatedAt": "2025-07-22T11:46:15.515Z"
 }

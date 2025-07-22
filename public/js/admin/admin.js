@@ -486,7 +486,7 @@ class AdminPanel {
         if (userId) {
             // Edit mode
             title.textContent = 'Chỉnh sửa tài khoản';
-            const user = this.findUserInType(userId, userType);
+            const user = this.findUserById(userId);
             if (user) {
                 // Wait a bit for form reset to take effect
                 setTimeout(() => {
@@ -494,9 +494,6 @@ class AdminPanel {
                     document.getElementById('user-password').value = user.password || '';
                     document.getElementById('user-name').value = user.name || '';
                     document.getElementById('user-role').value = user.role || 'student';
-                    document.getElementById('user-class').value = user.class || '';
-                    document.getElementById('user-subject').value = user.subject || '';
-                    this.toggleUserFields(user.role);
                 }, 50);
             }
         } else {
@@ -505,7 +502,6 @@ class AdminPanel {
             // Wait a bit for form reset to take effect
             setTimeout(() => {
                 document.getElementById('user-role').value = 'student';
-                this.toggleUserFields('student');
             }, 50);
         }
 
@@ -672,7 +668,6 @@ class AdminPanel {
         e.preventDefault();
         console.log('=== Form submit triggered ===');
         console.log('Event:', e);
-        console.log('Form element:', e.target);
 
         const usernameEl = document.getElementById('user-username');
         const passwordEl = document.getElementById('user-password');
@@ -706,25 +701,6 @@ class AdminPanel {
             console.log('Validation failed - missing required fields');
             this.showAlert('Vui lòng điền đầy đủ thông tin', 'error');
             return;
-        }
-
-        // Add role-specific fields
-        if (userData.role === 'student') {
-            const classEl = document.getElementById('user-class');
-            userData.class = classEl ? classEl.value.trim() : '';
-            console.log('Student class:', userData.class);
-            if (!userData.class) {
-                this.showAlert('Vui lòng nhập lớp cho học sinh', 'error');
-                return;
-            }
-        } else if (userData.role === 'teacher') {
-            const subjectEl = document.getElementById('user-subject');
-            userData.subject = subjectEl ? subjectEl.value.trim() : '';
-            console.log('Teacher subject:', userData.subject);
-            if (!userData.subject) {
-                this.showAlert('Vui lòng nhập môn học cho giáo viên', 'error');
-                return;
-            }
         }
 
         console.log('Final user data:', userData);

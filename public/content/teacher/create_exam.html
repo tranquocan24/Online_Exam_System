@@ -47,6 +47,14 @@
                 </div>
             </div>
 
+            <!-- Chọn lớp áp dụng -->
+            <div class="form-section">
+                <h3>Chọn lớp áp dụng *</h3>
+                <div id="classCheckboxes" class="form-group">
+                    <!-- Checkbox lớp sẽ được render bằng JS -->
+                </div>
+            </div>
+
             <!-- Cài đặt nâng cao -->
             <div class="form-section">
                 <h3>Cài đặt nâng cao</h3>
@@ -90,7 +98,8 @@
                 <div class="section-header">
                     <h3>Câu hỏi</h3>
                     <div class="section-actions">
-                        <button type="button" id="addQuestionBtn" class="btn btn-secondary" onclick="window.createExam?.addQuestion()">
+                        <button type="button" id="addQuestionBtn" class="btn btn-secondary"
+                            onclick="window.createExam?.addQuestion()">
                             <span class="btn-icon">➕</span>
                             Thêm câu hỏi
                         </button>
@@ -284,39 +293,39 @@
 
 <!-- Debug script to check CreateExam initialization -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded - checking CreateExam...');
-    
-    setTimeout(() => {
-        if (window.createExam) {
-            console.log('✅ CreateExam is available:', window.createExam);
-            
-            // Test form submission
-            const form = document.getElementById('createExamForm');
-            if (form) {
-                console.log('✅ Form found');
-                
-                // Add debug listener
-                form.addEventListener('submit', function(e) {
-                    console.log('🔥 Form submit event triggered!');
-                    if (!window.createExam) {
-                        console.error('❌ CreateExam not available on submit');
-                        e.preventDefault();
-                        alert('Lỗi: CreateExam chưa được khởi tạo');
-                    }
-                });
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM loaded - checking CreateExam...');
+
+        setTimeout(() => {
+            if (window.createExam) {
+                console.log('✅ CreateExam is available:', window.createExam);
+
+                // Test form submission
+                const form = document.getElementById('createExamForm');
+                if (form) {
+                    console.log('✅ Form found');
+
+                    // Add debug listener
+                    form.addEventListener('submit', function (e) {
+                        console.log('🔥 Form submit event triggered!');
+                        if (!window.createExam) {
+                            console.error('❌ CreateExam not available on submit');
+                            e.preventDefault();
+                            alert('Lỗi: CreateExam chưa được khởi tạo');
+                        }
+                    });
+                } else {
+                    console.error('❌ Form not found');
+                }
             } else {
-                console.error('❌ Form not found');
+                console.error('❌ CreateExam not available');
+
+                // Try to initialize manually
+                if (window.CreateExam) {
+                    console.log('Trying to initialize CreateExam manually...');
+                    window.createExam = new CreateExam();
+                }
             }
-        } else {
-            console.error('❌ CreateExam not available');
-            
-            // Try to initialize manually
-            if (window.CreateExam) {
-                console.log('Trying to initialize CreateExam manually...');
-                window.createExam = new CreateExam();
-            }
-        }
-    }, 500);
-});
+        }, 500);
+    });
 </script>
