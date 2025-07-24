@@ -487,6 +487,35 @@
       "timeSpent": 2,
       "submittedAt": "2025-07-22T12:07:30.640Z",
       "isTimeUp": false
+    },
+    {
+      "id": "result_1753353087058_SV317738",
+      "examId": "exam_1753184812674",
+      "examTitle": "test23",
+      "examQuestions": [
+        {
+          "id": "q_1753184795702_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV317738",
+      "userName": "Trần Quốc An",
+      "answers": {
+        "0": 0
+      },
+      "timeSpent": 1,
+      "submittedAt": "2025-07-24T10:31:27.051Z",
+      "isTimeUp": false
     }
   ]
 }

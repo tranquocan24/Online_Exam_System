@@ -4,19 +4,19 @@ class MyResultsManager {
         this.allResults = [];
         this.filteredResults = [];
         this.currentSort = 'date-desc';
-        
+
         this.init();
     }
 
     async init() {
         try {
             console.log('MyResultsManager initialized');
-            
+
             await this.loadResults();
             this.setupEventListeners();
             this.renderSummaryStats();
             this.renderResults();
-            
+
             // Check if we need to highlight a specific result
             const viewResultId = localStorage.getItem('viewResultId');
             if (viewResultId) {
@@ -25,12 +25,12 @@ class MyResultsManager {
                     this.highlightResult(viewResultId);
                 }, 500);
             }
-            
+
             const loadingScreen = document.getElementById('loadingScreen');
             const resultsContainer = document.getElementById('resultsContainer');
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (resultsContainer) resultsContainer.style.display = 'block';
-            
+
         } catch (error) {
             console.error('Error initializing results:', error);
             this.showError('Có lỗi xảy ra khi tải kết quả thi');
@@ -41,22 +41,22 @@ class MyResultsManager {
         try {
             // Get user from app or storage
             const user = window.app?.currentUser || JSON.parse(sessionStorage.getItem('user') || localStorage.getItem('currentUser') || '{}');
-            
+
             if (!user || !user.id) {
                 throw new Error('User not found');
             }
-            
+
             console.log('Loading results for user:', user.id);
             const response = await fetch(`/api/results?userId=${user.id}`);
-            
+
             if (!response.ok) {
                 throw new Error('Failed to load results');
             }
-            
+
             this.allResults = await response.json();
             this.filteredResults = [...this.allResults];
             console.log('Results loaded:', this.allResults);
-            
+
         } catch (error) {
             throw new Error('Không thể tải dữ liệu kết quả: ' + error.message);
         }
@@ -66,15 +66,15 @@ class MyResultsManager {
         document.getElementById('scoreFilter').addEventListener('change', () => {
             this.applyFilters();
         });
-        
+
         document.getElementById('timeFilter').addEventListener('change', () => {
             this.applyFilters();
         });
-        
+
         document.getElementById('searchFilter').addEventListener('input', (e) => {
             this.debounce(() => this.applyFilters(), 300)();
         });
-        
+
         document.getElementById('sortSelect').addEventListener('change', (e) => {
             this.currentSort = e.target.value;
             this.sortResults();
@@ -98,7 +98,7 @@ class MyResultsManager {
         const scoreFilter = document.getElementById('scoreFilter').value;
         const timeFilter = document.getElementById('timeFilter').value;
         const searchTerm = document.getElementById('searchFilter').value.toLowerCase();
-        
+
         this.filteredResults = this.allResults.filter(result => {
             // Score filter
             if (scoreFilter !== 'all') {
@@ -107,13 +107,13 @@ class MyResultsManager {
                 if (scoreFilter === 'good' && (score < 6 || score >= 8)) return false;
                 if (scoreFilter === 'average' && score >= 6) return false;
             }
-            
+
             // Time filter
             if (timeFilter !== 'all') {
                 const resultDate = new Date(result.submittedAt);
                 const now = new Date();
                 let cutoffDate;
-                
+
                 switch (timeFilter) {
                     case 'week':
                         cutoffDate = new Date(now - 7 * 24 * 60 * 60 * 1000);
@@ -125,18 +125,18 @@ class MyResultsManager {
                         cutoffDate = new Date(now - 90 * 24 * 60 * 60 * 1000);
                         break;
                 }
-                
+
                 if (resultDate < cutoffDate) return false;
             }
-            
+
             // Search filter
             if (searchTerm && !result.examTitle.toLowerCase().includes(searchTerm)) {
                 return false;
             }
-            
+
             return true;
         });
-        
+
         this.sortResults();
         this.renderResults();
     }
@@ -167,7 +167,7 @@ class MyResultsManager {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateScore(result);
         }
-        
+
         // Fallback to local implementation
         const { correct, total } = this.calculateCorrectAnswers(result);
         return Math.round((correct / total) * 100);
@@ -178,14 +178,14 @@ class MyResultsManager {
         if (window.ScoreCalculator) {
             return window.ScoreCalculator.calculateCorrectAnswers(result);
         }
-        
+
         // Fallback to local implementation
         let correct = 0;
         const total = result.examQuestions.length;
-        
+
         result.examQuestions.forEach((question, index) => {
             let userAnswer = null;
-            
+
             if (result.answers.hasOwnProperty(question.id)) {
                 userAnswer = result.answers[question.id];
             } else if (result.answers.hasOwnProperty(index.toString())) {
@@ -195,12 +195,12 @@ class MyResultsManager {
             } else if (result.answers.hasOwnProperty(question.id.toString())) {
                 userAnswer = result.answers[question.id.toString()];
             }
-            
+
             if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
             }
         });
-        
+
         return { correct, total };
     }
 
@@ -221,7 +221,7 @@ class MyResultsManager {
 
     renderSummaryStats() {
         const statsContainer = document.getElementById('summaryStats');
-        
+
         if (this.allResults.length === 0) {
             statsContainer.innerHTML = `
                 <div class="stat-card">
@@ -231,7 +231,7 @@ class MyResultsManager {
             `;
             return;
         }
-        
+
         const totalExams = this.allResults.length;
         const scores = this.allResults.map(result => this.calculateScore(result));
         const avgScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
@@ -239,7 +239,7 @@ class MyResultsManager {
         const recentResults = this.allResults
             .filter(result => new Date(result.submittedAt) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000))
             .length;
-        
+
         statsContainer.innerHTML = `
             <div class="stat-card">
                 <div class="stat-value">${totalExams}</div>
@@ -262,7 +262,7 @@ class MyResultsManager {
 
     renderResults() {
         const resultsGrid = document.getElementById('resultsGrid');
-        
+
         if (this.filteredResults.length === 0) {
             resultsGrid.innerHTML = `
                 <div class="empty-state">
@@ -276,7 +276,7 @@ class MyResultsManager {
             `;
             return;
         }
-        
+
         resultsGrid.innerHTML = this.filteredResults.map(result => this.createResultCard(result)).join('');
     }
 
@@ -284,22 +284,15 @@ class MyResultsManager {
         const score = this.calculateScore(result);
         const { correct, total } = this.calculateCorrectAnswers(result);
         const percentage = Math.round((correct / total) * 100);
-        
         let scoreClass = 'score-average';
         if (score >= 8) scoreClass = 'score-excellent';
         else if (score >= 6) scoreClass = 'score-good';
-        
         const submittedDate = new Date(result.submittedAt);
         const formattedDate = submittedDate.toLocaleDateString('vi-VN', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
+            year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
         });
-        
         const timeSpent = this.formatTime(result.timeSpent);
-        
+        // Sử dụng hàm handler để đảm bảo đồng bộ logic
         return `
             <div class="result-card" data-result-id="${result.id}">
                 <div class="result-card-header">
@@ -307,21 +300,20 @@ class MyResultsManager {
                         <h4>${result.examTitle}</h4>
                         <div class="exam-meta">
                             Làm bài lúc: ${formattedDate}
-                            ${result.isTimeUp ? ' • <span style="color: #e74c3c;">Hết thời gian</span>' : ''}
+                            ${result.isTimeUp ? ' • <span style=\"color: #e74c3c;\">Hết thời gian</span>' : ''}
                         </div>
                     </div>
                     <div class="score-badge ${scoreClass}">
                         ${score.toFixed(1)} điểm
                     </div>
                 </div>
-                
                 <div class="result-details">
                     <div class="detail-item">
                         <div class="detail-value">${correct}/${total}</div>
                         <div class="detail-label">Số câu đúng</div>
                     </div>
                     <div class="detail-item">
-                        <div class="detail-value">${percentage}%</div>
+                        <div class="detail-value">${percentage}</div>
                         <div class="detail-label">Tỷ lệ đúng</div>
                     </div>
                     <div class="detail-item">
@@ -333,14 +325,13 @@ class MyResultsManager {
                         <div class="detail-label">Tổng câu hỏi</div>
                     </div>
                 </div>
-                
                 <div class="result-actions">
-                    <a href="/student.html?content=result&result=${result.id}" class="action-btn btn-view">
+                    <button class="action-btn btn-view" onclick="handlePreviewExamFromResult('${result.examId}')">
                         👁️ Xem chi tiết
-                    </a>
-                    <a href="/student.html?content=exam&id=${result.examId}" class="action-btn btn-retake">
+                    </button>
+                    <button class="action-btn btn-retake" onclick="handleRetakeExamFromResult('${result.examId}')">
                         🔄 Làm lại
-                    </a>
+                    </button>
                 </div>
             </div>
         `;
@@ -350,7 +341,7 @@ class MyResultsManager {
         const hours = Math.floor(seconds / 3600);
         const minutes = Math.floor((seconds % 3600) / 60);
         const remainingSeconds = seconds % 60;
-        
+
         if (hours > 0) {
             return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
         } else {
@@ -361,7 +352,7 @@ class MyResultsManager {
     showError(message) {
         document.getElementById('loadingScreen').style.display = 'none';
         document.getElementById('resultsContainer').style.display = 'block';
-        
+
         const resultsGrid = document.getElementById('resultsGrid');
         resultsGrid.innerHTML = `
             <div class="empty-state">
@@ -383,10 +374,10 @@ class MyResultsManager {
             resultCard.style.transform = 'scale(1.02)';
             resultCard.style.boxShadow = '0 8px 25px rgba(74, 144, 226, 0.3)';
             resultCard.style.border = '2px solid #4a90e2';
-            
+
             // Show a success message
             this.showSuccessMessage('Bài thi đã được nộp thành công!');
-            
+
             // Reset highlight after a few seconds
             setTimeout(() => {
                 resultCard.style.transform = '';
@@ -412,7 +403,7 @@ class MyResultsManager {
             animation: slideIn 0.3s ease-out;
         `;
         successDiv.textContent = message;
-        
+
         // Add animation keyframes
         if (!document.querySelector('#success-animation-style')) {
             const style = document.createElement('style');
@@ -425,9 +416,9 @@ class MyResultsManager {
             `;
             document.head.appendChild(style);
         }
-        
+
         document.body.appendChild(successDiv);
-        
+
         setTimeout(() => {
             successDiv.style.animation = 'slideIn 0.3s ease-out reverse';
             setTimeout(() => successDiv.remove(), 300);
@@ -442,47 +433,47 @@ class MyResultsManager {
             const resultsContainer = document.getElementById('resultsContainer');
             if (loadingScreen) loadingScreen.style.display = 'block';
             if (resultsContainer) resultsContainer.style.display = 'none';
-            
+
             await this.loadResults();
             this.renderSummaryStats();
             this.renderResults();
-            
+
             // Hide loading screen and show results
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (resultsContainer) resultsContainer.style.display = 'block';
-            
+
             console.log('My results data refreshed successfully');
         } catch (error) {
             console.error('Error refreshing my results data:', error);
-            
+
             // Hide loading screen on error
             const loadingScreen = document.getElementById('loadingScreen');
             if (loadingScreen) loadingScreen.style.display = 'none';
-            
+
             this.showError('Không thể tải lại dữ liệu kết quả');
         }
     }
 
     reset() {
         console.log('Resetting my results state...');
-        
+
         // Reset data
         this.allResults = [];
         this.filteredResults = [];
         this.currentSort = 'date-desc';
-        
+
         // Reset UI
         const loadingScreen = document.getElementById('loadingScreen');
         const resultsContainer = document.getElementById('resultsContainer');
         if (loadingScreen) loadingScreen.style.display = 'none';
         if (resultsContainer) resultsContainer.style.display = 'block';
-        
+
         // Clear any existing content
         const summaryStats = document.getElementById('summaryStats');
         const resultsGrid = document.getElementById('resultsGrid');
         if (summaryStats) summaryStats.innerHTML = '';
         if (resultsGrid) resultsGrid.innerHTML = '';
-        
+
         console.log('My results state reset successfully');
     }
 }
@@ -510,3 +501,63 @@ if (document.readyState === 'loading') {
     // DOM already loaded
     initMyResults();
 }
+
+// Thêm các hàm handler toàn cục cho preview và retake
+window.handlePreviewExamFromResult = async function (examId) {
+    if (!window.examList || typeof window.examList.loadData !== 'function') {
+        alert('Không thể xem thông tin bài thi. Vui lòng thử lại!');
+        return;
+    }
+    await window.examList.loadData();
+    let exam = window.examList.exams.find(e => e.id === examId);
+    // Nếu không tìm thấy, thử lấy từ dữ liệu kết quả (nếu có)
+    if (!exam && window.myResultsManager) {
+        const result = window.myResultsManager.allResults.find(r => r.examId === examId);
+        if (result && result.examQuestions) {
+            // Tạo object exam tối thiểu để show preview
+            exam = {
+                id: examId,
+                title: result.examTitle,
+                subject: result.subject || '',
+                duration: result.duration || '',
+                questionCount: result.examQuestions.length,
+                createdBy: result.createdBy || '',
+                description: result.description || '',
+            };
+        }
+    }
+    if (exam && typeof window.examList.showExamPreview === 'function') {
+        window.examList.showExamPreview(exam);
+    } else {
+        alert('Bài thi không tồn tại hoặc đã bị xóa.');
+    }
+}
+window.handleRetakeExamFromResult = async function (examId) {
+    if (!window.examList || typeof window.examList.loadData !== 'function') {
+        alert('Không thể thi lại bài này. Vui lòng thử lại!');
+        return;
+    }
+    await window.examList.loadData();
+    let exam = window.examList.exams.find(e => e.id === examId);
+    // Nếu không tìm thấy, thử lấy từ dữ liệu kết quả (nếu có)
+    if (!exam && window.myResultsManager) {
+        const result = window.myResultsManager.allResults.find(r => r.examId === examId);
+        if (result && result.examQuestions) {
+            exam = {
+                id: examId,
+                title: result.examTitle,
+                subject: result.subject || '',
+                duration: result.duration || '',
+                questionCount: result.examQuestions.length,
+                createdBy: result.createdBy || '',
+                description: result.description || '',
+            };
+        }
+    }
+    if (exam && typeof window.examList.startExam === 'function') {
+        window.examList.startExam(examId);
+    } else {
+        alert('Bài thi không tồn tại hoặc đã bị xóa.');
+    }
+}
+

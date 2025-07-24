@@ -446,14 +446,9 @@
         </div>
 
         <div class="actions-section">
-            <a href="/student.html?content=exam_list" class="action-btn btn-primary">
-                📝 Làm bài thi khác
-            </a>
-            <a href="/student.html?content=my_results" class="action-btn btn-secondary">
-                📊 Xem tất cả kết quả
-            </a>
-            <button class="action-btn btn-success" onclick="printResult()">
-                🖨️ In kết quả
+            <button class="action-btn btn-primary"
+                onclick="if(window.app && typeof window.app.loadPage==='function'){window.app.loadPage('exam_list');}else{window.location.href='/student.html?content=exam_list';}">
+                📝 Quay về danh sách bài thi
             </button>
         </div>
     </div>
