@@ -29,6 +29,9 @@ class TeacherDashboard {
             const questionsData = await examsResponse.json();
             const teacherExams = questionsData.exams.filter(exam => exam.createdBy === this.user?.id);
 
+            // Sort exams by creation date (newest first)
+            teacherExams.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
             // Load all results for teacher's exams
             const resultsResponse = await fetch('/api/results');
             const allResults = await resultsResponse.json();

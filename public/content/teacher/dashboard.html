@@ -5,36 +5,6 @@
         <p>Quản lý đề thi và theo dõi kết quả sinh viên trên nền tảng EIU TestLab</p>
     </div>
 
-    <!-- Hành động nhanh -->
-    <div class="quick-actions">
-        <h3>Hành động nhanh</h3>
-        <div class="action-grid">
-            <button class="action-btn" onclick="navigateToPage('create_exam')">
-                <div class="action-icon">✏️</div>
-                <div class="action-text">
-                    <h4>Tạo đề thi mới</h4>
-                    <p>Tạo đề thi trắc nghiệm</p>
-                </div>
-            </button>
-
-            <button class="action-btn" onclick="navigateToPage('manage_exams')">
-                <div class="action-icon">📋</div>
-                <div class="action-text">
-                    <h4>Quản lý đề thi</h4>
-                    <p>Xem và chỉnh sửa đề thi</p>
-                </div>
-            </button>
-
-            <button class="action-btn" onclick="navigateToPage('view_results')">
-                <div class="action-icon">📈</div>
-                <div class="action-text">
-                    <h4>Xem kết quả</h4>
-                    <p>Theo dõi điểm số sinh viên</p>
-                </div>
-            </button>
-        </div>
-    </div>
-
     <!-- Đề thi gần đây -->
     <div class="card">
         <div class="card-header">
@@ -323,24 +293,61 @@
 
     async function loadTeacherDashboardData() {
         try {
+            // Lấy id giáo viên hiện tại (giả sử lưu trong localStorage)
+            let teacherId = null;
+            if (window.app && window.app.currentUser && window.app.currentUser.role === 'teacher') {
+                teacherId = window.app.currentUser.id;
+            } else {
+                const user = JSON.parse(localStorage.getItem('currentUser') || '{}');
+                if (user.role === 'teacher') teacherId = user.id;
+            }
+            // Lấy danh sách đề thi từ API thực tế
+            const response = await fetch('/api/questions');
+            const data = await response.json();
+            let recentExams = data.exams || [];
+            // Log toàn bộ danh sách bài thi trả về từ API
+            console.log('ALL exams from API:', recentExams.map(e => ({ title: e.title, createdAt: e.createdAt, createdBy: e.createdBy })));
+            // Lọc theo giáo viên hiện tại
+            let filteredExams = recentExams;
+            if (teacherId) {
+                filteredExams = recentExams.filter(exam => exam.createdBy === teacherId);
+            }
+            // Thêm log kiểm tra
+            console.log('teacherId:', teacherId);
+            console.log('filteredExams:', filteredExams.map(e => ({ title: e.title, createdAt: e.createdAt, createdBy: e.createdBy })));
+            // Nếu không có bài thi nào sau khi lọc, fallback hiển thị tất cả bài thi mới nhất
+            if (filteredExams.length === 0) {
+                filteredExams = recentExams;
+            }
+            // Sắp xếp theo ngày tạo mới nhất
+            filteredExams = filteredExams.sort((a, b) => new Date(b.createdAt || b.date) - new Date(a.createdAt || a.date));
+            // Lấy 5 bài thi mới nhất
+            filteredExams = filteredExams.slice(0, 5);
+
+            // Cập nhật đề thi gần đây
+            const recentExamsContainer = document.getElementById('recent-exams');
+            if (filteredExams.length > 0) {
+                recentExamsContainer.innerHTML = filteredExams.map(exam => `
+                <div class="exam-item">
+                    <div class="exam-info">
+                        <h4>${exam.title}</h4>
+                        <p>${exam.subject || ''}</p>
+                    </div>
+                    <div class="exam-meta">
+                        <div class="exam-date">${formatDate(exam.createdAt || exam.date)}</div>
+                    </div>
+                </div>
+            `).join('');
+            } else {
+                recentExamsContainer.innerHTML = '<div class="no-data"><p>Chưa có đề thi nào</p></div>';
+            }
+
+            // Cập nhật kết quả mới nhất
+            const recentResultsContainer = document.getElementById('recent-results');
+            const resultsTbody = document.getElementById('results-tbody');
+            const noDataDiv = recentResultsContainer.querySelector('.no-data');
             // Simulate API call để lấy dữ liệu
             const mockData = {
-                recentExams: [
-                    {
-                        id: 1,
-                        title: "Kiểm tra giữa kỳ - Lập trình Web",
-                        subject: "Lập trình Web",
-                        participants: 25,
-                        date: "2025-01-05"
-                    },
-                    {
-                        id: 2,
-                        title: "Bài tập JavaScript Nâng cao",
-                        subject: "Lập trình Web",
-                        participants: 23,
-                        date: "2025-01-03"
-                    }
-                ],
                 recentResults: [
                     {
                         studentName: "Nguyễn Văn A",
@@ -359,27 +366,6 @@
                 ]
             };
 
-            // Cập nhật đề thi gần đây
-            const recentExamsContainer = document.getElementById('recent-exams');
-            if (mockData.recentExams.length > 0) {
-                recentExamsContainer.innerHTML = mockData.recentExams.map(exam => `
-                <div class="exam-item">
-                    <div class="exam-info">
-                        <h4>${exam.title}</h4>
-                        <p>${exam.subject}</p>
-                    </div>
-                    <div class="exam-meta">
-                        <div class="exam-participants">${exam.participants} học sinh</div>
-                        <div class="exam-date">${formatDate(exam.date)}</div>
-                    </div>
-                </div>
-            `).join('');
-            }
-
-            // Cập nhật kết quả mới nhất
-            const recentResultsContainer = document.getElementById('recent-results');
-            const resultsTbody = document.getElementById('results-tbody');
-            const noDataDiv = recentResultsContainer.querySelector('.no-data');
             if (mockData.recentResults.length > 0) {
                 resultsTbody.innerHTML = mockData.recentResults.map(result => `
                     <tr>
@@ -409,6 +395,7 @@
     }
 
     function formatDate(dateString) {
+        if (!dateString) return '';
         const date = new Date(dateString);
         return date.toLocaleDateString('vi-VN');
     }

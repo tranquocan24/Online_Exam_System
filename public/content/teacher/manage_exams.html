@@ -57,14 +57,12 @@
     <div class="filter-section-improved">
         <div class="filter-row-main">
             <div class="search-container">
-                <span class="search-icon">🔍</span>
                 <input type="text" id="searchExams" class="search-input-improved"
                     placeholder="Tìm kiếm đề thi theo tên, môn học...">
             </div>
 
-            <div class="basic-filters">
+            <div class="basic-filters" style="display: flex; gap: 12px; align-items: center;">
                 <div class="filter-group">
-                    <span class="filter-icon">📖</span>
                     <select id="subjectFilter" class="filter-select-improved">
                         <option value="">Tất cả môn học</option>
                         <option value="Lập trình Web">Lập trình Web</option>
@@ -76,7 +74,6 @@
                 </div>
 
                 <div class="filter-group">
-                    <span class="filter-icon">📊</span>
                     <select id="statusFilter" class="filter-select-improved">
                         <option value="">Tất cả trạng thái</option>
                         <option value="published">Đã xuất bản</option>
@@ -86,7 +83,6 @@
                 </div>
 
                 <div class="filter-group">
-                    <span class="filter-icon">🔄</span>
                     <select id="sortBy" class="filter-select-improved">
                         <option value="created-desc">Mới nhất</option>
                         <option value="created-asc">Cũ nhất</option>
@@ -97,7 +93,6 @@
                 </div>
 
                 <button class="advanced-filter-toggle" onclick="manageExams.toggleAdvancedFilters()">
-                    <span class="btn-icon">⚙️</span>
                     Bộ lọc nâng cao
                 </button>
             </div>

@@ -2255,7 +2255,7 @@ html {
     max-height: 90vh;
     overflow: hidden;
 }
-  
+
 .large-modal {
     width: 800px;
 }
@@ -2345,6 +2345,7 @@ html {
     .header-actions {
         justify-content: center;
     }
+
     .overview-cards {
         grid-template-columns: 1fr;
     }
@@ -2377,9 +2378,11 @@ html {
     .result-summary {
         grid-template-columns: 1fr;
     }
+
     40% {
         transform: translateY(-20px);
     }
+
     60% {
         transform: translateY(-10px);
     }
@@ -2479,4 +2482,113 @@ html {
 
 .chart-container canvas {
     max-height: 400px;
+}
+
+/* Recent exams styling */
+.recent-exams {
+    padding: 0;
+}
+
+.recent-exams .exam-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    margin-bottom: 15px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.recent-exams .exam-item:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.recent-exams .exam-item:last-child {
+    margin-bottom: 0;
+}
+
+.recent-exams .exam-info {
+    flex: 1;
+}
+
+.recent-exams .exam-info h4 {
+    margin: 0 0 8px 0;
+    color: #2d3748;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.recent-exams .exam-info p {
+    margin: 0 0 12px 0;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.recent-exams .exam-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+    .recent-exams .exam-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 8px;
+    }
+}
+
+.recent-exams .exam-meta span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.recent-exams .exam-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.recent-exams .btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+}
+
+.recent-exams .no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: #718096;
+}
+
+.recent-exams .no-data p {
+    margin: 0 0 15px 0;
+    font-size: 1rem;
+}
+
+/* Responsive design for recent exams */
+@media (max-width: 768px) {
+    .recent-exams .exam-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .recent-exams .exam-actions {
+        justify-content: center;
+    }
+
+    .recent-exams .exam-meta {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
 }
