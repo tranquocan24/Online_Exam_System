@@ -3,7 +3,7 @@
     {
       "username": "sv001",
       "password": "123456",
-      "name": "Nguyễn Văn An",
+      "name": "Nguyễn Văn Minh",
       "role": "student",
       "classes": [
         "CIT0004",
@@ -12,7 +12,7 @@
       "id": "SV001"
     },
     {
-      "username": "hau",
+      "username": "hau.np",
       "password": "123456",
       "name": "Nguyễn Phúc Hậu",
       "role": "student",
@@ -23,7 +23,7 @@
       "class": "CIT0001"
     },
     {
-      "username": "quocan",
+      "username": "quocan.tq",
       "password": "123456",
       "name": "Trần Quốc An",
       "role": "student",
@@ -35,7 +35,7 @@
       "class": "CIT0001"
     },
     {
-      "username": "caocuong",
+      "username": "caocuong.dc",
       "password": "123456",
       "name": "Đặng Cao Cường",
       "role": "student",
@@ -50,24 +50,25 @@
   "teachers": [
     {
       "id": "GV001",
-      "username": "gv001",
+      "username": "dr.hoang.nm",
       "password": "123456",
-      "name": "PGS.TS Nguyễn Văn C",
+      "name": "PGS.TS Nguyễn Minh Hoàng",
       "subject": "Lập trình Web",
       "role": "teacher"
     },
     {
-      "username": "giaovien1",
+      "username": "ms.linh.tt",
       "password": "123456",
-      "name": "Nguyễn Thị Giáo Viên",
+      "name": "ThS. Trần Thị Linh",
       "role": "teacher",
-      "id": "GV279401"
+      "id": "GV279401",
+      "subject": "Cơ sở dữ liệu"
     }
   ],
   "admins": [
     {
       "id": "AD001",
-      "username": "admin",
+      "username": "admin.system",
       "password": "admin123",
       "name": "Quản trị viên hệ thống",
       "role": "admin"

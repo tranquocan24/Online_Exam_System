@@ -2,16 +2,21 @@
   "exams": [
     {
       "id": "exam_001",
-      "title": "Kiểm tra Lập trình Web",
+      "title": "Kiểm tra Giữa kỳ - Lập trình Web",
       "subject": "Lập trình Web",
+      "description": "Bài kiểm tra giữa kỳ môn Lập trình Web - Kiến thức cơ bản về HTML, CSS và JavaScript",
       "duration": 60,
       "createdBy": "GV001",
       "createdAt": "2025-07-07T10:00:00.000Z",
-      "allowedClasses": [],
+      "allowedClasses": [
+        "CIT0004",
+        "CIT0005"
+      ],
       "questions": [
         {
           "id": 1,
-          "question": "HTML là gì?",
+          "type": "multiple-choice",
+          "question": "HTML là viết tắt của gì?",
           "options": [
             "HyperText Markup Language",
             "High Tech Modern Language",
@@ -22,55 +27,89 @@
         },
         {
           "id": 2,
-          "question": "CSS được sử dụng để làm gì?",
+          "type": "multiple-choice",
+          "question": "CSS được sử dụng chủ yếu để làm gì trong phát triển web?",
           "options": [
-            "Tạo cấu trúc trang web",
-            "Định dạng và trang trí trang web",
-            "Xử lý logic trang web",
-            "Kết nối cơ sở dữ liệu"
+            "Tạo cấu trúc nội dung trang web",
+            "Định dạng và trang trí giao diện trang web",
+            "Xử lý logic và tương tác của trang web",
+            "Kết nối và truy vấn cơ sở dữ liệu"
           ],
           "correctAnswer": 1
+        },
+        {
+          "id": 3,
+          "type": "multiple-choice",
+          "question": "Thẻ HTML nào được sử dụng để tạo liên kết?",
+          "options": [
+            "<link>",
+            "<a>",
+            "<href>",
+            "<url>"
+          ],
+          "correctAnswer": 1
+        },
+        {
+          "id": 4,
+          "type": "multiple-select",
+          "question": "Những công nghệ nào sau đây thuộc về Frontend Development?",
+          "options": [
+            "HTML5",
+            "CSS3",
+            "JavaScript",
+            "Python",
+            "React.js"
+          ],
+          "correctAnswer": [0, 1, 2, 4]
+        },
+        {
+          "id": 5,
+          "type": "text",
+          "question": "Viết cú pháp khai báo một biến trong JavaScript ES6:",
+          "correctAnswer": "let variableName; hoặc const variableName = value;"
         }
       ]
     },
     {
-      "title": "1",
+      "title": "Kiểm tra JavaScript Cơ bản",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức cơ bản về JavaScript ES6+",
+      "duration": 45,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
-      "allowedClasses": [],
+      "allowedClasses": [
+        "CIT0004"
+      ],
       "questions": [
         {
           "id": "q_1751893869302_1",
           "type": "multiple-choice",
-          "question": "1",
+          "question": "Từ khóa nào được sử dụng để khai báo hằng số trong JavaScript?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "const",
+            "let",
+            "var",
+            "final"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1751893908083_2",
           "type": "multiple-choice",
-          "question": "2",
+          "question": "Arrow function được giới thiệu trong phiên bản JavaScript nào?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "ES5",
+            "ES6 (ES2015)",
+            "ES7",
+            "ES8"
           ],
           "correctAnswer": 1
         }
@@ -79,71 +118,73 @@
       "createdAt": "2025-07-07T13:11:58.219Z"
     },
     {
-      "title": "2",
+      "title": "Kiểm tra CSS và Responsive Design",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về CSS3 và thiết kế responsive",
+      "duration": 50,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
-      "allowedClasses": [],
+      "allowedClasses": [
+        "CIT0004"
+      ],
       "questions": [
         {
           "id": "q_1751899074767_1",
           "type": "multiple-choice",
-          "question": "3",
+          "question": "Flexbox được sử dụng chủ yếu để làm gì?",
           "points": 1,
           "explanation": "",
           "options": [
-            "3",
-            "4",
-            "5",
-            "7"
+            "Tạo layout linh hoạt và căn chỉnh phần tử",
+            "Thêm hiệu ứng chuyển động",
+            "Tạo gradient màu sắc",
+            "Định dạng text"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1751899074867_2",
           "type": "multiple-choice",
-          "question": "4",
+          "question": "Media query được sử dụng để làm gì?",
           "points": 1,
           "explanation": "",
           "options": [
-            "4",
-            "5",
-            "6",
-            "8"
+            "Tạo responsive design",
+            "Thêm âm thanh",
+            "Tối ưu hóa hình ảnh",
+            "Kết nối API"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1751899100720_3",
           "type": "multiple-choice",
-          "question": "3",
+          "question": "Grid layout có ưu điểm gì so với Flexbox?",
           "points": 1,
           "explanation": "",
           "options": [
-            "3",
-            "4",
-            "5",
-            "6"
+            "Tạo layout 2 chiều phức tạp",
+            "Tốc độ render nhanh hơn",
+            "Dễ học hơn",
+            "Tương thích tốt hơn"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1751899110717_4",
           "type": "multiple-choice",
-          "question": "4",
+          "question": "CSS Preprocessor nào phổ biến nhất?",
           "points": 1,
           "explanation": "",
           "options": [
-            "4",
-            "5",
-            "6",
-            "7"
+            "Sass/SCSS",
+            "Less",
+            "Stylus",
+            "PostCSS"
           ],
           "correctAnswer": 0
         }
@@ -152,9 +193,9 @@
       "createdAt": "2025-07-07T14:38:36.115Z"
     },
     {
-      "title": "3",
+      "title": "Kiểm tra Kỹ thuật Phần mềm",
       "subject": "Kỹ thuật phần mềm",
-      "description": "",
+      "description": "Đánh giá kiến thức về quy trình phát triển phần mềm và methodologies",
       "duration": 60,
       "maxAttempts": 1,
       "shuffleQuestions": true,
@@ -162,33 +203,35 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
-      "allowedClasses": [],
+      "allowedClasses": [
+        "CIT0003"
+      ],
       "questions": [
         {
           "id": "q_1751957078459_1",
           "type": "multiple-choice",
-          "question": "5",
+          "question": "Agile methodology có đặc điểm chính nào?",
           "points": 1,
           "explanation": "",
           "options": [
-            "5",
-            "6",
-            "4",
-            "3"
+            "Phát triển lặp lại và linh hoạt",
+            "Thiết kế hoàn chỉnh trước khi code",
+            "Tài liệu chi tiết là ưu tiên",
+            "Quy trình tuyến tính nghiêm ngặt"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1751957078559_2",
           "type": "multiple-choice",
-          "question": "3",
+          "question": "SCRUM sprint thường kéo dài bao lâu?",
           "points": 1,
           "explanation": "",
           "options": [
-            "3",
-            "5",
-            "4",
-            "7"
+            "1-4 tuần",
+            "5-8 tuần",
+            "2-3 tháng",
+            "6 tháng"
           ],
           "correctAnswer": 0
         }
@@ -197,9 +240,9 @@
       "createdAt": "2025-07-08T06:45:23.339Z"
     },
     {
-      "title": "abc",
+      "title": "Kiểm tra Hệ điều hành Linux",
       "subject": "Hệ điều hành",
-      "description": "",
+      "description": "Đánh giá kiến thức cơ bản về hệ điều hành Linux và command line",
       "duration": 60,
       "maxAttempts": 1,
       "shuffleQuestions": true,
@@ -207,47 +250,49 @@
       "showResults": true,
       "allowReview": true,
       "createdBy": "GV001",
-      "allowedClasses": [],
+      "allowedClasses": [
+        "CIT0003"
+      ],
       "questions": [
         {
           "id": "q_1752595197191_1",
           "type": "multiple-choice",
-          "question": "1",
+          "question": "Lệnh nào được sử dụng để liệt kê file và thư mục trong Linux?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "ls",
+            "dir",
+            "list",
+            "show"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1752595208359_2",
           "type": "multiple-choice",
-          "question": "2",
+          "question": "Quyền 755 trong Linux có nghĩa là gì?",
           "points": 1,
           "explanation": "",
           "options": [
-            "2",
-            "3",
-            "4",
-            "5"
+            "Owner: rwx, Group: r-x, Others: r-x",
+            "Owner: rw-, Group: rw-, Others: rw-",
+            "Owner: r--, Group: r--, Others: r--",
+            "Owner: --x, Group: --x, Others: --x"
           ],
           "correctAnswer": 0
         },
         {
           "id": "q_1752595208359_3",
           "type": "multiple-choice",
-          "question": "4",
+          "question": "Lệnh nào được sử dụng để thay đổi thư mục hiện tại?",
           "points": 1,
           "explanation": "",
           "options": [
-            "2",
-            "3",
-            "4",
-            "5"
+            "mv",
+            "cp",
+            "cd",
+            "pwd"
           ],
           "correctAnswer": 2
         }
@@ -322,10 +367,10 @@
       "createdAt": "2025-07-22T01:55:12.718Z"
     },
     {
-      "title": "test12",
+      "title": "Kiểm tra Lập trình PHP",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về lập trình PHP, xử lý form và tương tác với database",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -339,14 +384,14 @@
         {
           "id": "q_1753149794121_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Cú pháp nào đúng để khai báo biến trong PHP?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "$variable_name",
+            "var variable_name",
+            "variable_name",
+            "let $variable_name"
           ],
           "correctAnswer": 0
         }
@@ -355,10 +400,10 @@
       "createdAt": "2025-07-22T02:03:33.273Z"
     },
     {
-      "title": "test13",
+      "title": "Kiểm tra Thiết kế cơ sở dữ liệu",
       "subject": "Cơ sở dữ liệu",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về thiết kế CSDL, chuẩn hóa và mô hình thực thể - mối quan hệ",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -372,14 +417,14 @@
         {
           "id": "q_1753150139654_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Dạng chuẩn 3NF (Third Normal Form) yêu cầu điều kiện gì?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "Loại bỏ phụ thuộc bắc cầu",
+            "Mỗi thuộc tính phụ thuộc hoàn toàn vào khóa chính",
+            "Không có thuộc tính đa trị",
+            "Có khóa chính duy nhất"
           ],
           "correctAnswer": 0
         }
@@ -388,10 +433,10 @@
       "createdAt": "2025-07-22T02:09:15.904Z"
     },
     {
-      "title": "test14",
+      "title": "Kiểm tra Framework Laravel",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về framework Laravel PHP, MVC pattern và Eloquent ORM",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -405,14 +450,14 @@
         {
           "id": "q_1753150547667_1",
           "type": "multiple-choice",
-          "question": "hahahah",
+          "question": "Artisan là gì trong Laravel?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "Command-line interface",
+            "Template engine",
+            "Database ORM",
+            "HTTP Client"
           ],
           "correctAnswer": 0
         }
@@ -421,10 +466,10 @@
       "createdAt": "2025-07-22T02:16:06.992Z"
     },
     {
-      "title": "test16",
+      "title": "Kiểm tra Mạng máy tính",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về mạng máy tính, giao thức TCP/IP và bảo mật mạng",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -438,14 +483,14 @@
         {
           "id": "q_1753150789553_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Giao thức nào hoạt động ở tầng Transport trong mô hình OSI?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "TCP",
+            "HTTP",
+            "IP",
+            "Ethernet"
           ],
           "correctAnswer": 0
         }
@@ -454,10 +499,10 @@
       "createdAt": "2025-07-22T02:20:05.658Z"
     },
     {
-      "title": "test20",
+      "title": "Kiểm tra An toàn thông tin",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về an toàn thông tin, mã hóa và các phương pháp bảo mật",
+      "duration": 120,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -471,14 +516,14 @@
         {
           "id": "q_1753184123522_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Thuật toán mã hóa nào là thuật toán mã hóa đối xứng?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "AES",
+            "RSA",
+            "DSA",
+            "ECC"
           ],
           "correctAnswer": 0
         }
@@ -487,10 +532,10 @@
       "createdAt": "2025-07-22T11:35:48.297Z"
     },
     {
-      "title": "test21",
+      "title": "Kiểm tra Kiến trúc máy tính",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về kiến trúc máy tính, CPU, bộ nhớ và hệ thống I/O",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -504,14 +549,14 @@
         {
           "id": "q_1753184283824_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Đơn vị nào trong CPU chịu trách nhiệm thực hiện các phép toán số học?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "34",
-            "4"
+            "ALU",
+            "Control Unit",
+            "Cache",
+            "Register"
           ],
           "correctAnswer": 0
         }
@@ -520,10 +565,10 @@
       "createdAt": "2025-07-22T11:38:17.191Z"
     },
     {
-      "title": "test22",
+      "title": "Kiểm tra Trí tuệ nhân tạo",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về AI cơ bản, machine learning và neural networks",
+      "duration": 120,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -537,14 +582,14 @@
         {
           "id": "q_1753184689316_1",
           "type": "multiple-choice",
-          "question": "ahahahah",
+          "question": "Thuật toán nào thường được sử dụng trong supervised learning?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "Linear Regression",
+            "K-Means",
+            "DBSCAN",
+            "Apriori"
           ],
           "correctAnswer": 0
         }
@@ -553,10 +598,10 @@
       "createdAt": "2025-07-22T11:45:05.623Z"
     },
     {
-      "title": "test23",
+      "title": "Kiểm tra Công nghệ phần mềm",
       "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
+      "description": "Đánh giá kiến thức về quy trình phát triển phần mềm, testing và project management",
+      "duration": 90,
       "maxAttempts": 1,
       "shuffleQuestions": true,
       "shuffleAnswers": true,
@@ -570,14 +615,14 @@
         {
           "id": "q_1753184795702_1",
           "type": "multiple-choice",
-          "question": "hahaha",
+          "question": "Mô hình phát triển phần mềm nào phù hợp với dự án có yêu cầu thay đổi thường xuyên?",
           "points": 1,
           "explanation": "",
           "options": [
-            "1",
-            "2",
-            "3",
-            "4"
+            "Agile",
+            "Waterfall",
+            "V-Model",
+            "Spiral"
           ],
           "correctAnswer": 0
         }
