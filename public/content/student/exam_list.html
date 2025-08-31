@@ -39,7 +39,6 @@
 
     <!-- Empty state -->
     <div id="empty-state" class="empty-state" style="display: none;">
-        <div class="empty-icon">📝</div>
         <h3>Chưa có bài thi nào</h3>
         <p>Hiện tại chưa có bài thi nào khả dụng. Vui lòng liên hệ giáo viên để biết thêm thông tin.</p>
     </div>
@@ -243,6 +242,18 @@
     .exam-actions {
         display: flex;
         gap: 10px;
+    }
+
+    .exam-actions .btn {
+        flex: 1;
+    }
+
+    .exam-actions .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #f8f9fa !important;
+        color: #6c757d !important;
+        border-color: #dee2e6 !important;
     }
 
     .btn-take-exam {
@@ -630,13 +641,13 @@
                         </button>
                     ` : exam.status === 'completed' ? `
                         <button class="btn-view-result" onclick="viewResult('${exam.id}')">
-                            📊 Xem kết quả
+                            Xem kết quả
                         </button>
                         <button class="btn-retake-exam" onclick="showExamModal('${exam.id}')">
-                            🔄 Thi lại
+                            Thi lại
                         </button>
                         <button class="btn-view-detail" onclick="viewExamDetail('${exam.id}')">
-                            👁️ Chi tiết
+                            Chi tiết
                         </button>
                     ` : `
                         <button class="btn-take-exam" disabled>

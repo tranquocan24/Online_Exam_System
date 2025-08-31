@@ -93,6 +93,22 @@ body {
     background-color: #cbd5e0;
 }
 
+.btn-outline {
+    background-color: transparent;
+    color: #112444;
+    border: 2px solid #112444;
+}
+
+.btn-outline:hover {
+    background-color: #112444;
+    color: white;
+}
+
+/* Hide all button icons */
+.btn-icon {
+    display: none !important;
+}
+
 /* Container chính */
 #app-container {
     flex: 1;

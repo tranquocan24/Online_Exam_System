@@ -100,15 +100,12 @@
                     <div class="section-actions">
                         <button type="button" id="addQuestionBtn" class="btn btn-secondary"
                             onclick="window.createExam?.addQuestion()">
-                            <span class="btn-icon">➕</span>
                             Thêm câu hỏi
                         </button>
                         <button type="button" id="importMarkdownBtn" class="btn btn-outline">
-                            <span class="btn-icon">📝</span>
                             Import từ Markdown
                         </button>
                         <button type="button" id="importQuestionsBtn" class="btn btn-outline">
-                            <span class="btn-icon">📁</span>
                             Import từ file
                         </button>
                     </div>
@@ -237,20 +234,20 @@
     <div id="importMarkdownModal" class="modal" style="display: none;">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>📝 Import đề thi từ Markdown</h3>
+                <h3>Import đề thi từ Markdown</h3>
                 <button class="modal-close" onclick="createExam.closeMarkdownModal()">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="import-section">
                     <h4>Chọn file Markdown (.md)</h4>
                     <p class="help-text">
-                        <a href="markdown_guide.md" target="_blank">📖 Xem hướng dẫn tạo đề thi Markdown</a> |
-                        <a href="sample_exam.md" target="_blank">📄 Tải file mẫu</a>
+                        <a href="markdown_guide.md" target="_blank">Xem hướng dẫn tạo đề thi Markdown</a> |
+                        <a href="sample_exam.md" target="_blank">Tải file mẫu</a>
                     </p>
                     <div class="file-upload-area">
                         <input type="file" id="markdownFile" accept=".md" style="display: none;">
                         <div class="file-upload-zone" onclick="document.getElementById('markdownFile').click()">
-                            <div class="upload-icon">📁</div>
+                            <div class="upload-icon">+</div>
                             <p>Click để chọn file .md hoặc kéo thả file vào đây</p>
                             <small>Hỗ trợ định dạng Markdown với cú pháp đặc biệt cho đề thi</small>
                         </div>

@@ -49,7 +49,7 @@ class StudentDashboard {
             console.log('Average score:', this.calculateAverageScore(results));
 
             this.displayDashboardStats(availableExams.length, completedExams.length, results);
-            this.displayRecentExams(exams.slice(0, 3));
+            this.displayRecentExams(exams); // Truyền toàn bộ danh sách, logic sắp xếp ở trong function
             // Note: displayRecentResults không cần vì dashboard.html không có phần này
 
         } catch (error) {
@@ -77,15 +77,20 @@ class StudentDashboard {
     displayRecentExams(exams) {
         const container = document.getElementById('recent-exams');
         if (container && exams.length > 0) {
+            // Sắp xếp bài thi theo ngày tạo gần nhất
+            const recentExams = exams
+                .sort((a, b) => new Date(b.createdAt || b.created || 0) - new Date(a.createdAt || a.created || 0))
+                .slice(0, 3);
+                
             container.innerHTML = `
-                ${exams.map(exam => `
+                ${recentExams.map(exam => `
                     <div class="exam-item">
                         <div class="exam-content">
                             <h4>${exam.title}</h4>
                             <p>${exam.description || exam.subject}</p>
                             <div class="exam-meta">
-                                <span class="exam-duration">⏱️ ${exam.duration} phút</span>
-                                <span class="exam-questions">📝 ${exam.questionCount || exam.questions?.length || 0} câu</span>
+                                <span class="exam-duration">${exam.duration} phút</span>
+                                <span class="exam-questions">${exam.questionCount || exam.questions?.length || 0} câu</span>
                             </div>
                         </div>
                         <div class="exam-actions">
