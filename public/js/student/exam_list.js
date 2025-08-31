@@ -118,6 +118,13 @@ class ExamList {
             return true;
         });
 
+        // Sort exams by creation date (newest first)
+        this.filteredExams.sort((a, b) => {
+            const dateA = new Date(a.createdAt || '2025-01-01');
+            const dateB = new Date(b.createdAt || '2025-01-01');
+            return dateB - dateA; // Newest first
+        });
+
         this.renderExams();
     }
 

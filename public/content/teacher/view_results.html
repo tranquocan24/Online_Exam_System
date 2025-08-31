@@ -2,16 +2,14 @@
 <div class="view-results-page">
     <div class="page-header">
         <div class="header-content">
-            <h2>📊 Kết quả thi sinh viên</h2>
+            <h2>Kết quả thi sinh viên</h2>
             <p>Xem và phân tích kết quả thi của sinh viên</p>
         </div>
         <div class="header-actions">
             <button onclick="viewResults.exportResults()" class="btn btn-secondary">
-                <span class="btn-icon">📊</span>
                 Xuất Excel
             </button>
             <button onclick="viewResults.refreshData()" class="btn btn-primary">
-                <span class="btn-icon">🔄</span>
                 Làm mới
             </button>
         </div>
@@ -19,7 +17,7 @@
 
     <!-- Exam selector -->
     <div class="exam-selector">
-        <label for="examSelect">🎯 Chọn bài thi để xem kết quả:</label>
+        <label for="examSelect">Chọn bài thi để xem kết quả:</label>
         <select id="examSelect" class="exam-select">
             <option value="">-- Chọn bài thi --</option>
         </select>
@@ -29,28 +27,24 @@
     <div id="resultsOverview" class="results-overview" style="display: none;">
         <div class="overview-cards">
             <div class="overview-card">
-                <div class="card-icon">👥</div>
                 <div class="card-content">
                     <div class="card-number" id="totalStudents">0</div>
                     <div class="card-label">Sinh viên tham gia</div>
                 </div>
             </div>
             <div class="overview-card">
-                <div class="card-icon">📊</div>
                 <div class="card-content">
                     <div class="card-number" id="averageScore">0%</div>
                     <div class="card-label">Điểm trung bình</div>
                 </div>
             </div>
             <div class="overview-card">
-                <div class="card-icon">🏆</div>
                 <div class="card-content">
                     <div class="card-number" id="highestScore">0%</div>
                     <div class="card-label">Điểm cao nhất</div>
                 </div>
             </div>
             <div class="overview-card">
-                <div class="card-icon">📉</div>
                 <div class="card-content">
                     <div class="card-number" id="lowestScore">0%</div>
                     <div class="card-label">Điểm thấp nhất</div>
@@ -60,7 +54,7 @@
 
         <!-- Score Distribution Chart -->
         <div class="score-distribution">
-            <h3>📈 Phân bố điểm số</h3>
+            <h3>Phân bố điểm số</h3>
             <div class="chart-container">
                 <canvas id="scoreChart" width="400" height="200"></canvas>
             </div>
@@ -71,14 +65,14 @@
     <div id="resultsFilters" class="results-filters" style="display: none;">
         <div class="filter-row">
             <div class="filter-group">
-                <label for="classFilter">🏫 Lớp:</label>
+                <label for="classFilter">Lớp:</label>
                 <select id="classFilter" class="filter-select">
                     <option value="">Tất cả lớp</option>
                 </select>
             </div>
 
             <div class="filter-group">
-                <label for="scoreRangeFilter">📊 Khoảng điểm:</label>
+                <label for="scoreRangeFilter">Khoảng điểm:</label>
                 <select id="scoreRangeFilter" class="filter-select">
                     <option value="">Tất cả điểm</option>
                     <option value="excellent">Xuất sắc (90-100%)</option>
@@ -90,7 +84,7 @@
             </div>
 
             <div class="filter-group">
-                <label for="studentSearch">🔍 Tìm kiếm:</label>
+                <label for="studentSearch">Tìm kiếm:</label>
                 <input type="text" id="studentSearch" class="search-input"
                     placeholder="Tìm theo tên hoặc mã sinh viên...">
             </div>
@@ -105,11 +99,9 @@
             </div>
             <div class="table-controls">
                 <button onclick="viewResults.selectAllResults()" class="btn btn-outline btn-sm">
-                    <span class="btn-icon">☑️</span>
                     Chọn tất cả
                 </button>
                 <button onclick="viewResults.exportSelectedResults()" class="btn btn-secondary btn-sm">
-                    <span class="btn-icon">📥</span>
                     Xuất đã chọn
                 </button>
             </div>
@@ -148,14 +140,12 @@
 
     <!-- Empty state -->
     <div id="emptyResults" class="empty-state" style="display: none;">
-        <div class="empty-icon">📊</div>
         <h3>Chưa có kết quả thi</h3>
         <p>Chưa có sinh viên nào làm bài thi này</p>
     </div>
 
     <!-- No exam selected -->
     <div id="noExamSelected" class="empty-state">
-        <div class="empty-icon">📚</div>
         <h3>Chọn bài thi để xem kết quả</h3>
         <p>Vui lòng chọn một bài thi từ danh sách trên để xem kết quả chi tiết</p>
     </div>
@@ -165,21 +155,21 @@
 <div id="resultDetailModal" class="modal" style="display: none;">
     <div class="modal-content large-modal">
         <div class="modal-header">
-            <h3>📋 Chi tiết bài làm - <span id="modalStudentName"></span></h3>
+            <h3>Chi tiết bài làm - <span id="modalStudentName"></span></h3>
             <button class="modal-close" onclick="viewResults.closeDetailModal()">&times;</button>
         </div>
         <div class="modal-body">
             <div class="result-summary">
                 <div class="summary-item">
-                    <strong>🎯 Điểm số:</strong>
+                    <strong>Điểm số:</strong>
                     <span id="modalScore" class="score-highlight"></span>
                 </div>
                 <div class="summary-item">
-                    <strong>⏱️ Thời gian làm bài:</strong>
+                    <strong>Thời gian làm bài:</strong>
                     <span id="modalTimeSpent"></span>
                 </div>
                 <div class="summary-item">
-                    <strong>📅 Ngày nộp:</strong>
+                    <strong>Ngày nộp:</strong>
                     <span id="modalSubmitTime"></span>
                 </div>
             </div>
@@ -190,11 +180,9 @@
         </div>
         <div class="modal-footer">
             <button onclick="viewResults.exportStudentResult()" class="btn btn-secondary">
-                <span class="btn-icon">📄</span>
                 Xuất PDF
             </button>
             <button onclick="viewResults.closeDetailModal()" class="btn btn-primary">
-                <span class="btn-icon">✖️</span>
                 Đóng
             </button>
         </div>

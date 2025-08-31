@@ -346,10 +346,6 @@ class App {
                 e.preventDefault();
                 const page = link.getAttribute('data-page');
                 this.loadPage(page);
-
-                // Update active state
-                navLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
             });
         });
     }
@@ -371,6 +367,9 @@ class App {
                 contentContainer.innerHTML = html;
                 this.currentPage = page;
 
+                // Update navigation active state
+                this.updateNavigationState(page);
+
                 // Load JS tương ứng nếu có
                 await this.loadPageScript(page);
             }
@@ -387,6 +386,17 @@ class App {
                 `;
             }
         }
+    }
+
+    // Update navigation active state
+    updateNavigationState(page) {
+        const navLinks = document.querySelectorAll('.nav-link[data-page]');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-page') === page) {
+                link.classList.add('active');
+            }
+        });
     }
 
     // Load script cho trang cụ thể

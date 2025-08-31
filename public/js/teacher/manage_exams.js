@@ -93,6 +93,13 @@ class ManageExams {
             }
             
             this.updateStatistics();
+            
+            // Ensure default sort is set to newest first
+            const sortBy = document.getElementById('sortBy');
+            if (sortBy && !sortBy.value) {
+                sortBy.value = 'created-desc';
+            }
+            
             this.applyFilters();
             
         } catch (error) {

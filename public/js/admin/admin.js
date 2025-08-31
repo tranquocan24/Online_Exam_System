@@ -260,9 +260,6 @@ class AdminPanel {
             case 'users':
                 this.displayUsers();
                 break;
-            case 'stats':
-                this.displayStats();
-                break;
             case 'settings':
                 this.loadSettings();
                 break;
@@ -828,53 +825,12 @@ class AdminPanel {
         this.editingUserId = null;
     }
 
-    displayStats() {
-        console.log('Displaying statistics...');
-
-        if (!this.users || !this.exams || !this.results) {
-            console.log('Data not loaded yet for stats');
-            return;
-        }
-
-        // Calculate statistics
-        const totalUsers = (this.users.students ? this.users.students.length : 0) +
-            (this.users.teachers ? this.users.teachers.length : 0) +
-            (this.users.admins ? this.users.admins.length : 0);
-
-        const activeExams = Array.isArray(this.exams) ? this.exams.length : 0;
-        const weeklyAttempts = this.getWeeklyAttempts();
-
-        // Update stats display in the stats tab
-        const totalUsersElement = document.getElementById('total-users');
-        const activeExamsElement = document.getElementById('active-exams');
-        const weeklyAttemptsElement = document.getElementById('weekly-attempts');
-
-        if (totalUsersElement) totalUsersElement.textContent = totalUsers;
-        if (activeExamsElement) activeExamsElement.textContent = activeExams;
-        if (weeklyAttemptsElement) weeklyAttemptsElement.textContent = weeklyAttempts;
-    }
-
-    getWeeklyAttempts() {
-        if (!this.results || !this.results.results) return 0;
-
-        const oneWeekAgo = new Date();
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-        return this.results.results.filter(result => {
-            const resultDate = new Date(result.submittedAt);
-            return resultDate >= oneWeekAgo;
-        }).length;
-    }
-
     loadSettings() {
         // Load current settings from localStorage or server
         const settings = this.getSettings();
 
-        document.getElementById('system-name').value = settings.systemName || 'Hệ thống thi online';
-        document.getElementById('default-exam-time').value = settings.defaultExamTime || 60;
-        document.getElementById('allow-registration').checked = settings.allowRegistration || false;
         document.getElementById('min-password-length').value = settings.minPasswordLength || 6;
-        document.getElementById('session-timeout').value = settings.sessionTimeout || 30;
+        document.getElementById('session-timeout').value = settings.sessionTimeout || 10;
     }
 
     getSettings() {
@@ -884,15 +840,18 @@ class AdminPanel {
 
     saveSettings() {
         const settings = {
-            systemName: document.getElementById('system-name').value,
-            defaultExamTime: parseInt(document.getElementById('default-exam-time').value),
-            allowRegistration: document.getElementById('allow-registration').checked,
             minPasswordLength: parseInt(document.getElementById('min-password-length').value),
             sessionTimeout: parseInt(document.getElementById('session-timeout').value)
         };
 
         localStorage.setItem('systemSettings', JSON.stringify(settings));
-        this.showAlert('Lưu cài đặt thành công!', 'success');
+        
+        // Cập nhật session timeout ngay lập tức
+        if (window.sessionManager) {
+            window.sessionManager.updateTimeout(settings.sessionTimeout);
+        }
+        
+        this.showAlert('Lưu cài đặt thành công! Thời gian hết hạn phiên đã được cập nhật.', 'success');
     }
 
     resetSettings() {

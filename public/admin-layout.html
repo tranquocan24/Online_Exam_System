@@ -15,7 +15,6 @@
         <ul class="nav-tabs">
             <li><a href="#" data-tab="dashboard" class="nav-tab active">Tổng quan</a></li>
             <li><a href="#" data-tab="users" class="nav-tab">Quản lý tài khoản</a></li>
-            <li><a href="#" data-tab="stats" class="nav-tab">Thống kê</a></li>
             <li><a href="#" data-tab="settings" class="nav-tab">Cài đặt</a></li>
         </ul>
     </div>
@@ -88,60 +87,12 @@
         </div>
     </div>
 
-    <!-- Statistics Tab -->
-    <div id="stats-tab" class="tab-content">
-        <div class="stats-header">
-            <h2>Thống kê hệ thống</h2>
-        </div>
-        <div class="stats-content">
-            <div class="chart-container">
-                <h3>Biểu đồ hoạt động hệ thống</h3>
-                <p>Tính năng biểu đồ sẽ được phát triển trong phiên bản sau.</p>
-            </div>
-            <div class="stats-summary">
-                <h3>Báo cáo tổng quan</h3>
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <span class="label">Tổng số người dùng:</span>
-                        <span class="value" id="total-users">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="label">Bài thi hoạt động:</span>
-                        <span class="value" id="active-exams">0</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="label">Lượt thi trong tuần:</span>
-                        <span class="value" id="weekly-attempts">0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Settings Tab -->
     <div id="settings-tab" class="tab-content">
         <div class="settings-header">
             <h2>Cài đặt hệ thống</h2>
         </div>
         <div class="settings-content">
-            <div class="settings-section">
-                <h3>Cài đặt chung</h3>
-                <div class="form-group">
-                    <label for="system-name">Tên hệ thống:</label>
-                    <input type="text" id="system-name" value="Hệ thống thi online">
-                </div>
-                <div class="form-group">
-                    <label for="default-exam-time">Thời gian thi mặc định (phút):</label>
-                    <input type="number" id="default-exam-time" value="60" min="1" max="300">
-                </div>
-                <div class="form-group">
-                    <label>
-                        <input type="checkbox" id="allow-registration">
-                        Cho phép đăng ký tài khoản mới
-                    </label>
-                </div>
-            </div>
-            
             <div class="settings-section">
                 <h3>Bảo mật</h3>
                 <div class="form-group">
@@ -150,7 +101,8 @@
                 </div>
                 <div class="form-group">
                     <label for="session-timeout">Thời gian hết hạn phiên (phút):</label>
-                    <input type="number" id="session-timeout" value="30" min="5" max="480">
+                    <input type="number" id="session-timeout" value="10" min="5" max="480">
+                    <small class="form-hint">Hệ thống sẽ tự động đăng xuất người dùng sau thời gian này nếu không có hoạt động</small>
                 </div>
             </div>
             

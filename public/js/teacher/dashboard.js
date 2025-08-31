@@ -29,6 +29,13 @@ class TeacherDashboard {
             const questionsData = await examsResponse.json();
             const teacherExams = questionsData.exams.filter(exam => exam.createdBy === this.user?.id);
 
+            // Sort exams by creation date (newest first) and take first 3
+            const sortedExams = teacherExams.sort((a, b) => {
+                const dateA = new Date(a.createdAt || '2025-01-01');
+                const dateB = new Date(b.createdAt || '2025-01-01');
+                return dateB - dateA; // Newest first
+            });
+
             // Load all results for teacher's exams
             const resultsResponse = await fetch('/api/results');
             const allResults = await resultsResponse.json();
@@ -36,8 +43,15 @@ class TeacherDashboard {
                 teacherExams.some(exam => exam.id === result.examId)
             );
 
-            this.displayRecentExams(teacherExams.slice(0, 3));
-            this.displayRecentSubmissions(teacherResults.slice(0, 5));
+            // Sort results by submission date (newest first) and take first 5
+            const sortedResults = teacherResults.sort((a, b) => {
+                const dateA = new Date(a.submittedAt || '2025-01-01');
+                const dateB = new Date(b.submittedAt || '2025-01-01');
+                return dateB - dateA; // Newest first
+            });
+
+            this.displayRecentExams(sortedExams.slice(0, 3));
+            this.displayRecentSubmissions(sortedResults.slice(0, 5));
 
         } catch (error) {
             console.error('Error loading teacher dashboard data:', error);
@@ -60,9 +74,9 @@ class TeacherDashboard {
                             <h4>${exam.title}</h4>
                             <p>${exam.description || 'Không có mô tả'}</p>
                             <div class="exam-meta">
-                                <span>⏱️ ${exam.duration} phút</span>
-                                <span>❓ ${exam.questions?.length || 0} câu</span>
-                                <span>📅 ${new Date(exam.createdAt).toLocaleDateString('vi-VN')}</span>
+                                <span>${exam.duration} phút</span>
+                                <span>${exam.questions?.length || 0} câu</span>
+                                <span>${new Date(exam.createdAt).toLocaleDateString('vi-VN')}</span>
                             </div>
                         </div>
                         <div class="exam-actions">
