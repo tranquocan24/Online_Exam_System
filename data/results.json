@@ -545,6 +545,64 @@
       "timeSpent": 4,
       "submittedAt": "2025-08-31T12:24:25.501Z",
       "isTimeUp": false
+    },
+    {
+      "id": "result_1756656003171_SV684783",
+      "examId": "exam_1753184812674",
+      "examTitle": "Kiểm tra Công nghệ phần mềm",
+      "examQuestions": [
+        {
+          "id": "q_1753184795702_1",
+          "type": "multiple-choice",
+          "question": "Mô hình phát triển phần mềm nào phù hợp với dự án có yêu cầu thay đổi thường xuyên?",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "Agile",
+            "Waterfall",
+            "V-Model",
+            "Spiral"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": null
+      },
+      "timeSpent": 15,
+      "submittedAt": "2025-08-31T16:00:03.166Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1756656058379_SV684783",
+      "examId": "exam_1753184705623",
+      "examTitle": "Kiểm tra Trí tuệ nhân tạo",
+      "examQuestions": [
+        {
+          "id": "q_1753184689316_1",
+          "type": "multiple-choice",
+          "question": "Thuật toán nào thường được sử dụng trong supervised learning?",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "Linear Regression",
+            "K-Means",
+            "DBSCAN",
+            "Apriori"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV684783",
+      "userName": "Nguyễn Phúc Hậu",
+      "answers": {
+        "0": 0
+      },
+      "timeSpent": 18,
+      "submittedAt": "2025-08-31T16:00:58.376Z",
+      "isTimeUp": false
     }
   ]
 }
