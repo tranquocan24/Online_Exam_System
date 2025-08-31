@@ -496,11 +496,20 @@ class ManageExams {
         
         if (confirm(`Bạn có chắc chắn muốn XÓA VĨNH VIỄN đề thi "${exam.title}"? Hành động này không thể hoàn tác.`)) {
             try {
-                // TODO: Implement delete API
-                this.showMessage('Đã xóa đề thi', 'success');
-                this.refreshData();
+                const response = await fetch(`/api/questions?id=${examId}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    this.showMessage('Đã xóa đề thi thành công', 'success');
+                    this.refreshData();
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to delete exam');
+                }
             } catch (error) {
-                this.showMessage('Có lỗi khi xóa đề thi', 'error');
+                console.error('Delete exam error:', error);
+                this.showMessage('Có lỗi khi xóa đề thi: ' + error.message, 'error');
             }
         }
         
@@ -647,13 +656,23 @@ class ManageExams {
         
         if (confirm(`Bạn có chắc chắn muốn xóa ${this.selectedExams.size} đề thi được chọn? Hành động này không thể hoàn tác.`)) {
             try {
-                for (const examId of this.selectedExams) {
-                    await this.deleteExam(examId);
+                const deletePromises = Array.from(this.selectedExams).map(examId => 
+                    fetch(`/api/questions?id=${examId}`, { method: 'DELETE' })
+                );
+
+                const results = await Promise.all(deletePromises);
+                const failedDeletes = results.filter(result => !result.ok);
+
+                if (failedDeletes.length === 0) {
+                    this.showMessage(`Đã xóa thành công ${this.selectedExams.size} đề thi`, 'success');
+                } else {
+                    this.showMessage(`Đã xóa ${results.length - failedDeletes.length}/${results.length} đề thi. Một số đề thi không thể xóa.`, 'warning');
                 }
-                this.showMessage('Đã xóa tất cả đề thi được chọn', 'success');
+
                 this.clearSelection();
                 this.refreshData();
             } catch (error) {
+                console.error('Bulk delete error:', error);
                 this.showMessage('Có lỗi khi xóa đề thi', 'error');
             }
         }

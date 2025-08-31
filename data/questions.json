@@ -199,7 +199,6 @@
     {
       "title": "abc",
       "subject": "Hệ điều hành",
-
       "description": "",
       "duration": 60,
       "maxAttempts": 1,
@@ -255,37 +254,6 @@
       ],
       "id": "exam_1752595226806",
       "createdAt": "2025-07-15T16:00:26.806Z"
-    },
-    {
-      "title": "test8",
-      "subject": "Lập trình Web",
-      "description": "",
-      "duration": 60,
-      "maxAttempts": 1,
-      "shuffleQuestions": true,
-      "shuffleAnswers": true,
-      "showResults": true,
-      "allowReview": true,
-      "createdBy": "GV279401",
-      "allowedClasses": [],
-      "questions": [
-        {
-          "id": "q_1752822988275_1",
-          "type": "multiple-choice",
-          "question": "hahahah",
-          "points": 10,
-          "explanation": "",
-          "options": [
-            "1",
-            "2",
-            "3",
-            "4"
-          ],
-          "correctAnswer": 0
-        }
-      ],
-      "id": "exam_1752823011928",
-      "createdAt": "2025-07-18T07:16:51.928Z"
     },
     {
       "title": "test9",

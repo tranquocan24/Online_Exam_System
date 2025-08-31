@@ -910,6 +910,7 @@ class CreateExam {
         const questions = [];
         let currentQuestion = null;
         let currentSection = null;
+        let isParsingQuestionContent = false;
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
@@ -934,11 +935,12 @@ class CreateExam {
                     questions.push(currentQuestion);
                 }
                 currentQuestion = {
-                    text: line.substring(line.indexOf(':') + 1).trim(),
+                    text: '', // Will be filled later
                     type: 'multiple-choice',
                     options: [],
                     score: 1
                 };
+                isParsingQuestionContent = false;
             } else if (line.startsWith('**Loại:**')) {
                 const type = line.replace('**Loại:**', '').trim();
                 if (currentQuestion) {
@@ -949,8 +951,9 @@ class CreateExam {
                 if (currentQuestion) {
                     currentQuestion.score = score;
                 }
-            } else if (line.startsWith('**Đáp án:**')) {
-                const answer = line.replace('**Đáp án:**', '').trim();
+                isParsingQuestionContent = true; // Start parsing question content after score
+            } else if (line.startsWith('**Đáp án:**') || line.startsWith('**Đáp án mẫu:**')) {
+                const answer = line.replace(/\*\*(Đáp án|Đáp án mẫu):\*\*/, '').trim();
                 if (currentQuestion) {
                     if (currentQuestion.type === 'multiple-choice') {
                         // Convert A,B,C,D to index
@@ -964,6 +967,7 @@ class CreateExam {
                         currentQuestion.sampleAnswer = answer;
                     }
                 }
+                isParsingQuestionContent = false; // Stop parsing question content after answer
             } else if (line.startsWith('- ') && currentQuestion) {
                 // Parse options
                 const optionText = line.substring(2).trim();
@@ -972,10 +976,13 @@ class CreateExam {
                     const cleanOption = optionText.substring(2).trim();
                     currentQuestion.options.push(cleanOption);
                 }
-            } else if (line && !line.startsWith('---') && !line.startsWith('**') && currentQuestion && currentQuestion.type === 'text') {
-                // Add text content for essay questions
-                if (!currentQuestion.text.includes(line)) {
+                isParsingQuestionContent = false; // Stop parsing question content when options start
+            } else if (line && !line.startsWith('---') && !line.startsWith('**') && currentQuestion && isParsingQuestionContent) {
+                // Parse actual question text
+                if (currentQuestion.text) {
                     currentQuestion.text += ' ' + line;
+                } else {
+                    currentQuestion.text = line;
                 }
             }
         }
@@ -986,6 +993,112 @@ class CreateExam {
         }
 
         return { examInfo, questions };
+    }
+
+    addQuestionsSequentially(questionsData) {
+        if (!questionsData || questionsData.length === 0) return;
+        
+        let index = 0;
+        const addNext = () => {
+            if (index >= questionsData.length) return;
+            
+            const questionData = questionsData[index];
+            index++;
+            
+            // Add question without the _addingQuestion lock for import
+            this.addQuestionForImport(questionData);
+            
+            // Add next question after a short delay
+            if (index < questionsData.length) {
+                setTimeout(addNext, 100);
+            }
+        };
+        
+        addNext();
+    }
+
+    addQuestionForImport(questionData = null) {
+        try {
+            console.log('Adding question for import...', questionData);
+            this.questionCounter++;
+            const questionId = `q_${Date.now()}_${this.questionCounter}`;
+
+            const template = document.getElementById('questionTemplate');
+            if (!template) {
+                console.error('Question template not found');
+                return;
+            }
+
+            const questionElement = template.content.cloneNode(true);
+
+            // Set question number and ID
+            const questionItem = questionElement.querySelector('.question-item');
+            if (!questionItem) {
+                console.error('Question item not found in template');
+                return;
+            }
+
+            questionItem.setAttribute('data-question-id', questionId);
+            const numberElement = questionElement.querySelector('.number');
+            if (numberElement) {
+                numberElement.textContent = this.questionCounter;
+            }
+
+            // Setup question type change handler
+            const typeSelect = questionElement.querySelector('.question-type-select');
+            if (typeSelect) {
+                typeSelect.addEventListener('change', (e) => {
+                    this.changeQuestionType(e.target.closest('.question-item'), e.target.value);
+                });
+            }
+
+            // Add initial options for multiple choice
+            if (!questionData || questionData.type === 'multiple-choice' || questionData.type === 'multiple-select') {
+                this.setupQuestionOptions(questionItem);
+            }
+
+            // Insert question
+            const container = document.getElementById('questionsContainer');
+            if (!container) {
+                console.error('Questions container not found');
+                return;
+            }
+
+            container.appendChild(questionElement);
+
+            // Hide empty state
+            const emptyState = document.getElementById('emptyQuestions');
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+
+            // Update questions array
+            const questionObj = {
+                id: questionId,
+                type: questionData?.type || 'multiple-choice',
+                question: questionData?.text || '',
+                options: questionData?.options || ['', '', '', ''],
+                correctAnswer: questionData?.correctAnswer || 0,
+                correctAnswers: questionData?.correctAnswers || [],
+                points: questionData?.score || 1,
+                explanation: ''
+            };
+
+            this.questions.push(questionObj);
+
+            // Populate with imported data
+            if (questionData) {
+                this.populateQuestionData(questionItem, questionData);
+            }
+
+            this.updateQuestionNumbers();
+            this.markAsModified();
+
+            console.log('Question imported successfully');
+
+        } catch (error) {
+            console.error('Error adding question for import:', error);
+        }
     }
 
     importFromMarkdown() {
@@ -1019,10 +1132,8 @@ class CreateExam {
             this.questions = [];
             this.questionCounter = 0;
 
-            // Add parsed questions
-            parsed.questions.forEach(questionData => {
-                this.addQuestion(questionData);
-            });
+            // Add parsed questions sequentially
+            this.addQuestionsSequentially(parsed.questions);
 
             this.showMessage(`Đã import thành công ${parsed.questions.length} câu hỏi`, 'success');
             this.closeMarkdownModal();

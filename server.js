@@ -835,6 +835,47 @@ class ExamServer {
                     res.end(JSON.stringify({ error: 'Invalid JSON' }));
                 }
             });
+        } else if (req.method === 'DELETE') {
+            // Handle exam deletion
+            const url = require('url');
+            const urlParts = url.parse(req.url, true);
+            const examId = urlParts.query.id;
+
+            if (!examId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Exam ID is required' }));
+                return;
+            }
+
+            try {
+                const data = JSON.parse(fs.readFileSync(questionsFile, 'utf8'));
+                const examIndex = data.exams.findIndex(exam => exam.id === examId);
+
+                if (examIndex === -1) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Exam not found' }));
+                    return;
+                }
+
+                // Remove the exam
+                const deletedExam = data.exams.splice(examIndex, 1)[0];
+                fs.writeFileSync(questionsFile, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+
+                // Also delete related results
+                const resultsFile = path.join(this.dataDir, 'results.json');
+                if (fs.existsSync(resultsFile)) {
+                    const resultsData = JSON.parse(fs.readFileSync(resultsFile, 'utf8'));
+                    resultsData.submissions = resultsData.submissions.filter(result => result.examId !== examId);
+                    fs.writeFileSync(resultsFile, JSON.stringify(resultsData, null, 2), { encoding: 'utf8' });
+                }
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true, deletedExam }));
+            } catch (error) {
+                console.error('Error deleting exam:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Failed to delete exam' }));
+            }
         }
     }
 

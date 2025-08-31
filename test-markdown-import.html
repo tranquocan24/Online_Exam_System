@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Import Markdown</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .container { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        textarea { 
+            width: 100%; 
+            height: 300px; 
+            font-family: monospace;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .question-preview {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .question-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .question-type {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .question-options {
+            margin-left: 20px;
+        }
+        .question-options li {
+            margin: 5px 0;
+        }
+        .correct-answer {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Import Markdown</h1>
+        
+        <div class="test-section">
+            <h3>📝 Markdown Content</h3>
+            <textarea id="markdownInput" placeholder="Paste your markdown content here...">
+# Đề thi Test - Sample
+
+**Môn học:** Test Subject  
+**Thời gian:** 60 phút  
+**Mô tả:** Test import markdown
+
+---
+
+## Câu 1: Trắc nghiệm đơn
+**Loại:** multiple-choice  
+**Điểm:** 1
+
+JavaScript là gì?
+- A. Ngôn ngữ lập trình
+- B. Hệ điều hành
+- C. Database
+- D. Web server
+
+**Đáp án:** A
+
+---
+
+## Câu 2: Trắc nghiệm nhiều lựa chọn
+**Loại:** multiple-select  
+**Điểm:** 2
+
+HTML elements nào sau đây là block elements?
+- A. div
+- B. span
+- C. p
+- D. h1
+- E. a
+
+**Đáp án:** A,C,D
+
+---
+
+## Câu 3: Câu hỏi tự luận
+**Loại:** text  
+**Điểm:** 3
+
+Giải thích sự khác biệt giữa let và var trong JavaScript.
+
+**Đáp án mẫu:** let có block scope, var có function scope.
+            </textarea>
+            <button onclick="testParseMarkdown()">🔍 Test Parse Markdown</button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Parse Results</h3>
+            <div id="parseResults">
+                <p>Click "Test Parse Markdown" to see results...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy the improved parseMarkdownExam function
+        function parseMarkdownExam(content) {
+            const lines = content.split('\n');
+            const examInfo = {};
+            const questions = [];
+            let currentQuestion = null;
+            let isParsingQuestionContent = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                // Parse exam info from header
+                if (line.startsWith('# ')) {
+                    examInfo.title = line.substring(2).trim();
+                } else if (line.startsWith('**Môn học:**')) {
+                    examInfo.subject = line.replace('**Môn học:**', '').trim();
+                } else if (line.startsWith('**Thời gian:**')) {
+                    const timeMatch = line.match(/(\d+)\s*phút/);
+                    if (timeMatch) {
+                        examInfo.duration = parseInt(timeMatch[1]);
+                    }
+                } else if (line.startsWith('**Mô tả:**')) {
+                    examInfo.description = line.replace('**Mô tả:**', '').trim();
+                }
+
+                // Parse questions
+                if (line.startsWith('## Câu ')) {
+                    if (currentQuestion) {
+                        questions.push(currentQuestion);
+                    }
+                    currentQuestion = {
+                        text: '',
+                        type: 'multiple-choice',
+                        options: [],
+                        score: 1
+                    };
+                    isParsingQuestionContent = false;
+                } else if (line.startsWith('**Loại:**')) {
+                    const type = line.replace('**Loại:**', '').trim();
+                    if (currentQuestion) {
+                        currentQuestion.type = type;
+                    }
+                } else if (line.startsWith('**Điểm:**')) {
+                    const score = parseInt(line.replace('**Điểm:**', '').trim());
+                    if (currentQuestion) {
+                        currentQuestion.score = score;
+                    }
+                    isParsingQuestionContent = true;
+                } else if (line.startsWith('**Đáp án:**') || line.startsWith('**Đáp án mẫu:**')) {
+                    const answer = line.replace(/\*\*(Đáp án|Đáp án mẫu):\*\*/, '').trim();
+                    if (currentQuestion) {
+                        if (currentQuestion.type === 'multiple-choice') {
+                            const answerIndex = answer.charCodeAt(0) - 65;
+                            currentQuestion.correctAnswer = answerIndex;
+                        } else if (currentQuestion.type === 'multiple-select') {
+                            const answers = answer.split(',').map(a => a.trim().charCodeAt(0) - 65);
+                            currentQuestion.correctAnswers = answers;
+                        } else {
+                            currentQuestion.sampleAnswer = answer;
+                        }
+                    }
+                    isParsingQuestionContent = false;
+                } else if (line.startsWith('- ') && currentQuestion) {
+                    const optionText = line.substring(2).trim();
+                    if (optionText.match(/^[A-E]\./)) {
+                        const cleanOption = optionText.substring(2).trim();
+                        currentQuestion.options.push(cleanOption);
+                    }
+                    isParsingQuestionContent = false;
+                } else if (line && !line.startsWith('---') && !line.startsWith('**') && currentQuestion && isParsingQuestionContent) {
+                    if (currentQuestion.text) {
+                        currentQuestion.text += ' ' + line;
+                    } else {
+                        currentQuestion.text = line;
+                    }
+                }
+            }
+
+            if (currentQuestion) {
+                questions.push(currentQuestion);
+            }
+
+            return { examInfo, questions };
+        }
+
+        function testParseMarkdown() {
+            const content = document.getElementById('markdownInput').value;
+            const resultsDiv = document.getElementById('parseResults');
+            
+            if (!content.trim()) {
+                resultsDiv.innerHTML = '<p style="color: red;">Please enter some markdown content!</p>';
+                return;
+            }
+            
+            try {
+                const result = parseMarkdownExam(content);
+                
+                let html = '<div>';
+                
+                // Show exam info
+                html += '<h4>📋 Exam Information</h4>';
+                html += `<p><strong>Title:</strong> ${result.examInfo.title || 'N/A'}</p>`;
+                html += `<p><strong>Subject:</strong> ${result.examInfo.subject || 'N/A'}</p>`;
+                html += `<p><strong>Duration:</strong> ${result.examInfo.duration || 'N/A'} minutes</p>`;
+                html += `<p><strong>Description:</strong> ${result.examInfo.description || 'N/A'}</p>`;
+                
+                // Show questions count
+                html += `<h4>❓ Questions Found: ${result.questions.length}</h4>`;
+                
+                // Show each question
+                result.questions.forEach((q, index) => {
+                    html += `<div class="question-preview">`;
+                    html += `<div class="question-title">Question ${index + 1}: ${q.text}</div>`;
+                    html += `<div class="question-type">Type: ${q.type} | Score: ${q.score}</div>`;
+                    
+                    if (q.options && q.options.length > 0) {
+                        html += '<div class="question-options"><ul>';
+                        q.options.forEach((option, optIndex) => {
+                            const isCorrect = (q.type === 'multiple-choice' && q.correctAnswer === optIndex) ||
+                                            (q.type === 'multiple-select' && q.correctAnswers && q.correctAnswers.includes(optIndex));
+                            const optClass = isCorrect ? 'correct-answer' : '';
+                            html += `<li class="${optClass}">${String.fromCharCode(65 + optIndex)}. ${option}</li>`;
+                        });
+                        html += '</ul></div>';
+                        
+                        if (q.type === 'multiple-choice') {
+                            html += `<p><strong>Correct Answer:</strong> <span class="correct-answer">${String.fromCharCode(65 + q.correctAnswer)}</span></p>`;
+                        } else if (q.type === 'multiple-select') {
+                            const correctLetters = q.correctAnswers.map(i => String.fromCharCode(65 + i)).join(', ');
+                            html += `<p><strong>Correct Answers:</strong> <span class="correct-answer">${correctLetters}</span></p>`;
+                        }
+                    }
+                    
+                    if (q.sampleAnswer) {
+                        html += `<p><strong>Sample Answer:</strong> ${q.sampleAnswer}</p>`;
+                    }
+                    
+                    html += '</div>';
+                });
+                
+                html += '</div>';
+                resultsDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error parsing markdown: ${error.message}</p>`;
+                console.error('Parse error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
