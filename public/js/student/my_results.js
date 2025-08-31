@@ -336,10 +336,10 @@ class MyResultsManager {
                 
                 <div class="result-actions">
                     <a href="/student.html?content=result&result=${result.id}" class="action-btn btn-view">
-                        👁️ Xem chi tiết
+                        Xem chi tiết
                     </a>
                     <a href="/student.html?content=exam&id=${result.examId}" class="action-btn btn-retake">
-                        🔄 Làm lại
+                        Làm lại
                     </a>
                 </div>
             </div>

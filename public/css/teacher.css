@@ -4,10 +4,10 @@
     --eiu-text: #fff;
 }
 
-.dashboard-header,
+#teacher-layout .dashboard-header,
 #teacher-nav .nav-link.active {
-    background: var(--eiu-main) !important;
-    color: var(--eiu-text) !important;
+    background: var(--eiu-primary) !important;
+    color: white !important;
 }
 
 body,
@@ -140,21 +140,21 @@ body,
     padding: 0 20px;
 }
 
-.page-header {
+#teacher-layout .page-header {
     text-align: center;
     margin-bottom: 32px;
     padding: 24px 0;
     border-bottom: 2px solid var(--eiu-border-light);
 }
 
-.page-header h2 {
+#teacher-layout .page-header h2 {
     font-size: 2rem;
     font-weight: 700;
     color: var(--eiu-primary);
     margin-bottom: 8px;
 }
 
-.page-header p {
+#teacher-layout .page-header p {
     color: var(--eiu-text-secondary);
     font-size: 16px;
 }
