@@ -243,11 +243,7 @@ class ExamList {
                         <button onclick="window.examList?.viewResult('${userResult.id}')" class="btn btn-secondary">
                             <span class="btn-icon">📊</span>
                             Xem kết quả
-                        </button>
-                        <button onclick="window.examList?.retakeExam('${exam.id}')" class="btn btn-outline">
-                            <span class="btn-icon">🔄</span>
-                            Thi lại
-                        </button>
+                        </button>   
                     ` : ''}
                     
                     <button onclick="window.examList?.previewExam('${exam.id}')" class="btn btn-outline">

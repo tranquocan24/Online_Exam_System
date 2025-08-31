@@ -118,10 +118,20 @@ class ViewResults {
             this.showLoading(true);
             this.hideAllSections();
 
-            const response = await fetch('/api/results');
-            if (response.ok) {
-                const allResults = await response.json();
+            // Load both results and users data
+            const [resultsResponse, usersResponse] = await Promise.all([
+                fetch('/api/results'),
+                fetch('/api/users')
+            ]);
+
+            if (resultsResponse.ok && usersResponse.ok) {
+                const allResults = await resultsResponse.json();
+                const usersData = await usersResponse.json();
+                
                 this.results = allResults.filter(result => result.examId === examId);
+                
+                // Enrich results with user class information
+                this.enrichResultsWithUserData(this.results, usersData);
 
                 if (this.results.length === 0) {
                     this.showEmptyState();
@@ -130,7 +140,7 @@ class ViewResults {
                     this.showResultsSections();
                 }
             } else {
-                throw new Error('Failed to load results');
+                throw new Error('Failed to load results or users data');
             }
         } catch (error) {
             console.error('Error loading results:', error);
@@ -138,6 +148,35 @@ class ViewResults {
         } finally {
             this.showLoading(false);
         }
+    }
+
+    enrichResultsWithUserData(results, usersData) {
+        // Create a map for faster lookup
+        const studentsMap = new Map();
+        
+        if (usersData.students) {
+            usersData.students.forEach(student => {
+                studentsMap.set(student.id, student);
+            });
+        }
+
+        // Enrich each result with user class information
+        results.forEach(result => {
+            const student = studentsMap.get(result.userId);
+            if (student) {
+                // Use class field first, then first class from classes array, or default
+                result.userClass = student.class || 
+                                 (student.classes && student.classes[0]) || 
+                                 'Không xác định';
+                
+                // Also update user name if needed (in case of encoding issues)
+                if (student.name && student.name !== result.userName) {
+                    result.userName = student.name;
+                }
+            } else {
+                result.userClass = 'Không xác định';
+            }
+        });
     }
 
     processResults() {
@@ -191,7 +230,9 @@ class ViewResults {
     }
 
     isAnswerCorrect(question, userAnswer) {
-        if (!userAnswer) return false;
+        // For multiple choice questions, 0 is a valid answer (option A)
+        // So we need to check for null, undefined, and empty string, but not 0
+        if (userAnswer === null || userAnswer === undefined || userAnswer === '') return false;
 
         switch (question.type) {
             case 'multiple-choice':
@@ -370,7 +411,54 @@ class ViewResults {
         }
     }
 
-    populateClassFilter() {
+    async populateClassFilter() {
+        const classFilter = document.getElementById('classFilter');
+        if (!classFilter) return;
+
+        // Get unique class IDs from results
+        const classIds = [...new Set(this.results.map(r => r.userClass).filter(cls => cls && cls !== 'Không xác định'))];
+        
+        // Load class information to get class names
+        try {
+            const classesResponse = await fetch('/api/classes');
+            if (classesResponse.ok) {
+                const classesData = await classesResponse.json();
+                
+                // Create a map of class ID to class name
+                const classMap = new Map();
+                classesData.forEach(cls => {
+                    classMap.set(cls.id, cls.name);
+                });
+
+                classFilter.innerHTML = '<option value="">Tất cả lớp</option>';
+                
+                // Add "Không xác định" option if there are results without class
+                if (this.results.some(r => !r.userClass || r.userClass === 'Không xác định')) {
+                    const option = document.createElement('option');
+                    option.value = 'Không xác định';
+                    option.textContent = 'Không xác định';
+                    classFilter.appendChild(option);
+                }
+                
+                // Add class options with proper names
+                classIds.forEach(classId => {
+                    const option = document.createElement('option');
+                    option.value = classId;
+                    option.textContent = classMap.get(classId) || classId;
+                    classFilter.appendChild(option);
+                });
+            } else {
+                // Fallback: use class IDs as names
+                this.populateClassFilterFallback();
+            }
+        } catch (error) {
+            console.error('Error loading classes:', error);
+            // Fallback: use class IDs as names
+            this.populateClassFilterFallback();
+        }
+    }
+
+    populateClassFilterFallback() {
         const classFilter = document.getElementById('classFilter');
         if (!classFilter) return;
 
@@ -415,7 +503,7 @@ class ViewResults {
         this.renderResults();
     }
 
-    renderResults() {
+    async renderResults() {
         const tbody = document.getElementById('resultsTableBody');
         const resultsCount = document.getElementById('resultsCount');
 
@@ -434,10 +522,18 @@ class ViewResults {
             return;
         }
 
+        // Load class names if not already loaded
+        if (!this.classMap) {
+            await this.loadClassMap();
+        }
+
         const rowsHTML = this.filteredResults.map((result, index) => {
             const timeSpent = this.formatTimeSpent(result.timeSpent);
             const submitTime = new Date(result.submittedAt).toLocaleString('vi-VN');
             const scoreClass = this.getScoreClass(result.calculatedScore);
+            
+            // Get class name from map or use the class ID/default
+            const className = this.getClassDisplayName(result.userClass);
 
             return `
                 <tr>
@@ -449,7 +545,7 @@ class ViewResults {
                     <td>${index + 1}</td>
                     <td>${result.userId}</td>
                     <td>${result.userName}</td>
-                    <td>${result.userClass || 'Không xác định'}</td>
+                    <td>${className}</td>
                     <td class="score-cell ${scoreClass}">${result.calculatedScore}%</td>
                     <td>${timeSpent}</td>
                     <td>${submitTime}</td>
@@ -464,6 +560,34 @@ class ViewResults {
         }).join('');
 
         tbody.innerHTML = rowsHTML;
+    }
+
+    async loadClassMap() {
+        try {
+            const response = await fetch('/api/classes');
+            if (response.ok) {
+                const classesData = await response.json();
+                this.classMap = new Map();
+                classesData.forEach(cls => {
+                    this.classMap.set(cls.id, cls.name);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading class map:', error);
+            this.classMap = new Map(); // Empty map as fallback
+        }
+    }
+
+    getClassDisplayName(classId) {
+        if (!classId || classId === 'Không xác định') {
+            return 'Không xác định';
+        }
+        
+        if (this.classMap && this.classMap.has(classId)) {
+            return this.classMap.get(classId);
+        }
+        
+        return classId; // Fallback to class ID if name not found
     }
 
     getScoreClass(score) {
@@ -518,7 +642,19 @@ class ViewResults {
         if (!container || !result.examQuestions) return;
 
         const answersHTML = result.examQuestions.map((question, index) => {
-            const userAnswer = result.answers[question.id];
+            // Try multiple ways to get user answer (similar to student result.js)
+            let userAnswer = null;
+            
+            if (result.answers.hasOwnProperty(question.id)) {
+                userAnswer = result.answers[question.id];
+            } else if (result.answers.hasOwnProperty(index.toString())) {
+                userAnswer = result.answers[index.toString()];
+            } else if (result.answers.hasOwnProperty(index)) {
+                userAnswer = result.answers[index];
+            } else if (result.answers.hasOwnProperty(question.id.toString())) {
+                userAnswer = result.answers[question.id.toString()];
+            }
+
             const isCorrect = this.isAnswerCorrect(question, userAnswer);
             const correctAnswerText = this.getCorrectAnswerText(question);
             const userAnswerText = this.getUserAnswerText(question, userAnswer);
@@ -575,7 +711,11 @@ class ViewResults {
     }
 
     getUserAnswerText(question, userAnswer) {
-        if (!userAnswer) return 'Không trả lời';
+        // For multiple choice questions, 0 is a valid answer (option A)
+        // So we need to check for null, undefined, and empty string, but not 0
+        if (userAnswer === null || userAnswer === undefined || userAnswer === '') {
+            return 'Không trả lời';
+        }
 
         switch (question.type) {
             case 'multiple-choice':
@@ -665,7 +805,7 @@ class ViewResults {
             index + 1,
             result.userId,
             result.userName,
-            result.userClass || 'Không xác định',
+            this.getClassDisplayName(result.userClass),
             result.calculatedScore,
             this.formatTimeSpent(result.timeSpent),
             new Date(result.submittedAt).toLocaleString('vi-VN')

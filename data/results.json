@@ -460,35 +460,6 @@
       "isTimeUp": false
     },
     {
-      "id": "result_1753186050645_SV317738",
-      "examId": "exam_1753184812674",
-      "examTitle": "test23",
-      "examQuestions": [
-        {
-          "id": "q_1753184795702_1",
-          "type": "multiple-choice",
-          "question": "hahaha",
-          "points": 1,
-          "explanation": "",
-          "options": [
-            "1",
-            "2",
-            "3",
-            "4"
-          ],
-          "correctAnswer": 0
-        }
-      ],
-      "userId": "SV317738",
-      "userName": "Trần Quốc An",
-      "answers": {
-        "0": 0
-      },
-      "timeSpent": 2,
-      "submittedAt": "2025-07-22T12:07:30.640Z",
-      "isTimeUp": false
-    },
-    {
       "id": "result_1756631733182_SV684783",
       "examId": "exam_1752823382404",
       "examTitle": "test9",
@@ -515,6 +486,64 @@
       },
       "timeSpent": 2,
       "submittedAt": "2025-08-31T09:15:33.174Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1756638229120_SV001",
+      "examId": "exam_1753150805658",
+      "examTitle": "test16",
+      "examQuestions": [
+        {
+          "id": "q_1753150789553_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV001",
+      "userName": "Nguyễn Văn An",
+      "answers": {
+        "0": 0
+      },
+      "timeSpent": 3,
+      "submittedAt": "2025-08-31T11:03:49.115Z",
+      "isTimeUp": false
+    },
+    {
+      "id": "result_1756643065506_SV317738",
+      "examId": "exam_1753184812674",
+      "examTitle": "test23",
+      "examQuestions": [
+        {
+          "id": "q_1753184795702_1",
+          "type": "multiple-choice",
+          "question": "hahaha",
+          "points": 1,
+          "explanation": "",
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "correctAnswer": 0
+        }
+      ],
+      "userId": "SV317738",
+      "userName": "Trần Quốc An",
+      "answers": {
+        "0": 0
+      },
+      "timeSpent": 4,
+      "submittedAt": "2025-08-31T12:24:25.501Z",
       "isTimeUp": false
     }
   ]

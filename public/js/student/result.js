@@ -136,19 +136,47 @@ class ResultViewer {
         let incorrect = 0;
         let unanswered = 0;
 
+        console.log('Calculating stats for result:', this.resultData);
+        console.log('Exam questions:', this.examData.questions);
+        console.log('User answers:', this.resultData.answers);
+
         this.examData.questions.forEach((question, index) => {
-            const userAnswer = this.resultData.answers[index];
+            // Use the same logic as my_results.js to find user answer
+            let userAnswer = null;
+            
+            // Try multiple ways to get the answer (same as my_results.js)
+            if (this.resultData.answers.hasOwnProperty(question.id)) {
+                userAnswer = this.resultData.answers[question.id];
+            } else if (this.resultData.answers.hasOwnProperty(index.toString())) {
+                userAnswer = this.resultData.answers[index.toString()];
+            } else if (this.resultData.answers.hasOwnProperty(index)) {
+                userAnswer = this.resultData.answers[index];
+            } else if (this.resultData.answers.hasOwnProperty(question.id.toString())) {
+                userAnswer = this.resultData.answers[question.id.toString()];
+            }
+
+            console.log(`Question ${index + 1} (ID: ${question.id}):`, {
+                question: question.text,
+                userAnswer,
+                correctAnswer: question.correctAnswer,
+                type: question.type
+            });
+
             const isAnswered = this.isAnswerProvided(userAnswer);
 
             if (!isAnswered) {
                 unanswered++;
+                console.log(`  → Unanswered`);
             } else if (this.isAnswerCorrect(question, userAnswer)) {
                 correct++;
+                console.log(`  → Correct`);
             } else {
                 incorrect++;
+                console.log(`  → Incorrect`);
             }
         });
 
+        console.log('Final stats:', { correct, incorrect, unanswered });
         return { correct, incorrect, unanswered };
     }
 
@@ -156,10 +184,17 @@ class ResultViewer {
         if (Array.isArray(answer)) {
             return answer.length > 0;
         }
+        // For multiple choice questions, 0 is a valid answer (option A)
+        // So we need to check for null, undefined, and empty string, but not 0
         return answer !== null && answer !== undefined && answer !== '';
     }
 
     isAnswerCorrect(question, userAnswer) {
+        // Add null/undefined check first
+        if (userAnswer === null || userAnswer === undefined) {
+            return false;
+        }
+
         if (question.type === 'multiple-select') {
             if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) {
                 return false;
@@ -171,9 +206,8 @@ class ResultViewer {
 
             return JSON.stringify(sortedUserAnswer) === JSON.stringify(sortedCorrectAnswer);
         } else if (question.type === 'text') {
-            // For text questions, we'll do a simple comparison
-            // In a real system, this might involve more sophisticated text analysis
-            return userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
+            // Use same logic as my_results.js
+            return userAnswer && userAnswer.toLowerCase().trim() === question.correctAnswer.toLowerCase().trim();
         } else {
             // Single choice
             return userAnswer === question.correctAnswer;
@@ -203,7 +237,19 @@ class ResultViewer {
     }
 
     createQuestionElement(question, index) {
-        const userAnswer = this.resultData.answers[index];
+        // Use the same logic as calculateStats to find user answer
+        let userAnswer = null;
+        
+        if (this.resultData.answers.hasOwnProperty(question.id)) {
+            userAnswer = this.resultData.answers[question.id];
+        } else if (this.resultData.answers.hasOwnProperty(index.toString())) {
+            userAnswer = this.resultData.answers[index.toString()];
+        } else if (this.resultData.answers.hasOwnProperty(index)) {
+            userAnswer = this.resultData.answers[index];
+        } else if (this.resultData.answers.hasOwnProperty(question.id.toString())) {
+            userAnswer = this.resultData.answers[question.id.toString()];
+        }
+
         const isAnswered = this.isAnswerProvided(userAnswer);
         const isCorrect = isAnswered && this.isAnswerCorrect(question, userAnswer);
 
@@ -218,6 +264,12 @@ class ResultViewer {
         } else {
             status = 'Sai';
             statusClass = 'status-incorrect';
+        }
+
+        // Force correct status for debugging
+        if (userAnswer === question.correctAnswer && userAnswer !== null && userAnswer !== undefined) {
+            status = 'Đúng';
+            statusClass = 'status-correct';
         }
 
         const questionDiv = document.createElement('div');

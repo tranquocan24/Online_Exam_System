@@ -75,15 +75,22 @@ class Auth {
 
     // Bind events cho form đăng nhập
     bindLoginForm() {
+        console.log('Binding login form events...');
+        
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
-            loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+            // Remove existing event listeners to prevent duplicates
+            const newForm = loginForm.cloneNode(true);
+            loginForm.parentNode.replaceChild(newForm, loginForm);
+            
+            // Bind new event listener
+            newForm.addEventListener('submit', (e) => this.handleLogin(e));
         }
 
         // Auto-fill remembered username
         this.loadRememberedUser();
 
-        // Thêm demo accounts
+        // Thêm demo accounts với retry để đảm bảo được thêm
         this.addDemoAccountsInfo();
         
         // Add keyboard shortcuts
@@ -108,7 +115,13 @@ class Auth {
 
     // Add keyboard shortcuts
     addKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
+        // Remove existing keyboard shortcuts first
+        if (this._keyboardHandler) {
+            document.removeEventListener('keydown', this._keyboardHandler);
+        }
+        
+        // Create new handler
+        this._keyboardHandler = (e) => {
             // Alt + L to focus on login form
             if (e.altKey && e.key === 'l') {
                 e.preventDefault();
@@ -126,105 +139,140 @@ class Auth {
                     this.showMessage('', 'info');
                 }
             }
-        });
+        };
+        
+        document.addEventListener('keydown', this._keyboardHandler);
     }
 
     // Hiển thị thông tin tài khoản demo
     addDemoAccountsInfo() {
-        const container = document.querySelector('.login-container');
-        if (container) {
-            const demoInfo = document.createElement('div');
-            demoInfo.className = 'demo-accounts';
-            demoInfo.innerHTML = `
-                <div class="demo-info">
-                    <h4>Tài khoản demo:</h4>
-                    <div class="demo-grid">
-                        <div class="demo-account" onclick="Auth.fillDemoAccount('sv001', '123456')">
-                            <strong>Sinh viên:</strong><br>
-                            Username: sv001<br>
-                            Password: 123456<br>
-                            <small>Click để điền tự động</small>
+        const tryAddDemo = () => {
+            // Try both the placeholder and the container
+            const placeholder = document.getElementById('demo-accounts-placeholder');
+            const container = document.querySelector('.login-container');
+            const targetElement = placeholder || container;
+            
+            // Kiểm tra xem demo info đã tồn tại chưa
+            if (document.querySelector('.demo-accounts')) {
+                console.log('Demo accounts already added');
+                return;
+            }
+            
+            if (targetElement) {
+                console.log('Adding demo accounts info to:', targetElement.id || targetElement.className);
+                const demoInfo = document.createElement('div');
+                demoInfo.className = 'demo-accounts';
+                demoInfo.innerHTML = `
+                    <div class="demo-info">
+                        <h4>Tài khoản demo:</h4>
+                        <div class="demo-grid">
+                            <div class="demo-account" onclick="Auth.fillDemoAccount('sv001', '123456')">
+                                <strong>Sinh viên:</strong><br>
+                                Username: sv001<br>
+                                Password: 123456<br>
+                                <small>Click để điền tự động</small>
+                            </div>
+                            <div class="demo-account" onclick="Auth.fillDemoAccount('gv001', '123456')">
+                                <strong>Giáo viên:</strong><br>
+                                Username: gv001<br>
+                                Password: 123456<br>
+                                <small>Click để điền tự động</small>
+                            </div>
+                            <div class="demo-account" onclick="Auth.fillDemoAccount('admin', 'admin123')">
+                                <strong>Quản trị viên:</strong><br>
+                                Username: admin<br>
+                                Password: admin123<br>
+                                <small>Click để điền tự động</small>
+                            </div>
                         </div>
-                        <div class="demo-account" onclick="Auth.fillDemoAccount('gv001', '123456')">
-                            <strong>Giáo viên:</strong><br>
-                            Username: gv001<br>
-                            Password: 123456<br>
-                            <small>Click để điền tự động</small>
-                        </div>
-                        <div class="demo-account" onclick="Auth.fillDemoAccount('admin', 'admin123')">
-                            <strong>Quản trị viên:</strong><br>
-                            Username: admin<br>
-                            Password: admin123<br>
-                            <small>Click để điền tự động</small>
+                        <div class="keyboard-shortcuts">
+                            <small>
+                                💡 <strong>Phím tắt:</strong> Alt+L để focus vào form, Esc để xóa form
+                            </small>
                         </div>
                     </div>
-                    <div class="keyboard-shortcuts">
-                        <small>
-                            💡 <strong>Phím tắt:</strong> Alt+L để focus vào form, Esc để xóa form
-                        </small>
-                    </div>
-                </div>
-            `;
-            
-            // Thêm CSS cho demo info
-            const style = document.createElement('style');
-            style.textContent = `
-                .demo-accounts {
-                    margin-top: 20px;
-                    padding: 20px;
-                    background: #f8f9fa;
-                    border-radius: 8px;
-                    border-left: 4px solid #667eea;
+                `;
+                
+                // Thêm CSS cho demo info nếu chưa có
+                if (!document.querySelector('#demo-accounts-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'demo-accounts-styles';
+                    style.textContent = `
+                        .demo-accounts {
+                            margin-top: 20px;
+                            padding: 20px;
+                            background: #f8f9fa;
+                            border-radius: 8px;
+                            border-left: 4px solid #667eea;
+                        }
+                        .demo-info h4 {
+                            margin-bottom: 15px;
+                            color: #2d3748;
+                        }
+                        .demo-grid {
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                            gap: 15px;
+                            margin-bottom: 15px;
+                        }
+                        .demo-account {
+                            background: white;
+                            padding: 15px;
+                            border-radius: 6px;
+                            font-size: 14px;
+                            line-height: 1.4;
+                            cursor: pointer;
+                            transition: all 0.3s ease;
+                            border: 2px solid transparent;
+                        }
+                        .demo-account:hover {
+                            border-color: #667eea;
+                            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+                            transform: translateY(-1px);
+                        }
+                        .demo-account small {
+                            color: #667eea;
+                            font-style: italic;
+                            display: block;
+                            margin-top: 5px;
+                        }
+                        .keyboard-shortcuts {
+                            text-align: center;
+                            padding: 10px;
+                            background: rgba(102, 126, 234, 0.1);
+                            border-radius: 4px;
+                        }
+                        .keyboard-shortcuts small {
+                            color: #4a5568;
+                        }
+                        @media (max-width: 480px) {
+                            .demo-grid {
+                                grid-template-columns: 1fr;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
                 }
-                .demo-info h4 {
-                    margin-bottom: 15px;
-                    color: #2d3748;
+                
+                // If using placeholder, replace it; if using container, append to it
+                if (placeholder) {
+                    placeholder.parentNode.replaceChild(demoInfo, placeholder);
+                } else {
+                    container.appendChild(demoInfo);
                 }
-                .demo-grid {
-                    display: grid;
-                    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-                    gap: 15px;
-                    margin-bottom: 15px;
-                }
-                .demo-account {
-                    background: white;
-                    padding: 15px;
-                    border-radius: 6px;
-                    font-size: 14px;
-                    line-height: 1.4;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    border: 2px solid transparent;
-                }
-                .demo-account:hover {
-                    border-color: #667eea;
-                    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
-                    transform: translateY(-1px);
-                }
-                .demo-account small {
-                    color: #667eea;
-                    font-style: italic;
-                    display: block;
-                    margin-top: 5px;
-                }
-                .keyboard-shortcuts {
-                    text-align: center;
-                    padding: 10px;
-                    background: rgba(102, 126, 234, 0.1);
-                    border-radius: 4px;
-                }
-                .keyboard-shortcuts small {
-                    color: #4a5568;
-                }
-                @media (max-width: 480px) {
-                    .demo-grid {
-                        grid-template-columns: 1fr;
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            container.appendChild(demoInfo);
+                
+            } else {
+                console.log('No target element found for demo accounts, retrying...');
+                // Retry sau 100ms nếu container chưa sẵn sàng
+                setTimeout(tryAddDemo, 100);
+            }
+        };
+        
+        // Thực hiện ngay lập tức hoặc khi DOM sẵn sàng
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', tryAddDemo);
+        } else {
+            tryAddDemo();
         }
     }
 

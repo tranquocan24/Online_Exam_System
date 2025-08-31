@@ -4,6 +4,8 @@ class MyResultsManager {
         this.allResults = [];
         this.filteredResults = [];
         this.currentSort = 'date-desc';
+        this.eventListenersSetup = false; // Track if event listeners are setup
+        this.currentPage = 'my_results'; // Track current page
         
         this.init();
     }
@@ -13,9 +15,13 @@ class MyResultsManager {
             console.log('MyResultsManager initialized');
             
             await this.loadResults();
-            this.setupEventListeners();
             this.renderSummaryStats();
             this.renderResults();
+            
+            // Setup event listeners after DOM is ready
+            setTimeout(() => {
+                this.setupEventListeners();
+            }, 100);
             
             // Check if we need to highlight a specific result
             const viewResultId = localStorage.getItem('viewResultId');
@@ -63,23 +69,86 @@ class MyResultsManager {
     }
 
     setupEventListeners() {
-        document.getElementById('scoreFilter').addEventListener('change', () => {
-            this.applyFilters();
-        });
+        console.log('Setting up event listeners...');
         
-        document.getElementById('timeFilter').addEventListener('change', () => {
-            this.applyFilters();
-        });
+        const scoreFilter = document.getElementById('scoreFilter');
+        const timeFilter = document.getElementById('timeFilter');
+        const searchFilter = document.getElementById('searchFilter');
+        const sortSelect = document.getElementById('sortSelect');
+
+        // Remove existing listeners to avoid duplicates
+        if (this.eventListenersSetup) {
+            console.log('Removing existing event listeners...');
+            // Clone elements to remove all event listeners
+            if (scoreFilter) {
+                const newScoreFilter = scoreFilter.cloneNode(true);
+                scoreFilter.parentNode.replaceChild(newScoreFilter, scoreFilter);
+            }
+            if (timeFilter) {
+                const newTimeFilter = timeFilter.cloneNode(true);
+                timeFilter.parentNode.replaceChild(newTimeFilter, timeFilter);
+            }
+            if (searchFilter) {
+                const newSearchFilter = searchFilter.cloneNode(true);
+                searchFilter.parentNode.replaceChild(newSearchFilter, searchFilter);
+            }
+            if (sortSelect) {
+                const newSortSelect = sortSelect.cloneNode(true);
+                sortSelect.parentNode.replaceChild(newSortSelect, sortSelect);
+            }
+        }
+
+        // Get fresh references after cloning
+        const freshScoreFilter = document.getElementById('scoreFilter');
+        const freshTimeFilter = document.getElementById('timeFilter');
+        const freshSearchFilter = document.getElementById('searchFilter');
+        const freshSortSelect = document.getElementById('sortSelect');
+
+        if (freshScoreFilter) {
+            freshScoreFilter.addEventListener('change', () => {
+                console.log('Score filter changed:', freshScoreFilter.value);
+                this.applyFilters();
+            });
+            console.log('Score filter event listener bound');
+        } else {
+            console.warn('scoreFilter element not found');
+        }
         
-        document.getElementById('searchFilter').addEventListener('input', (e) => {
-            this.debounce(() => this.applyFilters(), 300)();
-        });
+        if (freshTimeFilter) {
+            freshTimeFilter.addEventListener('change', () => {
+                console.log('Time filter changed:', freshTimeFilter.value);
+                this.applyFilters();
+            });
+            console.log('Time filter event listener bound');
+        } else {
+            console.warn('timeFilter element not found');
+        }
         
-        document.getElementById('sortSelect').addEventListener('change', (e) => {
-            this.currentSort = e.target.value;
-            this.sortResults();
-            this.renderResults();
-        });
+        if (freshSearchFilter) {
+            freshSearchFilter.addEventListener('input', (e) => {
+                console.log('Search filter changed:', e.target.value);
+                this.debounce(() => this.applyFilters(), 300)();
+            });
+            console.log('Search filter event listener bound');
+        } else {
+            console.warn('searchFilter element not found');
+        }
+        
+        if (freshSortSelect) {
+            freshSortSelect.addEventListener('change', (e) => {
+                console.log('Sort changed from', this.currentSort, 'to', e.target.value);
+                this.currentSort = e.target.value;
+                this.sortResults();
+                this.renderResults();
+            });
+            console.log('Sort select event listener bound');
+        } else {
+            console.warn('sortSelect element not found');
+        }
+
+        // Mark that event listeners have been setup
+        this.eventListenersSetup = true;
+        console.log('Event listeners setup completed');
     }
 
     debounce(func, wait) {
@@ -142,6 +211,9 @@ class MyResultsManager {
     }
 
     sortResults() {
+        console.log('Sorting results with:', this.currentSort);
+        console.log('Results to sort:', this.filteredResults.length);
+        
         this.filteredResults.sort((a, b) => {
             switch (this.currentSort) {
                 case 'date-desc':
@@ -157,9 +229,12 @@ class MyResultsManager {
                 case 'title-desc':
                     return b.examTitle.localeCompare(a.examTitle);
                 default:
+                    console.warn('Unknown sort option:', this.currentSort);
                     return 0;
             }
         });
+        
+        console.log('Results sorted successfully');
     }
 
     calculateScore(result) {
@@ -205,6 +280,11 @@ class MyResultsManager {
     }
 
     isAnswerCorrect(question, userAnswer) {
+        // Add null/undefined check for consistency
+        if (userAnswer === null || userAnswer === undefined) {
+            return false;
+        }
+
         if (question.type === 'multiple-select') {
             if (!Array.isArray(userAnswer) || !Array.isArray(question.correctAnswer)) {
                 return false;
@@ -278,6 +358,9 @@ class MyResultsManager {
         }
         
         resultsGrid.innerHTML = this.filteredResults.map(result => this.createResultCard(result)).join('');
+        
+        // Bind click events for result buttons using event delegation
+        this.bindResultActions();
     }
 
     createResultCard(result) {
@@ -335,15 +418,44 @@ class MyResultsManager {
                 </div>
                 
                 <div class="result-actions">
-                    <a href="/student.html?content=result&result=${result.id}" class="action-btn btn-view">
-                        Xem chi tiết
-                    </a>
-                    <a href="/student.html?content=exam&id=${result.examId}" class="action-btn btn-retake">
-                        Làm lại
-                    </a>
+                    <button class="action-btn btn-view" data-result-id="${result.id}">
+                        Xem kết quả
+                    </button>
                 </div>
             </div>
         `;
+    }
+
+    bindResultActions() {
+        const resultsGrid = document.getElementById('resultsGrid');
+        if (!resultsGrid) {
+            console.warn('Results grid not found for binding actions');
+            return;
+        }
+
+        // Remove existing event listeners by cloning the element
+        const newResultsGrid = resultsGrid.cloneNode(true);
+        resultsGrid.parentNode.replaceChild(newResultsGrid, resultsGrid);
+
+        // Add event delegation to the new element
+        newResultsGrid.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-view')) {
+                e.preventDefault();
+                
+                const resultId = e.target.getAttribute('data-result-id') || 
+                               e.target.closest('.result-card')?.getAttribute('data-result-id');
+                
+                console.log('Result button clicked via delegation:', resultId);
+                
+                if (resultId) {
+                    this.viewResult(resultId);
+                } else {
+                    console.error('Could not find result ID from button or parent card');
+                }
+            }
+        });
+
+        console.log('Result actions bound via event delegation');
     }
 
     formatTime(seconds) {
@@ -393,6 +505,58 @@ class MyResultsManager {
                 resultCard.style.boxShadow = '';
                 resultCard.style.border = '';
             }, 3000);
+        }
+    }
+
+    viewResult(resultId) {
+        console.log('viewResult called with resultId:', resultId);
+
+        if (!resultId) {
+            console.error('No result ID provided');
+            alert('Không tìm thấy kết quả thi. Vui lòng thử lại.');
+            return;
+        }
+
+        try {
+            // Store result ID for the result page
+            localStorage.setItem('selectedResultId', resultId);
+
+            // Use replaceState instead of pushState to avoid multiple history entries
+            const newUrl = `#result/${resultId}`;
+            
+            // Only push new state if we're not already on a result page
+            if (!window.location.hash.startsWith('#result/')) {
+                window.history.pushState({
+                    page: 'result',
+                    resultId: resultId,
+                    fromPage: this.currentPage || 'my_results'
+                }, `Result ${resultId}`, newUrl);
+            } else {
+                // Replace current state if already on a result page
+                window.history.replaceState({
+                    page: 'result',
+                    resultId: resultId,
+                    fromPage: this.currentPage || 'my_results'
+                }, `Result ${resultId}`, newUrl);
+            }
+
+            // Update hash and load page
+            window.location.hash = newUrl;
+            
+            // Use app navigation if available
+            if (window.app && typeof window.app.loadPage === 'function') {
+                console.log('Loading result page via app.loadPage...');
+                window.app.loadPage('result');
+            } else {
+                console.warn('App navigation not available, using direct navigation');
+                // Direct navigation fallback
+                window.location.href = `student.html#result/${resultId}`;
+            }
+
+            console.log('Navigation to result page initiated');
+        } catch (error) {
+            console.error('Error navigating to result page:', error);
+            alert('Có lỗi khi mở trang kết quả. Vui lòng thử lại.');
         }
     }
 
@@ -447,6 +611,12 @@ class MyResultsManager {
             this.renderSummaryStats();
             this.renderResults();
             
+            // Setup event listeners after rendering (critical for back navigation)
+            setTimeout(() => {
+                console.log('Re-binding event listeners after refresh...');
+                this.setupEventListeners();
+            }, 200);
+            
             // Hide loading screen and show results
             if (loadingScreen) loadingScreen.style.display = 'none';
             if (resultsContainer) resultsContainer.style.display = 'block';
@@ -482,6 +652,12 @@ class MyResultsManager {
         const resultsGrid = document.getElementById('resultsGrid');
         if (summaryStats) summaryStats.innerHTML = '';
         if (resultsGrid) resultsGrid.innerHTML = '';
+        
+        // Re-bind event listeners after reset (important for navigation)
+        setTimeout(() => {
+            console.log('Re-binding event listeners after reset...');
+            this.setupEventListeners();
+        }, 100);
         
         console.log('My results state reset successfully');
     }

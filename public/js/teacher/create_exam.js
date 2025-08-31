@@ -77,14 +77,18 @@ class CreateExam {
         const addQuestionBtn = document.getElementById('addQuestionBtn');
         if (addQuestionBtn) {
             console.log('Found add question button, binding click event');
-            addQuestionBtn.addEventListener('click', (e) => {
+            // Remove existing listeners to prevent duplicates
+            addQuestionBtn.replaceWith(addQuestionBtn.cloneNode(true));
+            const newBtn = document.getElementById('addQuestionBtn');
+            newBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 console.log('Add question button clicked');
                 this.addQuestion();
             });
             console.log('Add question button event bound');
         } else {
-            console.warn('addQuestionBtn not found - will rely on onclick fallback');
+            console.warn('addQuestionBtn not found');
         }
 
         // Save as draft button
@@ -145,6 +149,15 @@ class CreateExam {
 
     addQuestion(questionData = null) {
         console.log('addQuestion() called', questionData);
+        
+        // Prevent rapid clicking/multiple calls
+        if (this._addingQuestion) {
+            console.log('Already adding question, skipping...');
+            return;
+        }
+        
+        this._addingQuestion = true;
+        
         try {
             console.log('Adding question...', questionData);
             this.questionCounter++;
@@ -235,6 +248,11 @@ class CreateExam {
         } catch (error) {
             console.error('Error adding question:', error);
             this.showMessage('Có lỗi khi thêm câu hỏi: ' + error.message, 'error');
+        } finally {
+            // Release lock after a short delay
+            setTimeout(() => {
+                this._addingQuestion = false;
+            }, 500);
         }
     }
 

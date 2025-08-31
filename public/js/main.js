@@ -16,8 +16,16 @@ class App {
         // Bind events
         this.bindEvents();
 
+        // Setup navigation history handling
+        this.setupHistoryHandling();
+
         // Load trang đăng nhập nếu chưa đăng nhập
         if (!this.currentUser) {
+            // Clear any existing hash to prevent confusion
+            if (window.location.hash) {
+                console.log('Clearing hash before loading login page:', window.location.hash);
+                window.location.hash = '';
+            }
             this.loadLoginPage();
         }
     }
@@ -25,6 +33,81 @@ class App {
     bindEvents() {
         // Sự kiện đăng xuất sẽ được bind sau khi layout được load
         // Không bind ở đây để tránh conflict
+    }
+
+    // Setup navigation history handling for back button
+    setupHistoryHandling() {
+        // Listen to popstate (back/forward button) - primary handler
+        window.addEventListener('popstate', (event) => {
+            console.log('Popstate event:', event.state, 'URL:', window.location.href);
+            this.handleNavigation(event);
+        });
+
+        // Listen to hash changes only for programmatic navigation
+        window.addEventListener('hashchange', (event) => {
+            console.log('Hash changed:', event.newURL);
+            // Only handle if not triggered by popstate
+            if (!this.isPopstateNavigation) {
+                this.handleNavigation(event);
+            }
+            this.isPopstateNavigation = false;
+        });
+
+        // Initialize flag
+        this.isPopstateNavigation = false;
+    }
+
+    // Unified navigation handler
+    handleNavigation(event) {
+        if (!this.currentUser || !this.currentRole) {
+            return;
+        }
+
+        // Set flag to prevent duplicate handling
+        if (event.type === 'popstate') {
+            this.isPopstateNavigation = true;
+        }
+
+        const hash = window.location.hash;
+        console.log('Handling navigation:', event.type, 'Hash:', hash);
+
+        // Parse hash to determine page and content
+        if (hash.startsWith('#result/')) {
+            // Navigate to result page
+            const resultId = hash.replace('#result/', '');
+            console.log('Loading result page for ID:', resultId);
+            
+            // Store result ID for the result page
+            localStorage.setItem('selectedResultId', resultId);
+            
+            // Load result page
+            this.loadPage('result');
+        } else if (hash === '' || hash === '#' || hash === '#my_results') {
+            // Navigate back to my_results or dashboard
+            console.log('Navigating back, current page:', this.currentPage);
+            
+            // Check if we have state indicating where to go back
+            const state = window.history.state;
+            if (state && state.fromPage === 'my_results') {
+                console.log('Going back to my_results from result page');
+                this.loadPage('my_results');
+            } else if (this.currentPage === 'result') {
+                // Coming back from result page, go to my_results by default
+                console.log('Going back from result to my_results (default)');
+                this.loadPage('my_results');
+            } else {
+                // Default to dashboard
+                console.log('Loading dashboard');
+                this.loadPage('dashboard');
+            }
+        } else {
+            // Handle other hash patterns
+            const pageName = hash.replace('#', '');
+            if (pageName && pageName !== this.currentPage) {
+                console.log('Loading page from hash:', pageName);
+                this.loadPage(pageName);
+            }
+        }
     }
 
     // Kiểm tra session đơn giản (localStorage)
@@ -179,8 +262,21 @@ class App {
             if (!window.Auth) {
                 await this.loadScript('js/auth.js');
                 // Wait a bit for Auth to initialize
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 200));
+            } else {
+                // If Auth exists, reinitialize it for the fresh login page
+                console.log('Reinitializing Auth for fresh login page...');
+                window.Auth.bindLoginForm();
             }
+            
+            // Ensure demo accounts are added even if Auth existed
+            setTimeout(() => {
+                if (window.Auth && typeof window.Auth.addDemoAccountsInfo === 'function') {
+                    console.log('Ensuring demo accounts are displayed...');
+                    window.Auth.addDemoAccountsInfo();
+                }
+            }, 100);
+            
         } catch (error) {
             console.error('Lỗi load trang đăng nhập:', error);
             this.renderContent('<p>Lỗi tải trang đăng nhập</p>');
@@ -471,6 +567,9 @@ class App {
 
                 case 'my_results':
                     if (this.currentRole === 'student') {
+                        // Check if we're coming back from a result page
+                        const fromResult = window.history.state?.fromPage === 'result';
+                        
                         if (window.myResultsManager && typeof window.myResultsManager.reset === 'function') {
                             console.log('Resetting existing my results...');
                             window.myResultsManager.reset();
@@ -480,6 +579,12 @@ class App {
                             window.myResultsManager = new MyResultsManager();
                         } else {
                             console.warn('MyResultsManager class not found');
+                        }
+                        
+                        // If coming back from result page, update navigation state
+                        if (fromResult) {
+                            console.log('Returned from result page, updating navigation');
+                            this.updateNavigationState('my_results');
                         }
                     }
                     break;
@@ -780,6 +885,9 @@ class App {
             document.body.classList.remove('admin-mode');
         }
 
+        // Clear URL hash to prevent issues when returning to login
+        window.location.hash = '';
+        
         // Xóa session
         localStorage.removeItem('currentUser');
         localStorage.removeItem('sessionExpiry');
